@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">utils</string>
+    <string name="rationale_all">We need missed permissions for normal work. Enable them?</string>
+    <string name="permissions_title">Permissions</string>
 </resources>
