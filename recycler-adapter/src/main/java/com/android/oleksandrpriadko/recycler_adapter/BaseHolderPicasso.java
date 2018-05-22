@@ -1,4 +1,4 @@
-package com.android.priadko.baselib.recycler_view.adapter;
+package com.android.oleksandrpriadko.recycler_adapter;
 
 import android.support.annotation.DrawableRes;
 import android.support.v7.widget.RecyclerView;
