@@ -31,5 +31,9 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation 'com.android.support:appcompat-v7:' + rootProject.supportLibraryVersion
+    implementation 'com.android.support:design:' + rootProject.supportLibraryVersion
+
+    implementation 'com.squareup.picasso:picasso:' + rootProject.picasso
+
     testImplementation 'junit:junit:' + rootProject.junit
 }
