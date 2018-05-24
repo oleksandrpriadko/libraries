@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".item_decoration.ItemDecorationActivity">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recView"
+        android:layout_width="@dimen/constraint_match"
+        android:layout_height="@dimen/constraint_match"
+        app:layout_constraintBottom_toTopOf="@id/grid_options"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@android:color/holo_blue_light"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <android.support.constraint.Barrier
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <GridLayout
+        android:id="@+id/grid_options"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:rowCount="3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recView">
+
+        <Button
+            android:id="@+id/button_layout_manager"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Layout Manager"/>
+
+        <Button
+            android:id="@+id/button_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Margin"/>
+
+        <Button
+            android:id="@+id/button_orientation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Orientation"/>
+
+        <CheckBox
+            android:id="@+id/checkbox_margin_first"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Margin First Item"
+            android:textAllCaps="true"/>
+
+        <CheckBox
+            android:id="@+id/checkbox_margin_last"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Margin Last Item"
+            android:textAllCaps="true"/>
+
+        <CheckBox
+            android:id="@+id/checkbox_include_edge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Include Edge (Grid only)"
+            android:textAllCaps="true"/>
+    </GridLayout>
+
+</android.support.constraint.ConstraintLayout>
