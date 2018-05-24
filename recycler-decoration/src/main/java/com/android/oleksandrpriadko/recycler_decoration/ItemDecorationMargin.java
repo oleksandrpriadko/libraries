@@ -53,7 +53,7 @@ public class ItemDecorationMargin extends RecyclerView.ItemDecoration {
                                RecyclerView.State state) {
         int position = parent.getChildAdapterPosition(view);
         boolean isFirstItem = position == 0;
-        boolean isLastItem = position == position - 1;
+        boolean isLastItem = position == parent.getAdapter().getItemCount() - 1;
 
         if (mLinearLayoutManagerOrientation == LinearLayoutManager.HORIZONTAL) {
             defineOffsetHorizontalOrientation(outRect, isFirstItem, isLastItem);
@@ -97,6 +97,8 @@ public class ItemDecorationMargin extends RecyclerView.ItemDecoration {
             if (mLastItemMargin) {
                 outRect.right = mRightMargin;
             }
+        } else {
+            outRect.right = mRightMargin;
         }
     }
 }

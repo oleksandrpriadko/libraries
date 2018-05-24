@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 @SuppressWarnings("SpellCheckingInspection")
-public class ItemDecorVertGridSpac extends RecyclerView.ItemDecoration {
+public class ItemDecorationVerticalGridMargin extends RecyclerView.ItemDecoration {
     private final int spanCount;
     private int left;
     private int top;
@@ -13,7 +13,7 @@ public class ItemDecorVertGridSpac extends RecyclerView.ItemDecoration {
     private int bottom;
     private boolean includeEdge;
 
-    public ItemDecorVertGridSpac(int spanCount, int left, int top, int right, int bottom, boolean includeEdge) {
+    public ItemDecorationVerticalGridMargin(int spanCount, int left, int top, int right, int bottom, boolean includeEdge) {
         this.spanCount = spanCount;
         this.left = left;
         this.top = top;
@@ -22,7 +22,7 @@ public class ItemDecorVertGridSpac extends RecyclerView.ItemDecoration {
         this.includeEdge = includeEdge;
     }
 
-    public ItemDecorVertGridSpac(int spanCount, int space, boolean includeEdge) {
+    public ItemDecorationVerticalGridMargin(int spanCount, int space, boolean includeEdge) {
         this.spanCount = spanCount;
         this.left = space;
         this.top = space;
@@ -33,8 +33,9 @@ public class ItemDecorVertGridSpac extends RecyclerView.ItemDecoration {
 
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-        int position = parent.getChildAdapterPosition(view); // item position
-        int column = position % spanCount; // item column
+        int position = parent.getChildAdapterPosition(view);
+        int column = position % spanCount;
+        int row = position / spanCount;
 
         if (includeEdge) {
             outRect.left = left - column * left / spanCount;
