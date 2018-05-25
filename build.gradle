@@ -32,8 +32,8 @@ ext {
     buildToolsVersion = '27.1.1'
 
     // version
-    versionsName = "0.4.16"
-    versionsCode = 18
+    versionsName = "0.4.17"
+    versionsCode = 19
 
     // dependencies versions
     supportLibraryVersion = '27.1.1'
