@@ -9,7 +9,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.android.oleksandrpriadko.loggalitic.analytics.converter.Converter;
-import com.android.oleksandrpriadko.loggalitic.analytics.policy.Policy;
+import com.android.oleksandrpriadko.loggalitic.policy.Policy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

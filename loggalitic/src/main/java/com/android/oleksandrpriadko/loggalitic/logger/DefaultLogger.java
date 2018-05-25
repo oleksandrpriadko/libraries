@@ -3,7 +3,7 @@ package com.android.oleksandrpriadko.loggalitic.logger;
 import android.util.Log;
 
 import com.android.oleksandrpriadko.loggalitic.Loggalitic;
-import com.android.oleksandrpriadko.loggalitic.analytics.policy.Policy;
+import com.android.oleksandrpriadko.loggalitic.policy.Policy;
 
 /**
  * wifi_switcher

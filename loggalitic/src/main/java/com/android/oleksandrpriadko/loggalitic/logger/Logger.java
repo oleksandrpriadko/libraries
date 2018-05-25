@@ -1,6 +1,6 @@
 package com.android.oleksandrpriadko.loggalitic.logger;
 
-import com.android.oleksandrpriadko.loggalitic.analytics.policy.Policy;
+import com.android.oleksandrpriadko.loggalitic.policy.Policy;
 
 /**
  * Created by Oleksandr Priadko.
