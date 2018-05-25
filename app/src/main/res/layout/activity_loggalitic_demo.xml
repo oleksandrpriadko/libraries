@@ -5,6 +5,84 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="8dp"
     tools:context=".loggalitic.LoggaliticDemoActivity">
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/inputLayout_name"
+        android:layout_width="@dimen/constraint_match"
+        android:layout_height="wrap_content"
+        android:hint="Event name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/editText_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionNext"
+            android:maxLines="1"
+            android:singleLine="true"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/inputLayout_description"
+        android:layout_width="@dimen/constraint_match"
+        android:layout_height="wrap_content"
+        android:hint="Description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/inputLayout_name">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/editText_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionNext"
+            android:maxLines="1"
+            android:singleLine="true"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <ScrollView
+        android:id="@+id/scrollView_published_logged"
+        android:layout_width="@dimen/constraint_match"
+        android:layout_height="@dimen/constraint_match"
+        app:layout_constraintBottom_toTopOf="@id/button_publish_log"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/inputLayout_description">
+
+        <TextView
+            android:id="@+id/textView_published_logged"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Published/Logged events"
+            app:layout_constraintBottom_toTopOf="@id/button_publish_log"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/inputLayout_description"/>
+
+    </ScrollView>
+
+    <Button
+        android:id="@+id/button_publish_log"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="Publish/Log"
+        app:layout_constraintBottom_toTopOf="@id/spinner_log_level"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <Spinner
+        android:id="@+id/spinner_log_level"
+        android:layout_width="@dimen/constraint_match"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+    </Spinner>
 
 </android.support.constraint.ConstraintLayout>

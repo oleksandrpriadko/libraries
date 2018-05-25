@@ -58,8 +58,9 @@ public final class Loggalitic {
         }
 
         @Override
-        public void send(AnalyticsEvent event) {
+        public boolean send(AnalyticsEvent event) {
             Log.e(getTag(), "send: failed as publisher is not initialized");
+            return false;
         }
     }
 }

@@ -18,30 +18,33 @@ public class DemoPublisher extends Publisher {
     }
 
     @Override
-    public void send(AnalyticsEvent event) {
-        toFabric(event);
-        toFireBase(event);
+    public boolean send(AnalyticsEvent event) {
+        return toFabric(event) && toFireBase(event);
     }
 
-    private void toFabric(AnalyticsEvent event) {
+    private boolean toFabric(AnalyticsEvent event) {
         FabricConverter fabricConverter = (FabricConverter) findConverter(Converter.FABRIC);
         if (fabricConverter != null) {
             Answers.getInstance().logCustom(fabricConverter.convert(event));
+            return true;
         } else {
             Log.d(getTag(),
-                    "send: failed. reason = " + FabricConverter.class.getSimpleName() + " is null");
+                "send: failed. reason = " + FabricConverter.class.getSimpleName() + " is null");
+            return false;
         }
     }
 
-    private void toFireBase(AnalyticsEvent event) {
+    private boolean toFireBase(AnalyticsEvent event) {
         FireBaseConverter fireBaseConverter
-                = (FireBaseConverter) findConverter(Converter.FIRE_BASE);
+            = (FireBaseConverter) findConverter(Converter.FIRE_BASE);
         if (fireBaseConverter != null) {
             Pair<String, Bundle> pair = fireBaseConverter.convert(event);
             App.getFireBaseAnalytics().logEvent(pair.first, pair.second);
+            return true;
         } else {
             Log.d(getTag(),
-                    "send: failed. reason = " + FireBaseConverter.class.getSimpleName() + " is null");
+                "send: failed. reason = " + FireBaseConverter.class.getSimpleName() + " is null");
+            return false;
         }
     }
 }
