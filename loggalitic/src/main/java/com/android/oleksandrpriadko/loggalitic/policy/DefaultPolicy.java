@@ -1,4 +1,4 @@
-package com.android.oleksandrpriadko.loggalitic.analytics.policy;
+package com.android.oleksandrpriadko.loggalitic.policy;
 
 import android.text.TextUtils;
 import android.util.Log;
