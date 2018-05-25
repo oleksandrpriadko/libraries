@@ -11,8 +11,9 @@ import android.util.Log;
 import com.android.oleksandrpriadko.loggalitic.analytics.converter.Converter;
 import com.android.oleksandrpriadko.loggalitic.analytics.policy.Policy;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
- * baselib
  * Created by Oleksandr Priadko.
  * 6/9/17
  * <p>
@@ -21,83 +22,75 @@ import com.android.oleksandrpriadko.loggalitic.analytics.policy.Policy;
 
 public abstract class Publisher {
 
-    private Policy policy;
+    private final Policy mPolicy;
+    private List<Converter> mConverters = new ArrayList<>();
 
-    /**
-     * available converters
-     */
-    private List<Converter> converters;
-
-    //region Constructors
     public Publisher(Policy policy) {
-        this.policy = policy;
+        checkNotNull(policy);
+        this.mPolicy = policy;
     }
 
     public Publisher(Policy policy, @NonNull List<Converter> converters) {
-        this.policy = policy;
-        this.converters = converters;
+        this(policy);
+        this.mConverters = converters;
     }
-    //endregion
 
     //region Converters
 
-    /**
-     * do not return null to developers.
-     */
     private void initConvertersIfNecessary() {
-        if (this.converters == null) {
-            this.converters = new ArrayList<>();
+        if (this.mConverters == null) {
+            this.mConverters = new ArrayList<>();
         }
     }
 
-    public void addConverter(@NonNull Converter... converter) {
+    public final void addConverter(@NonNull Converter... converter) {
         Collections.addAll(getConverters(), converter);
     }
 
-    public void removeConvertor(@NonNull Converter... converter) {
+    public final void removeConvertor(@NonNull Converter... converter) {
         for (Converter item : converter) {
             getConverters().remove(item);
         }
     }
 
-    public void setConverters(@NonNull List<Converter> converters) {
-        this.converters = converters;
+    public final void setConverters(@NonNull List<Converter> converters) {
+        this.mConverters = converters;
     }
 
     @NonNull
     private List<Converter> getConverters() {
         initConvertersIfNecessary();
-        return this.converters;
+        return this.mConverters;
     }
 
     @Nullable
-    protected Converter findConverter(Converter.TYPE type) {
+    protected final Converter findConverter(@Converter.Type String type) {
         for (Converter converter : getConverters()) {
-            if (converter.getType() == type) {
+            if (converter.getType().equals(type)) {
                 return converter;
             }
         }
-        Log.d(getTag(), "findConverter: null. type = " + type.name());
+        Log.d(getTag(), "findConverter: null. type = " + type);
         return null;
     }
     //endregion
 
     //region Event transformation
-    public void event(String name) {
-        AnalyticsEvent event = createEvent(name);
-        if (isAllowedByPolicy(event)) {
-            send(event);
-        } else {
-            Log.d(getTag(), "event: notAllowed by policy");
-        }
+    public final void event(String name) {
+        AnalyticsEvent event = new AnalyticsEvent(name);
+        checkAndSend(event);
     }
 
-    public void event(String name, String description) {
-        AnalyticsEvent event = createEvent(name, description);
-        if (isAllowedByPolicy(event)) {
-            send(event);
+    public final void event(String name, String description) {
+        AnalyticsEvent event = new AnalyticsEvent(name, description);
+        checkAndSend(event);
+    }
+
+    private void checkAndSend(AnalyticsEvent analyticsEvent) {
+        if (isAllowedByPolicy(analyticsEvent)) {
+            send(analyticsEvent);
         } else {
-            Log.d(getTag(), "event: notAllowed by policy");
+            Log.d(getTag(), "checkAndSend: notAllowed by mPolicy");
         }
     }
     //endregion
@@ -111,37 +104,15 @@ public abstract class Publisher {
     //endregion
 
     //region Policy
-    private Policy getPolicy() {
-        return policy;
-    }
 
     private boolean isAllowedByPolicy(AnalyticsEvent event) {
-        if (getPolicy() == null) {
-            // TODO: do we need NoNull for sure?
-            Log.d(getTag(), "policy is not set. Please set the policy");
-            return true;
-        }
-        return policy.isEventAllowed(event);
+        return mPolicy.isEventAllowed(event);
     }
     //endregion
-
-    //region Helpers
-    private AnalyticsEvent createEvent(String name) {
-        AnalyticsEvent analyticsEvent = new AnalyticsEvent();
-        analyticsEvent.prepareEvent(name);
-        return analyticsEvent;
-    }
-
-    private AnalyticsEvent createEvent(String name, String description) {
-        AnalyticsEvent analyticsEvent = new AnalyticsEvent();
-        analyticsEvent.prepareEvent(name, description);
-        return analyticsEvent;
-    }
 
     protected String getTag() {
         return this.getClass().getSimpleName();
     }
-    //endregion
 
     @SuppressWarnings({"unused", "SpellCheckingInspection"})
     public static class Param {

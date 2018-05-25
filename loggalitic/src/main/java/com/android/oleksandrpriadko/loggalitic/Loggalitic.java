@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.android.oleksandrpriadko.loggalitic.analytics.AnalyticsEvent;
 import com.android.oleksandrpriadko.loggalitic.analytics.Publisher;
+import com.android.oleksandrpriadko.loggalitic.analytics.converter.Converter;
 import com.android.oleksandrpriadko.loggalitic.analytics.policy.Policy;
 import com.android.oleksandrpriadko.loggalitic.logger.DefaultLogger;
 import com.android.oleksandrpriadko.loggalitic.logger.Logger;
@@ -12,7 +13,6 @@ import com.android.oleksandrpriadko.loggalitic.logger.Logger;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * baselib
  * Created by Oleksandr Priadko.
  * 6/9/17
  * <p>
@@ -60,7 +60,6 @@ public final class Loggalitic {
 
         @Override
         public void send(AnalyticsEvent event) {
-            // do not operate as it is dummy publisher
             Log.e(getTag(), "send: failed as publisher is not initialized");
         }
     }

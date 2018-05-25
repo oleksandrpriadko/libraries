@@ -3,7 +3,6 @@ package com.android.oleksandrpriadko.loggalitic.logger;
 import com.android.oleksandrpriadko.loggalitic.analytics.policy.Policy;
 
 /**
- * baselib
  * Created by Oleksandr Priadko.
  * 7/9/17
  */

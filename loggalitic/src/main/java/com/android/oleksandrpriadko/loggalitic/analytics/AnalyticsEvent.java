@@ -3,48 +3,32 @@ package com.android.oleksandrpriadko.loggalitic.analytics;
 import android.os.Bundle;
 
 /**
- * baselib
  * Created by Oleksandr Priadko.
  * 7/9/17
- *
+ * <p>
  * Generic event which will be converted to necessary type.
  */
-
 public class AnalyticsEvent {
 
-    /**
-     * Event name
-     */
-    private String name;
-    /**
-     * Event attributes
-     */
-    private final Bundle attributes = new Bundle();
+    private static final String DESCRIPTION = "description";
+
+    private String mName;
+    private final Bundle mAttributes = new Bundle();
 
     public String getName() {
-        return name;
+        return mName;
     }
 
     public Bundle getAttributes() {
-        return attributes;
+        return mAttributes;
     }
 
-    /**
-     * Uses by {@link Publisher} implementations
-     * @param name  event name
-     */
-    AnalyticsEvent prepareEvent(String name) {
-        this.name = name;
-        return this;
+    public AnalyticsEvent(String name) {
+        this.mName = name;
     }
-    /**
-     * Uses by {@link Publisher} implementations
-     * @param name          event name
-     * @param description   event details
-     */
-    AnalyticsEvent prepareEvent(String name, String description) {
-        this.name = name;
-        this.attributes.putString("description", description);
-        return this;
+
+    public AnalyticsEvent(String name, String description) {
+        this.mName = name;
+        this.mAttributes.putString(DESCRIPTION, description);
     }
 }
