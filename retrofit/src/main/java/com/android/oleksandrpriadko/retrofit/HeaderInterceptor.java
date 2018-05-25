@@ -12,46 +12,37 @@ public abstract class HeaderInterceptor implements Interceptor {
     private static final String TYPE_TITLE = "Accept";
     private static final String TYPE_VALUE = "application/json";
 
-    protected abstract @NonNull SimplePairStrings[] getHeaders();
+    @NonNull
+    protected abstract Header[] getHeaders();
 
     @Override
-    public Response intercept(Chain chain) throws IOException {
+    public Response intercept(@NonNull Chain chain) throws IOException {
         Request request = chain.request();
         Request.Builder builder = request.newBuilder().addHeader(TYPE_TITLE, TYPE_VALUE);
-        SimplePairStrings[] headers = getHeaders();
-        for (SimplePairStrings header : headers) {
-            builder.addHeader(header.first, header.second);
+        Header[] headers = getHeaders();
+        for (Header header : headers) {
+            builder.addHeader(header.getName(), header.getValue());
         }
         request = builder.build();
         return chain.proceed(request);
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    //  SIMPLE PAIR
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    public class SimplePairStrings{
-        private String first;
-        private String second;
+    public static final class Header {
 
-        public SimplePairStrings(String first, String second) {
-            this.first = first;
-            this.second = second;
+        private final String mName;
+        private final String mValue;
+
+        public Header(String name, String value) {
+            mName = name;
+            mValue = value;
         }
 
-        public String getFirst() {
-            return first;
+        public String getName() {
+            return mName;
         }
 
-        public void setFirst(String first) {
-            this.first = first;
-        }
-
-        public String getSecond() {
-            return second;
-        }
-
-        public void setSecond(String second) {
-            this.second = second;
+        public String getValue() {
+            return mValue;
         }
     }
 }
