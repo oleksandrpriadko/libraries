@@ -1,5 +1,8 @@
 package com.android.oleksandrpriadko.demo;
 
+import com.android.oleksandrpriadko.demo.loggalitic.LoggaliticDemoActivity;
+import com.crashlytics.android.answers.Answers;
+import io.fabric.sdk.android.Fabric;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Answers());
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
@@ -67,6 +71,12 @@ public class MainActivity extends AppCompatActivity {
         Demo demo = new Demo(
             ItemDecorationActivity.class,
             "ItemDecoration",
+            null);
+        demoList.add(demo);
+
+        demo = new Demo(
+            LoggaliticDemoActivity.class,
+            "Loggalitic",
             null);
         demoList.add(demo);
 
