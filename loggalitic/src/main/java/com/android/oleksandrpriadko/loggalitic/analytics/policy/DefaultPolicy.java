@@ -7,12 +7,9 @@ import com.android.oleksandrpriadko.loggalitic.analytics.AnalyticsEvent;
 
 
 /**
- * baselib
  * Created by Oleksandr Priadko.
  * 7/9/17
- *
  */
-
 public class DefaultPolicy extends Policy {
 
     public DefaultPolicy(int logLevel, int logToEventLevel, boolean debug) {

@@ -1,37 +1,29 @@
 package com.android.oleksandrpriadko.loggalitic.analytics.converter;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.StringDef;
 
 import com.android.oleksandrpriadko.loggalitic.analytics.AnalyticsEvent;
 
 
 /**
- * baselib
  * Created by Oleksandr Priadko.
  * 7/9/17
- *
+ * <p>
  * Convert generic event to concrete implementation.
  */
 
 public interface Converter<E> {
 
-    /**
-     * All magic happens here
-     * @param analyticsEvent        Generic event
-     * @return                      event, converted to necessary form
-     */
+    String FABRIC = "FABRIC";
+    String FIRE_BASE = "FIRE_BASE";
+
     E convert(@NonNull AnalyticsEvent analyticsEvent);
 
-    /**
-     * Allows to catch converter from list
-     */
-    TYPE getType();
+    @Type
+    String getType();
 
-    /**
-     * You can extend this enum or extend FROM this enum for your own type.
-     */
-    public enum TYPE {
-        FABRIC,
-        FIREBASE
+    @StringDef({FABRIC, FIRE_BASE})
+    public @interface Type {
     }
 }
