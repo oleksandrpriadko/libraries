@@ -20,7 +20,7 @@ public class AnalyticsEvent {
     private final Bundle mAttributes = new Bundle();
 
     public AnalyticsEvent(@NonNull String name) {
-        checkArgument(TextUtils.isEmpty(name));
+        checkArgument(!TextUtils.isEmpty(name));
         this.mName = name;
     }
 

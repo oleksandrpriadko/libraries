@@ -76,21 +76,22 @@ public abstract class Publisher {
     //endregion
 
     //region Event transformation
-    public final void event(String name) {
+    public final boolean event(String name) {
         AnalyticsEvent event = new AnalyticsEvent(name);
-        checkAndSend(event);
+        return checkAndSend(event);
     }
 
-    public final void event(String name, String description) {
+    public final boolean event(String name, String description) {
         AnalyticsEvent event = new AnalyticsEvent(name, description);
-        checkAndSend(event);
+        return checkAndSend(event);
     }
 
-    private void checkAndSend(AnalyticsEvent analyticsEvent) {
+    private boolean checkAndSend(AnalyticsEvent analyticsEvent) {
         if (isAllowedByPolicy(analyticsEvent)) {
-            send(analyticsEvent);
+            return send(analyticsEvent);
         } else {
             Log.d(getTag(), "checkAndSend: notAllowed by mPolicy");
+            return false;
         }
     }
     //endregion
@@ -100,7 +101,7 @@ public abstract class Publisher {
     /**
      * Ask implementations to send event.
      */
-    public abstract void send(AnalyticsEvent event);
+    public abstract boolean send(AnalyticsEvent event);
     //endregion
 
     //region Policy
