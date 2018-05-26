@@ -13,17 +13,10 @@ import com.android.oleksandrpriadko.loggalitic.analytics.AnalyticsEvent;
  * Convert generic event to concrete implementation.
  */
 
-public interface Converter<E> {
+public abstract class Converter<E> {
 
-    String FABRIC = "FABRIC";
-    String FIRE_BASE = "FIRE_BASE";
+    public abstract E convert(@NonNull AnalyticsEvent analyticsEvent);
 
-    E convert(@NonNull AnalyticsEvent analyticsEvent);
+    public abstract Class getType();
 
-    @Type
-    String getType();
-
-    @StringDef({FABRIC, FIRE_BASE})
-    public @interface Type {
-    }
 }

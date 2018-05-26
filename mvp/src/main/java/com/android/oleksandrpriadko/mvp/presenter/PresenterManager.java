@@ -31,7 +31,6 @@ public class PresenterManager {
     }
 
     public <P extends BasePresenter> P getFromCache(String key) {
-        //noinspection unchecked
         return (P) presenters.getIfPresent(key);
     }
 }

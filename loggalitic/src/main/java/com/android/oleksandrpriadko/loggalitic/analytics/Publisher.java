@@ -64,13 +64,13 @@ public abstract class Publisher {
     }
 
     @Nullable
-    protected final Converter findConverter(@Converter.Type String type) {
+    protected final <P extends Converter> P findConverter(Class clazz) {
         for (Converter converter : getConverters()) {
-            if (converter.getType().equals(type)) {
-                return converter;
+            if (converter.getType().equals(clazz)) {
+                return (P) converter;
             }
         }
-        Log.d(getTag(), "findConverter: null. type = " + type);
+        Log.d(getTag(), "findConverter: null. type = " + clazz.getSimpleName());
         return null;
     }
     //endregion
