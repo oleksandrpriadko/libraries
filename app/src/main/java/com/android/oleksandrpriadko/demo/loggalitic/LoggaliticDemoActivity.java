@@ -14,7 +14,6 @@ import com.android.oleksandrpriadko.loggalitic.Loggalitic;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnEditorAction;
 
 public class LoggaliticDemoActivity extends AppCompatActivity {
 

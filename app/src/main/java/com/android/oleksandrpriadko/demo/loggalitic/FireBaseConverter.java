@@ -7,7 +7,7 @@ import android.support.v4.util.Pair;
 import com.android.oleksandrpriadko.loggalitic.analytics.AnalyticsEvent;
 import com.android.oleksandrpriadko.loggalitic.analytics.converter.Converter;
 
-public class FireBaseConverter implements Converter<Pair<String, Bundle>> {
+public class FireBaseConverter extends Converter<Pair<String, Bundle>> {
 
     @Override
     public Pair<String, Bundle> convert(@NonNull AnalyticsEvent analyticsEvent) {
@@ -15,8 +15,7 @@ public class FireBaseConverter implements Converter<Pair<String, Bundle>> {
     }
 
     @Override
-    @Type
-    public String getType() {
-        return Converter.FIRE_BASE;
+    public Class getType() {
+        return FireBaseConverter.class;
     }
 }

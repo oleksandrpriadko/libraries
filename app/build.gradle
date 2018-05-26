@@ -48,6 +48,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
     implementation 'com.google.firebase:firebase-core:16.0.0'
+    implementation 'com.microsoft.appcenter:appcenter-analytics:1.5.1'
 
     implementation project(':recycler-adapter')
     implementation project(':recycler-decoration')

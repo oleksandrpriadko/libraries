@@ -7,7 +7,7 @@ import com.android.oleksandrpriadko.loggalitic.analytics.AnalyticsEvent;
 import com.android.oleksandrpriadko.loggalitic.analytics.converter.Converter;
 import com.crashlytics.android.answers.CustomEvent;
 
-public class FabricConverter implements Converter<CustomEvent> {
+public class FabricConverter extends Converter<CustomEvent> {
 
     @Override
     public CustomEvent convert(@NonNull AnalyticsEvent analyticsEvent) {
@@ -24,8 +24,7 @@ public class FabricConverter implements Converter<CustomEvent> {
     }
 
     @Override
-    @Type
-    public String getType() {
-        return Converter.FABRIC;
+    public Class getType() {
+        return FabricConverter.class;
     }
 }
