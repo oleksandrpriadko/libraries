@@ -1,11 +1,5 @@
 package com.android.oleksandrpriadko.structures;
 
-/**
- * wifi_switcher
- * Created by Oleksandr Priadko.
- * 12/5/17
- */
-
 public class MutableTriplet<F, S, T> {
     public F first;
     public S second;

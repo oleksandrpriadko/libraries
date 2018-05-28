@@ -2,12 +2,6 @@ package com.android.oleksandrpriadko.utils;
 
 import android.view.View;
 
-/**
- * BaseLibrary
- * Created by Oleksandr Priadko.
- * 19/5/17
- */
-
 public class UrlGenerator {
 
     @SuppressWarnings("WeakerAccess")

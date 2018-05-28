@@ -12,9 +12,6 @@ import com.android.oleksandrpriadko.loggalitic.logger.Logger;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Created by Oleksandr Priadko.
- * 6/9/17
- * <p>
  * Initialize this class inside your Application class.
  * This class will use provided {@link Publisher} for analytics and {@link Logger} for logging.
  */

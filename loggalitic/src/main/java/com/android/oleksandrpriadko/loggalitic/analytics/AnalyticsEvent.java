@@ -7,10 +7,7 @@ import android.text.TextUtils;
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
- * Created by Oleksandr Priadko.
- * 7/9/17
- * <p>
- * Generic event which will be converted to necessary type.
+ * Generic event which have to be converted to necessary type.
  */
 public class AnalyticsEvent {
 

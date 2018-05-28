@@ -13,11 +13,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 
-/**
- * PermissionManager
- * Created by Oleksandr Priadko.
- * 27/6/17
- */
 public class PermissionManager {
 
     private static final int REQUEST_CODE = 0xa;

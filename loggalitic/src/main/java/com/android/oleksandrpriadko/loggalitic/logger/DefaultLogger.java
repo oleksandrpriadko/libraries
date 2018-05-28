@@ -5,12 +5,6 @@ import android.util.Log;
 import com.android.oleksandrpriadko.loggalitic.Loggalitic;
 import com.android.oleksandrpriadko.loggalitic.policy.Policy;
 
-/**
- * wifi_switcher
- * Created by Oleksandr Priadko.
- * 7/9/17
- */
-
 public class DefaultLogger extends Logger {
 
     public DefaultLogger(Policy policy) {

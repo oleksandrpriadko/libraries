@@ -7,12 +7,6 @@ import java.util.Locale;
 
 import android.text.TextUtils;
 
-/**
- * expenses_tracker
- * Created by Oleksandr Priadko.
- * 9/6/17
- */
-
 public class TimeUtils {
 
     public static String custom(String dateString, F formatIN, F formatOUT) {

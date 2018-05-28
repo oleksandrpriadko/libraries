@@ -8,12 +8,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
-/**
- * baseli
- * Created by Oleksandr Priadko.
- * 1/9/17
- */
-
 public class ManagerSharedPreferences {
     private static ManagerSharedPreferences instance;
     private SharedPreferences sharedPreferences;

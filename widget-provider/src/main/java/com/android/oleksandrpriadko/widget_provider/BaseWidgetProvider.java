@@ -5,12 +5,6 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 
-/**
- * wifi_switcher
- * Created by Oleksandr Priadko.
- * 9/9/17
- */
-
 public class BaseWidgetProvider extends AppWidgetProvider {
 
     public String getTag() {

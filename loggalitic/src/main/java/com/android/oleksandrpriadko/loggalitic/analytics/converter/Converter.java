@@ -7,9 +7,6 @@ import com.android.oleksandrpriadko.loggalitic.analytics.AnalyticsEvent;
 
 
 /**
- * Created by Oleksandr Priadko.
- * 7/9/17
- * <p>
  * Convert generic event to concrete implementation.
  */
 

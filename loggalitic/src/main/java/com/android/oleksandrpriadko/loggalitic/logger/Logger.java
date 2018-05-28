@@ -2,11 +2,6 @@ package com.android.oleksandrpriadko.loggalitic.logger;
 
 import com.android.oleksandrpriadko.loggalitic.policy.Policy;
 
-/**
- * Created by Oleksandr Priadko.
- * 7/9/17
- */
-
 public abstract class Logger {
 
     private Policy policy;

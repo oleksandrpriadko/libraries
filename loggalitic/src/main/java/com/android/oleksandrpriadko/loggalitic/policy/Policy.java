@@ -5,9 +5,6 @@ import android.support.annotation.IntDef;
 import com.android.oleksandrpriadko.loggalitic.analytics.AnalyticsEvent;
 
 /**
- * Created by Oleksandr Priadko.
- * 7/9/17
- * <p>
  * Determines levels of reporting analytics events and logs. Implement yours or
  * use {@link DefaultPolicy}
  */

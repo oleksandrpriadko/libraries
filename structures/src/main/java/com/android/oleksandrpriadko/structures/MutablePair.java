@@ -1,11 +1,5 @@
 package com.android.oleksandrpriadko.structures;
 
-/**
- * wifi_switcher
- * Created by Oleksandr Priadko.
- * 12/5/17
- */
-
 public class MutablePair<F, S>{
     public F first;
     public S second;

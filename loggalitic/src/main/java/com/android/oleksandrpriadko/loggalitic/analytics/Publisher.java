@@ -14,9 +14,6 @@ import com.android.oleksandrpriadko.loggalitic.policy.Policy;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Created by Oleksandr Priadko.
- * 6/9/17
- * <p>
  * Publish events to analytic services.
  */
 
