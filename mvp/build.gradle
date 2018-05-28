@@ -4,7 +4,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 group = 'com.github.oleksanrpriadko.libraries'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion rootProject.compileSdkVersion
 
 
 
@@ -13,8 +13,6 @@ android {
         targetSdkVersion rootProject.targetSdkVersion
         versionCode rootProject.versionsCode
         versionName rootProject.versionsName
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
 
@@ -34,6 +32,4 @@ dependencies {
     implementation 'com.google.guava:guava:' + rootProject.guava
     implementation 'com.squareup.retrofit2:retrofit:' + rootProject.retrofit
     implementation 'com.squareup.okhttp3:logging-interceptor:' + rootProject.okhttp
-
-    testImplementation 'junit:junit:' + rootProject.junit
 }
