@@ -4,7 +4,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 group = 'com.github.oleksanrpriadko.libraries'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion rootProject.compileSdkVersion
 
 
 
@@ -13,8 +13,6 @@ android {
         targetSdkVersion rootProject.targetSdkVersion
         versionCode rootProject.versionsCode
         versionName rootProject.versionsName
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
 
@@ -31,5 +29,4 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation 'com.android.support:appcompat-v7:' + rootProject.supportLibraryVersion
-    testImplementation 'junit:junit:' + rootProject.junit
 }
