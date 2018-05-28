@@ -1,1 +1,1 @@
-include ':app', ':retrofit', ':recycler-adapter', ':recycler-decoration', ':mvp', ':utils', ':widget-provider', ':structures', ':loggalitic'
+include ':app', ':retrofit', ':recycler-adapter', ':recycler-decoration', ':mvp', ':utils', ':widget-provider', ':structures', ':loggalitic', ':ui'
