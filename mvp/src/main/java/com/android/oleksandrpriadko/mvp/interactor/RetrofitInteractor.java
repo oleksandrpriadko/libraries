@@ -63,4 +63,14 @@ public abstract class RetrofitInteractor<D> {
     protected <A> A getApi(final Class<A> apiClass) {
         return this.getRetrofit().create(apiClass);
     }
+
+    public interface ProcessListener {
+
+        void onLoadingStarted();
+
+        void onLoadingDone();
+
+        void onLoadingError(@NonNull Throwable throwable);
+
+    }
 }
