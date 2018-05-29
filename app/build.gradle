@@ -43,6 +43,7 @@ dependencies {
     implementation project(':recycler-adapter')
     implementation project(':recycler-decoration')
     implementation project(':loggalitic')
+//    implementation project(':ui')
 
     implementation('com.crashlytics.sdk.android:answers:1.4.2@aar') {
         transitive = true

@@ -20,4 +20,22 @@
         tools:itemCount="7"
         tools:listitem="@layout/item_demo"/>
 
+    <!--<com.android.oleksandrpriadko.ui.EmptyView-->
+        <!--android:layout_width="@dimen/constraint_match"-->
+        <!--android:layout_height="@dimen/constraint_match"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--android:background="@android:color/white"-->
+        <!--app:layout_constraintTop_toTopOf="parent"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"/>-->
+
+    <!--<com.android.oleksandrpriadko.ui.ErrorView-->
+        <!--android:layout_width="@dimen/constraint_match"-->
+        <!--android:layout_height="@dimen/constraint_match"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--android:background="@android:color/white"-->
+        <!--app:layout_constraintTop_toTopOf="parent"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"/>-->
+
 </android.support.constraint.ConstraintLayout>
