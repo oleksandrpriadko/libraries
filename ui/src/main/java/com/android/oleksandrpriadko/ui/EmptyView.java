@@ -16,14 +16,17 @@ public class EmptyView extends ConstraintLayout {
 
     public EmptyView(Context context) {
         super(context);
+        init();
     }
 
     public EmptyView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public EmptyView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
     }
 
     private void init() {
