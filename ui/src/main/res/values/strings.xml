@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">ui</string>
     <string name="default_empty">Empty</string>
+    <string name="default_error">Oops! Error occurs</string>
 </resources>
