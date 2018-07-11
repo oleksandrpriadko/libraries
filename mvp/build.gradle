@@ -32,4 +32,5 @@ dependencies {
     implementation 'com.google.guava:guava:' + rootProject.guava
     implementation 'com.squareup.retrofit2:retrofit:' + rootProject.retrofit
     implementation 'com.squareup.okhttp3:logging-interceptor:' + rootProject.okhttp
+    implementation 'android.arch.lifecycle:viewmodel:' + rootProject.lifecycleVersion
 }

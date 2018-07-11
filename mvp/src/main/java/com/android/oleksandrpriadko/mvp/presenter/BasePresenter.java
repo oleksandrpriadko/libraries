@@ -1,9 +1,10 @@
 package com.android.oleksandrpriadko.mvp.presenter;
 
-public abstract class BasePresenter<T> {
-    private T mView;
+public abstract class BasePresenter {
 
-    protected final T getView() {
+    private PresenterView mView;
+
+    protected final PresenterView getView() {
         return mView;
     }
 
@@ -11,11 +12,14 @@ public abstract class BasePresenter<T> {
         return mView != null;
     }
 
-    public final void bindView(T view) {
+    public final void bindView(PresenterView view) {
         this.mView = view;
     }
 
     public final void unBindView() {
         this.mView = null;
     }
+
+    /* no-op */
+    public interface PresenterView {}
 }
