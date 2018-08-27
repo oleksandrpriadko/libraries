@@ -62,6 +62,10 @@ public abstract class RetrofitInteractor {
         return this.retrofit;
     }
 
+    public final Cache getCache() {
+        return mCache;
+    }
+
     protected <A> A getApi(final Class<A> apiClass) {
         return this.getRetrofit().create(apiClass);
     }
