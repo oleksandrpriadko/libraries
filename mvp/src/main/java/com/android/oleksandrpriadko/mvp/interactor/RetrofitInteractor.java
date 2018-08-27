@@ -2,8 +2,6 @@ package com.android.oleksandrpriadko.mvp.interactor;
 
 import android.support.annotation.NonNull;
 
-import com.google.common.cache.Cache;
-
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -14,15 +12,9 @@ public abstract class RetrofitInteractor {
 
     private final String baseUrl;
     private Retrofit retrofit;
-    private final Cache mCache;
 
-    public RetrofitInteractor(String baseUrl) {
-        this(baseUrl, null);
-    }
-
-    public RetrofitInteractor(String baseUrl, Cache cache) {
+    public RetrofitInteractor(@NonNull final String baseUrl) {
         this.baseUrl = baseUrl;
-        this.mCache = cache;
         this.initRetrofit();
     }
 
@@ -60,10 +52,6 @@ public abstract class RetrofitInteractor {
             this.initRetrofit();
         }
         return this.retrofit;
-    }
-
-    public final Cache getCache() {
-        return mCache;
     }
 
     protected <A> A getApi(final Class<A> apiClass) {

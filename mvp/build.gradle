@@ -29,7 +29,6 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation 'com.android.support:appcompat-v7:' + rootProject.supportLibraryVersion
-    implementation 'com.google.guava:guava:' + rootProject.guava
     implementation 'com.squareup.retrofit2:retrofit:' + rootProject.retrofit
     implementation 'com.squareup.okhttp3:logging-interceptor:' + rootProject.okhttp
     implementation 'android.arch.lifecycle:viewmodel:' + rootProject.lifecycleVersion
