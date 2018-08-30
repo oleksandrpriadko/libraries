@@ -1,4 +1,4 @@
-package com.android.oleksandrpriadko.mvp.interactor;
+package com.android.oleksandrpriadko.mvp.repo_extension;
 
 import android.support.annotation.NonNull;
 
@@ -8,13 +8,13 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
 
-public abstract class RetrofitInteractor {
+public abstract class RetrofitRepoExtension implements RepoExtension {
 
-    private final String baseUrl;
-    private Retrofit retrofit;
+    private final String mBaseUrl;
+    private Retrofit mRetrofit;
 
-    public RetrofitInteractor(@NonNull final String baseUrl) {
-        this.baseUrl = baseUrl;
+    public RetrofitRepoExtension(@NonNull final String baseUrl) {
+        this.mBaseUrl = baseUrl;
         this.initRetrofit();
     }
 
@@ -35,30 +35,34 @@ public abstract class RetrofitInteractor {
         }
 
         OkHttpClient client = builder.build();
-        String testUrl = getBaseUrl();
-        this.retrofit = new Retrofit.Builder()
-            .baseUrl(testUrl)
+        this.mRetrofit = new Retrofit.Builder()
+            .baseUrl(getBaseUrl())
             .client(client)
             .addConverterFactory(getConverterFactory())
             .build();
     }
 
     private String getBaseUrl() {
-        return this.baseUrl;
+        return this.mBaseUrl;
     }
 
     private Retrofit getRetrofit() {
-        if (this.retrofit == null) {
+        if (this.mRetrofit == null) {
             this.initRetrofit();
         }
-        return this.retrofit;
+        return this.mRetrofit;
     }
 
-    protected <A> A getApi(final Class<A> apiClass) {
+    public <A> A getApi(final Class<A> apiClass) {
         return this.getRetrofit().create(apiClass);
     }
 
-    public interface ProcessListener {
+    @Override
+    public void cleanUp() {
+        mRetrofit = null;
+    }
+
+    public interface Listener {
 
         void onLoadingStarted();
 
