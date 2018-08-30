@@ -19,7 +19,7 @@ public abstract class ObservableRepo {
 
     private List<LifecycleBoundObserver> mLifecycleBoundObservers = new ArrayList<>();
 
-    ObservableRepo(@NonNull final LifecycleOwner lifecycleOwner) {
+    public ObservableRepo(@NonNull final LifecycleOwner lifecycleOwner) {
         requestObserve(lifecycleOwner);
     }
 
