@@ -1,6 +1,6 @@
 package com.android.oleksandrpriadko.loggalitic;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.android.oleksandrpriadko.loggalitic.analytics.AnalyticsEvent;

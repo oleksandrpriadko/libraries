@@ -1,6 +1,6 @@
 package com.android.oleksandrpriadko.loggalitic.policy;
 
-import android.support.annotation.IntDef;
+import androidx.annotation.IntDef;
 
 import com.android.oleksandrpriadko.loggalitic.analytics.AnalyticsEvent;
 

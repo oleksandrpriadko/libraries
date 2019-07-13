@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.android.oleksandrpriadko.demo"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.android.oleksandrpriadko.demo">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".App"
@@ -15,23 +15,22 @@
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".item_decoration.ItemDecorationActivity"
-            android:label="ItemDecoration">
-        </activity>
+            android:label="ItemDecoration"></activity>
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="35ba9af7c2f219ba35a8a57ea690f62d5a52318e"/>
+            android:value="35ba9af7c2f219ba35a8a57ea690f62d5a52318e" />
 
-        <activity android:name=".loggalitic.LoggaliticDemoActivity"
-            android:label="Loggalitic">
-        </activity>
+        <activity
+            android:name=".loggalitic.LoggaliticDemoActivity"
+            android:label="Loggalitic"></activity>
     </application>
 
 </manifest>

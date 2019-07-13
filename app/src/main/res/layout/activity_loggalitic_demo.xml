@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,7 +7,7 @@
     android:padding="8dp"
     tools:context=".loggalitic.LoggaliticDemoActivity">
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/inputLayout_name"
         android:layout_width="@dimen/constraint_match"
         android:layout_height="wrap_content"
@@ -16,16 +15,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/editText_name"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/nameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:imeOptions="actionNext"
             android:maxLines="1"
-            android:singleLine="true"/>
-    </android.support.design.widget.TextInputLayout>
+            android:singleLine="true" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/inputLayout_description"
         android:layout_width="@dimen/constraint_match"
         android:layout_height="wrap_content"
@@ -34,38 +33,38 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/inputLayout_name">
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/editText_description"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/descriptionEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:imeOptions="actionNext"
             android:maxLines="1"
-            android:singleLine="true"/>
-    </android.support.design.widget.TextInputLayout>
+            android:singleLine="true" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <ScrollView
-        android:id="@+id/scrollView_published_logged"
+        android:id="@+id/publishedLoggedScrollView"
         android:layout_width="@dimen/constraint_match"
         android:layout_height="@dimen/constraint_match"
-        app:layout_constraintBottom_toTopOf="@id/button_publish_log"
+        app:layout_constraintBottom_toTopOf="@id/publishLogButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/inputLayout_description">
 
         <TextView
-            android:id="@+id/textView_published_logged"
+            android:id="@+id/publishedLoggedTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Published/Logged events"
-            app:layout_constraintBottom_toTopOf="@id/button_publish_log"
+            app:layout_constraintBottom_toTopOf="@id/publishLogButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/inputLayout_description"/>
+            app:layout_constraintTop_toBottomOf="@id/inputLayout_description" />
 
     </ScrollView>
 
     <Button
-        android:id="@+id/button_publish_log"
+        android:id="@+id/publishLogButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -73,7 +72,7 @@
         app:layout_constraintBottom_toTopOf="@id/spinner_log_level"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Spinner
         android:id="@+id/spinner_log_level"
@@ -85,4 +84,4 @@
 
     </Spinner>
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

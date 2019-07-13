@@ -3,11 +3,11 @@
 
     <item
         android:id="@+id/dp10"
-        android:title="10"/>
+        android:title="10" />
     <item
         android:id="@+id/dp100"
-        android:title="100"/>
+        android:title="100" />
     <item
         android:id="@+id/dp300"
-        android:title="300"/>
+        android:title="300" />
 </menu>

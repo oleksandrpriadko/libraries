@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
 
 group = 'com.github.oleksanrpriadko.libraries'
@@ -30,4 +32,9 @@ dependencies {
 
     implementation 'com.android.support:appcompat-v7:' + rootProject.supportLibraryVersion
     implementation 'com.android.support:design:' + rootProject.supportLibraryVersion
+    implementation 'androidx.core:core-ktx:' + androidX
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }

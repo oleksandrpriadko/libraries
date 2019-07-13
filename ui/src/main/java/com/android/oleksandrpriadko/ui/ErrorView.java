@@ -2,9 +2,9 @@ package com.android.oleksandrpriadko.ui;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.StringRes;
-import android.support.constraint.ConstraintLayout;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.StringRes;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 import android.widget.TextView;

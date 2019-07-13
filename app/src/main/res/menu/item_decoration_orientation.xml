@@ -3,9 +3,9 @@
 
     <item
         android:id="@+id/vertical"
-        android:title="Vertical"/>
+        android:title="Vertical" />
 
     <item
         android:id="@+id/horizontal"
-        android:title="Horizontal"/>
+        android:title="Horizontal" />
 </menu>

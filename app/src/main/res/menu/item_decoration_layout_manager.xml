@@ -3,8 +3,8 @@
 
     <item
         android:id="@+id/linear"
-        android:title="Linear"/>
+        android:title="Linear" />
     <item
         android:id="@+id/grid"
-        android:title="Grid"/>
+        android:title="Grid" />
 </menu>

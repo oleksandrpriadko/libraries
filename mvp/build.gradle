@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
 
 group = 'com.github.oleksanrpriadko.libraries'
@@ -34,4 +36,9 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:' + rootProject.retrofit
     implementation 'com.squareup.okhttp3:logging-interceptor:' + rootProject.okhttp
     implementation 'android.arch.lifecycle:common-java8:' + rootProject.lifecycleVersion
+    implementation 'androidx.core:core-ktx:' + androidX
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }
