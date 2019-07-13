@@ -66,7 +66,7 @@ public class ItemDecorationActivity extends AppCompatActivity {
 
         List<Demo> demoList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            Demo demo = new Demo(null, "Dummy " + i, null);
+            Demo demo = new Demo(null, "Dummy " + i, null, 0);
             demoList.add(demo);
         }
         adapterDemos.setData(demoList);
@@ -109,15 +109,15 @@ public class ItemDecorationActivity extends AppCompatActivity {
     }
 
     private void applyOptions(Options options) {
-        RecyclerView.LayoutManager layoutManager = null;
+        LinearLayoutManager layoutManager = null;
         switch (options.getManagerType()) {
             case Options.LINEAR:
                 layoutManager = new LinearLayoutManager(this);
-                ((LinearLayoutManager) layoutManager).setOrientation(options.getOrientation());
+                layoutManager.setOrientation(options.getOrientation());
                 break;
             case Options.GRID:
                 layoutManager = new GridLayoutManager(this, SPAN_COUNT);
-                ((GridLayoutManager) layoutManager).setOrientation(options.getOrientation());
+                layoutManager.setOrientation(options.getOrientation());
                 break;
         }
         mRecyclerView.setLayoutManager(layoutManager);
