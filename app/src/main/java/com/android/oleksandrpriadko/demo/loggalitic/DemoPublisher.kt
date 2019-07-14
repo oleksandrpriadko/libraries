@@ -3,9 +3,9 @@ package com.android.oleksandrpriadko.demo.loggalitic
 import android.util.Log
 import com.android.oleksandrpriadko.demo.App
 import com.android.oleksandrpriadko.loggalitic.LogPublishService
-import com.android.oleksandrpriadko.loggalitic.analytics.AnalyticsEvent
+import com.android.oleksandrpriadko.core.policy.AnalyticsEvent
 import com.android.oleksandrpriadko.loggalitic.analytics.Publisher
-import com.android.oleksandrpriadko.loggalitic.policy.Policy
+import com.android.oleksandrpriadko.core.policy.Policy
 import com.crashlytics.android.answers.Answers
 import com.microsoft.appcenter.analytics.Analytics
 

@@ -1,6 +1,6 @@
 package com.android.oleksandrpriadko.loggalitic.analytics.converter
 
-import com.android.oleksandrpriadko.loggalitic.analytics.AnalyticsEvent
+import com.android.oleksandrpriadko.core.policy.AnalyticsEvent
 
 
 /**

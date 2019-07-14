@@ -24,11 +24,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
 
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':core')
 
     implementation 'com.android.support:appcompat-v7:' + rootProject.supportLibraryVersion
     implementation 'com.google.guava:guava:' + rootProject.guava

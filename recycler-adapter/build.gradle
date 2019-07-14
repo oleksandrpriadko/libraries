@@ -8,14 +8,11 @@ group = 'com.github.oleksanrpriadko.libraries'
 android {
     compileSdkVersion rootProject.compileSdkVersion
 
-
-
     defaultConfig {
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
         versionCode rootProject.versionsCode
         versionName rootProject.versionsName
-
     }
 
     buildTypes {
@@ -24,7 +21,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
 }
 
 dependencies {

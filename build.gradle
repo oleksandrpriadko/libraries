@@ -55,6 +55,8 @@ ext {
     picasso = '2.5.2'
 
     guava = '22.0'
+
+    mockitoVersion = '1.10.19'
 }
 
 task clean(type: Delete) {

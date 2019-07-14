@@ -1,6 +1,6 @@
 package com.android.oleksandrpriadko.demo.loggalitic
 
-import com.android.oleksandrpriadko.loggalitic.analytics.AnalyticsEvent
+import com.android.oleksandrpriadko.core.policy.AnalyticsEvent
 import com.android.oleksandrpriadko.loggalitic.analytics.converter.Converter
 import com.crashlytics.android.answers.CustomEvent
 

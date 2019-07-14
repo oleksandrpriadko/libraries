@@ -3,7 +3,7 @@ package com.android.oleksandrpriadko.loggalitic
 import android.util.Log
 
 import com.android.oleksandrpriadko.loggalitic.analytics.Publisher
-import com.android.oleksandrpriadko.loggalitic.logger.Logger
+import com.android.oleksandrpriadko.core.logger.Logger
 
 /**
  * This class will use provided [Publisher] for analytics and [Logger] for logging.

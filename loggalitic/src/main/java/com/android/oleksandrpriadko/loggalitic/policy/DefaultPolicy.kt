@@ -2,7 +2,8 @@ package com.android.oleksandrpriadko.loggalitic.policy
 
 import android.text.TextUtils
 import com.android.oleksandrpriadko.loggalitic.LogPublishService
-import com.android.oleksandrpriadko.loggalitic.analytics.AnalyticsEvent
+import com.android.oleksandrpriadko.core.policy.AnalyticsEvent
+import com.android.oleksandrpriadko.core.policy.Policy
 
 class DefaultPolicy : Policy {
 

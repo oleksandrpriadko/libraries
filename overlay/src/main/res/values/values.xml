@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="overlay_module_duration_slide_up">350</integer>
+    <integer name="overlay_module_duration_fade_in">@integer/overlay_module_duration_slide_up</integer>
+    <integer name="overlay_module_duration_fade_out">@integer/overlay_module_duration_slide_up</integer>
+    <integer name="overlay_module_duration_slide_down">@integer/overlay_module_duration_slide_up</integer>
+</resources>

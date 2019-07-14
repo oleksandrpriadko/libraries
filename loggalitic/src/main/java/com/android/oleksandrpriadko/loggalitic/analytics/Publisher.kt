@@ -1,9 +1,10 @@
 package com.android.oleksandrpriadko.loggalitic.analytics
 
+import com.android.oleksandrpriadko.core.policy.AnalyticsEvent
 import com.android.oleksandrpriadko.loggalitic.LogPublishService
 import com.android.oleksandrpriadko.loggalitic.analytics.converter.Converter
 import com.android.oleksandrpriadko.loggalitic.policy.DefaultPolicy
-import com.android.oleksandrpriadko.loggalitic.policy.Policy
+import com.android.oleksandrpriadko.core.policy.Policy
 import java.util.*
 
 /**

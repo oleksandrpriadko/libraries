@@ -1,9 +1,10 @@
 package com.android.oleksandrpriadko.loggalitic.logger
 
 import android.util.Log
+import com.android.oleksandrpriadko.core.logger.Logger
 
 import com.android.oleksandrpriadko.loggalitic.LogPublishService
-import com.android.oleksandrpriadko.loggalitic.policy.Policy
+import com.android.oleksandrpriadko.core.policy.Policy
 
 class DefaultLogger(policy: Policy) : Logger(policy) {
 

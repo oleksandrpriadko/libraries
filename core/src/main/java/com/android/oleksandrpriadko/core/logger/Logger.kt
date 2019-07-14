@@ -1,7 +1,6 @@
-package com.android.oleksandrpriadko.loggalitic.logger
+package com.android.oleksandrpriadko.core.logger
 
-import com.android.oleksandrpriadko.loggalitic.policy.DefaultPolicy
-import com.android.oleksandrpriadko.loggalitic.policy.Policy
+import com.android.oleksandrpriadko.core.policy.Policy
 
 abstract class Logger(protected val policy: Policy) {
 
@@ -88,7 +87,7 @@ abstract class Logger(protected val policy: Policy) {
 
     companion object {
 
-        val NOT_SET: Logger = DummyLogger(DefaultPolicy())
+        val NOT_SET: Logger = DummyLogger(Policy.NOT_SET)
     }
 
 }

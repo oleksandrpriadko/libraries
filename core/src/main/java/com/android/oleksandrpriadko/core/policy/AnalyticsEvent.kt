@@ -1,4 +1,4 @@
-package com.android.oleksandrpriadko.loggalitic.analytics
+package com.android.oleksandrpriadko.core.policy
 
 import android.os.Bundle
 
