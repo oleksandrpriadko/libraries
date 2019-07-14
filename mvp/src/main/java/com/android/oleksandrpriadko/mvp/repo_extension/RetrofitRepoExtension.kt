@@ -6,25 +6,22 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
 
-abstract class RetrofitRepoExtension(private val baseUrl: String) : RepoExtension {
-    private var mRetrofit: Retrofit? = null
+class RetrofitRepoExtension(
+        private val baseUrl: String,
+        private val interceptors: List<Interceptor> = listOf(),
+        private val loggingLevel: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.BASIC,
+        private val converterFactory: Converter.Factory) : RepoExtension {
 
-    protected abstract val interceptors: Array<Interceptor>
-
-    protected abstract val loggingLevel: HttpLoggingInterceptor.Level
-
-    protected abstract val converterFactory: Converter.Factory
-
-    private val retrofit: Retrofit?
+    private var retrofit: Retrofit? = null
         get() {
-            if (this.mRetrofit == null) {
-                this.initRetrofit()
+            if (field == null) {
+                initRetrofit()
             }
-            return this.mRetrofit
+            return field
         }
 
     init {
-        this.initRetrofit()
+        initRetrofit()
     }
 
     private fun initRetrofit() {
@@ -37,7 +34,7 @@ abstract class RetrofitRepoExtension(private val baseUrl: String) : RepoExtensio
         }
 
         val client = builder.build()
-        this.mRetrofit = Retrofit.Builder()
+        retrofit = Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(client)
                 .addConverterFactory(converterFactory)
@@ -45,11 +42,11 @@ abstract class RetrofitRepoExtension(private val baseUrl: String) : RepoExtensio
     }
 
     fun <A> getApi(apiClass: Class<A>): A {
-        return this.retrofit!!.create(apiClass)
+        return retrofit!!.create(apiClass)
     }
 
     override fun cleanUp() {
-        mRetrofit = null
+        retrofit = null
     }
 
     interface Listener {

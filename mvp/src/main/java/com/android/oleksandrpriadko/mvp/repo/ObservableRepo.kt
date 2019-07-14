@@ -43,10 +43,8 @@ abstract class ObservableRepo(lifecycleOwner: LifecycleOwner) {
 
     private fun findObserver(lifecycleOwner: LifecycleOwner): LifecycleBoundObserver? {
         for (lifecycleBoundObserver in mLifecycleBoundObservers) {
-            if (lifecycleBoundObserver.lifecycleOwner != null) {
-                if (lifecycleBoundObserver.lifecycleOwner == lifecycleOwner) {
-                    return lifecycleBoundObserver
-                }
+            if (lifecycleBoundObserver.lifecycleOwner === lifecycleOwner) {
+                return lifecycleBoundObserver
             }
         }
         return null

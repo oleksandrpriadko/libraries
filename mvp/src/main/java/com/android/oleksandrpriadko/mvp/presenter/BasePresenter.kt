@@ -35,17 +35,21 @@ abstract class BasePresenter<T : LifecycleOwner>(view: T?) : DefaultLifecycleObs
         this.view = view
     }
 
+    private fun unbind() {
+        view = null
+        logState("view unbound")
+    }
+
     override fun onDestroy(owner: LifecycleOwner) {
         logState(owner.lifecycle.currentState.name)
         unbind()
     }
 
-    private fun unbind() {
-        view = null
-        logState("view destroyed")
-    }
+    protected fun enableLog(): Boolean = false
 
     private fun logState(message: String) {
-        Loggalitic.logger().d(javaClass.simpleName, message)
+        if (enableLog()) {
+            Loggalitic.logger().d(javaClass.simpleName, message)
+        }
     }
 }
