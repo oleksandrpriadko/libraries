@@ -35,9 +35,9 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':core')
 
-    implementation 'com.android.support:appcompat-v7:' + rootProject.supportLibraryVersion
     implementation 'com.google.guava:guava:' + rootProject.guava
     implementation 'androidx.core:core-ktx:' + androidX
+    implementation 'androidx.appcompat:appcompat:' + androidX
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 repositories {

@@ -39,11 +39,9 @@ ext {
     versionsName = "1.4.2"
     versionsCode = 34
 
-    // dependencies versions
-    supportLibraryVersion = '27.1.1'
     androidX = '1.0.2'
 
-    constraintLayout = '1.1.0'
+    constraintLayout = '2.0.0-beta2'
 
     lifecycleVersion = "1.1.1"
 

@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="constraint_match">0dp</dimen>
+
+    <dimen name="margin_left_right_card">20dp</dimen>
+    <dimen name="margin_top_bottom_card">20dp</dimen>
+    <dimen name="radius_card">10dp</dimen>
+    <dimen name="elevation_card">15dp</dimen>
+    <dimen name="padding_left_right_card">5dp</dimen>
 </resources>

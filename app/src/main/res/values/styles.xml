@@ -1,11 +1,42 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/background_screen</item>
+        <item name="colorPrimaryDark">@color/background_secondary</item>
+        <item name="colorAccent">@color/accent_primary</item>
+        <item name="android:windowBackground">@color/background_screen</item>
+        <item name="android:buttonTint">@color/background_clickable</item>
+    </style>
+
+    <style name="EditText" parent="Text">
+        <item name="android:background">@drawable/background_edit_text</item>
+        <item name="android:paddingBottom">@dimen/margin_top_bottom_card</item>
+        <item name="android:paddingEnd">@dimen/margin_left_right_card</item>
+        <item name="android:paddingStart">@dimen/margin_left_right_card</item>
+        <item name="android:paddingTop">@dimen/margin_top_bottom_card</item>
+        <item name="android:textColorHint">@color/text_color_secondary</item>
+    </style>
+
+    <style name="Clickable" parent="Text">
+        <item name="android:background">@drawable/background_clickable</item>
+        <item name="android:paddingBottom">@dimen/margin_top_bottom_card</item>
+        <item name="android:paddingEnd">@dimen/margin_left_right_card</item>
+        <item name="android:paddingStart">@dimen/margin_left_right_card</item>
+        <item name="android:paddingTop">@dimen/margin_top_bottom_card</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="Text" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:textColor">@color/text_color</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+    </style>
+
+    <style name="CardViewStyle" parent="CardView">
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="cardBackgroundColor">@color/background_primary</item>
+        <item name="cardCornerRadius">@dimen/radius_card</item>
+        <item name="contentPadding">@dimen/padding_left_right_card</item>
     </style>
 
 </resources>

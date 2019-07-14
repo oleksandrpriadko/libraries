@@ -5,4 +5,17 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="colorBlackAlpha">#61000000</color>
+
+
+    <!--    backgrounds     -->
+    <color name="background_screen">#1F2850</color>
+    <color name="background_secondary">#192042</color>
+    <color name="background_primary">#2A3568</color>
+    <color name="background_clickable">#50B0D6</color>
+    <!--    accent  -->
+    <color name="accent_primary">#398AF7</color>
+    <color name="accent_secondary">#34DCAF</color>
+    <!--    text    -->
+    <color name="text_color">@android:color/white</color>
+    <color name="text_color_secondary">#4596A8B8</color>
 </resources>

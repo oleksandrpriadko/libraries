@@ -6,13 +6,13 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class ItemDecorationMargin(private val mLeftMargin: Int,
-                           private val mTopMargin: Int,
-                           private val mRightMargin: Int,
-                           private val mBottomMargin: Int,
-                           private val mFirstItemMargin: Boolean,
-                           private val mLastItemMargin: Boolean,
-                           private val mLinearLayoutManagerOrientation: Int)
+class ItemDecorationMargin(private val leftMargin: Int,
+                           private val topMargin: Int,
+                           private val rightMargin: Int,
+                           private val bottomMargin: Int,
+                           private val firstItemMargin: Boolean,
+                           private val lastItemMargin: Boolean,
+                           private val linearLayoutManagerOrientation: Int)
     : RecyclerView.ItemDecoration() {
 
     constructor(margin: Int,
@@ -36,9 +36,9 @@ class ItemDecorationMargin(private val mLeftMargin: Int,
         val isFirstItem = position == 0
         val isLastItem = position == parent.adapter!!.itemCount - 1
 
-        if (mLinearLayoutManagerOrientation == LinearLayoutManager.HORIZONTAL) {
+        if (linearLayoutManagerOrientation == LinearLayoutManager.HORIZONTAL) {
             defineOffsetHorizontalOrientation(outRect, isFirstItem, isLastItem)
-        } else if (mLinearLayoutManagerOrientation == LinearLayoutManager.VERTICAL) {
+        } else if (linearLayoutManagerOrientation == LinearLayoutManager.VERTICAL) {
             defineOffsetVerticalOrientation(outRect, isFirstItem, isLastItem)
         }
     }
@@ -46,40 +46,40 @@ class ItemDecorationMargin(private val mLeftMargin: Int,
     private fun defineOffsetVerticalOrientation(outRect: Rect,
                                                 isFirstItem: Boolean,
                                                 isLastItem: Boolean) {
-        outRect.left = mLeftMargin
-        outRect.right = mRightMargin
+        outRect.left = leftMargin
+        outRect.right = rightMargin
 
         if (isFirstItem) {
-            if (mFirstItemMargin) {
-                outRect.top = mTopMargin
+            if (firstItemMargin) {
+                outRect.top = topMargin
             }
-            outRect.bottom = mBottomMargin
+            outRect.bottom = bottomMargin
         } else if (isLastItem) {
-            if (mLastItemMargin) {
-                outRect.bottom = mBottomMargin
+            if (lastItemMargin) {
+                outRect.bottom = bottomMargin
             }
         } else {
-            outRect.bottom = mBottomMargin
+            outRect.bottom = bottomMargin
         }
     }
 
     private fun defineOffsetHorizontalOrientation(outRect: Rect,
                                                   isFirstItem: Boolean,
                                                   isLastItem: Boolean) {
-        outRect.top = mTopMargin
-        outRect.bottom = mBottomMargin
+        outRect.top = topMargin
+        outRect.bottom = bottomMargin
 
         if (isFirstItem) {
-            if (mFirstItemMargin) {
-                outRect.left = mLeftMargin
+            if (firstItemMargin) {
+                outRect.left = leftMargin
             }
-            outRect.right = mRightMargin
+            outRect.right = rightMargin
         } else if (isLastItem) {
-            if (mLastItemMargin) {
-                outRect.right = mRightMargin
+            if (lastItemMargin) {
+                outRect.right = rightMargin
             }
         } else {
-            outRect.right = mRightMargin
+            outRect.right = rightMargin
         }
     }
 }

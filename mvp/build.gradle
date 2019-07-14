@@ -36,10 +36,10 @@ dependencies {
 
     implementation project(':loggalitic')
 
-    implementation 'com.android.support:appcompat-v7:' + rootProject.supportLibraryVersion
+    implementation 'androidx.appcompat:appcompat:' + androidX
     implementation 'com.squareup.retrofit2:retrofit:' + rootProject.retrofit
     implementation 'com.squareup.okhttp3:logging-interceptor:' + rootProject.okhttp
-    implementation 'android.arch.lifecycle:common-java8:' + rootProject.lifecycleVersion
+    implementation 'androidx.lifecycle:lifecycle-common-java8:2.0.0'
     implementation 'androidx.core:core-ktx:' + androidX
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

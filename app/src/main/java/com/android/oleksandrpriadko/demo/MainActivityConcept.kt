@@ -2,43 +2,48 @@ package com.android.oleksandrpriadko.demo
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.oleksandrpriadko.demo.adapter.AdapterDemos
 import com.android.oleksandrpriadko.demo.adapter.Demo
 import com.android.oleksandrpriadko.demo.item_decoration.ItemDecorationActivity
-import com.android.oleksandrpriadko.demo.loggalitic.LoggaliticDemoActivity
+import com.android.oleksandrpriadko.demo.loggalitic.LogPublishActivity
+import com.android.oleksandrpriadko.extension.dimenPixelSize
 import com.android.oleksandrpriadko.recycler_adapter.BaseItemListener
-import com.android.oleksandrpriadko.recycler_decoration.ItemDecorationMargin
+import com.android.oleksandrpriadko.recycler_decoration.ItemDecorationVerticalGridMargin
 import com.crashlytics.android.answers.Answers
 import io.fabric.sdk.android.Fabric
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main_concept.*
 import java.util.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivityConcept : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Fabric.with(this, Answers())
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_main_concept)
 
         intRecViewDemos()
     }
 
     private fun intRecViewDemos() {
-        val layoutManager = LinearLayoutManager(this)
+        val spanCount = 2
+        val layoutManager = GridLayoutManager(this, spanCount)
         layoutManager.orientation = RecyclerView.VERTICAL
         recyclerView.layoutManager = layoutManager
 
         val adapterDemos = createAdapter()
         recyclerView.adapter = adapterDemos
 
-        val itemDecorationMargin = ItemDecorationMargin(
-                30,
-                firstItemMargin = true,
-                lastItemMargin = true,
-                linearLayoutManagerOrientation = layoutManager.orientation)
+        val itemDecorationMargin = ItemDecorationVerticalGridMargin(
+                spanCount = spanCount,
+                left = dimenPixelSize(R.dimen.margin_left_right_card),
+                top = dimenPixelSize(R.dimen.margin_top_bottom_card),
+                right = dimenPixelSize(R.dimen.margin_left_right_card),
+                bottom = dimenPixelSize(R.dimen.margin_top_bottom_card),
+                includeEdge = true
+        )
         recyclerView.addItemDecoration(itemDecorationMargin)
     }
 
@@ -49,7 +54,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun itemClicked(position: Int, item: Demo) {
-                val intent = Intent(this@MainActivity, item.clazz)
+                val intent = Intent(this@MainActivityConcept, item.clazz)
                 startActivity(intent)
             }
         }
@@ -59,18 +64,19 @@ class MainActivity : AppCompatActivity() {
                 ItemDecorationActivity::class.java,
                 "ItemDecoration",
                 null,
-                0)
+                R.drawable.ic_workflow_512)
         demoList.add(demo)
 
         demo = Demo(
-                LoggaliticDemoActivity::class.java,
-                "LogPublishService",
+                LogPublishActivity::class.java,
+                "Analytics",
                 null,
-                0)
+                R.drawable.ic_analytics_512)
         demoList.add(demo)
 
         adapterDemos.setData(demoList)
 
         return adapterDemos
     }
+
 }

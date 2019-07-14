@@ -7,13 +7,13 @@ import androidx.appcompat.app.AppCompatActivity
 import com.android.oleksandrpriadko.demo.R
 import com.android.oleksandrpriadko.loggalitic.LogPublishService
 import com.google.android.material.textfield.TextInputEditText
-import kotlinx.android.synthetic.main.activity_loggalitic_demo.*
+import kotlinx.android.synthetic.main.activity_log_publish_demo.*
 
-class LoggaliticDemoActivity : AppCompatActivity() {
+class LogPublishActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_loggalitic_demo)
+        setContentView(R.layout.activity_log_publish_demo)
 
         publishLogButton.setOnClickListener { click() }
     }

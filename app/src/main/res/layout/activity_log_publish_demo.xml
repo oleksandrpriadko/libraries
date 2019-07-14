@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/margin_top_bottom_card"
+    android:paddingEnd="@dimen/margin_left_right_card"
+    android:paddingStart="@dimen/margin_left_right_card"
+    android:paddingTop="@dimen/margin_top_bottom_card"
+    tools:context=".loggalitic.LogPublishActivity">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/nameEditText"
+        style="@style/EditText"
+        android:layout_width="@dimen/constraint_match"
+        android:layout_height="wrap_content"
+        android:hint="Name of the event"
+        android:imeOptions="actionNext"
+        android:inputType="textAutoComplete"
+        android:maxLines="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/descriptionEditText"
+        style="@style/EditText"
+        android:layout_width="@dimen/constraint_match"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_top_bottom_card"
+        android:hint="Description of the event"
+        android:imeOptions="actionDone"
+        android:inputType="textAutoComplete"
+        android:maxLines="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nameEditText" />
+
+    <ScrollView
+        android:id="@+id/publishedLoggedScrollView"
+        android:layout_width="@dimen/constraint_match"
+        android:layout_height="@dimen/constraint_match"
+        android:layout_marginTop="20dp"
+        android:paddingEnd="20dp"
+        android:paddingStart="20dp"
+        app:layout_constraintBottom_toTopOf="@id/publishLogButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/descriptionEditText">
+
+        <TextView
+            android:id="@+id/publishedLoggedTextView"
+            style="@style/Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Published/Logged events" />
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/publishLogButton"
+        style="@style/Clickable"
+        android:layout_width="@dimen/constraint_match"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="1dp"
+        android:text="Publish &amp; Log"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/publishedLoggedScrollView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

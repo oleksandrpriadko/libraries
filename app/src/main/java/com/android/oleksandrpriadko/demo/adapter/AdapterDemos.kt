@@ -3,6 +3,7 @@ package com.android.oleksandrpriadko.demo.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.DrawableRes
 
 import com.android.oleksandrpriadko.demo.R
 import com.android.oleksandrpriadko.recycler_adapter.BaseAdapterRecyclerView
@@ -18,19 +19,26 @@ class AdapterDemos(itemListener: BaseItemListener<Demo>)
     }
 
     override fun isItemViewClickable(): Boolean {
-        return true
+        return false
     }
 
     override fun onBindHolder(holder: Holder, position: Int) {
         val demo = items[position]
-        holder.itemView.textView_demo_name.text = demo.name
-        holder.loadAvatar(demo.avatarUrl)
+        holder.itemView.nameTextView.text = demo.name
+        holder.itemView.nameTextView.isSelected = true
+        holder.itemView.itemCardView
+                .setOnClickListener { itemListener?.itemClicked(position, demo) }
+        holder.loadAvatar(demo.avatarUrl, demo.iconResId)
     }
 
     inner class Holder(itemView: View) : BaseHolderPicasso(itemView) {
 
-        fun loadAvatar(url: String?) {
-            loadImage(url, itemView.imageView_demo_avatar, R.drawable.ic_hexagon_black_24dp)
+        fun loadAvatar(url: String?, @DrawableRes iconResId: Int) {
+            if (iconResId == 0) {
+                loadImage(url, itemView.avatarImageView, R.drawable.ic_hexagon_black_24dp)
+            } else {
+                itemView.avatarImageView.setImageDrawable(itemView.context.getDrawable(iconResId))
+            }
         }
     }
 }

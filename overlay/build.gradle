@@ -32,8 +32,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':core')
 
-    implementation "com.android.support:support-annotations:$rootProject.supportLibraryVersion"
-    implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    implementation 'androidx.annotation:annotation:' + androidX
+    implementation 'androidx.appcompat:appcompat:' + androidX
 
     testImplementation "junit:junit:$rootProject.junit"
     testImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"

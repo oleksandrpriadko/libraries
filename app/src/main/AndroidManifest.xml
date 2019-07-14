@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.android.oleksandrpriadko.demo">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -12,25 +13,28 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+
+        <activity android:name=".MainActivityConcept">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".item_decoration.ItemDecorationActivity"
-            android:label="ItemDecoration"></activity>
+            android:label="ItemDecoration" />
 
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="35ba9af7c2f219ba35a8a57ea690f62d5a52318e" />
 
         <activity
-            android:name=".loggalitic.LoggaliticDemoActivity"
-            android:label="Loggalitic"></activity>
+            android:name=".loggalitic.LogPublishActivity"
+            android:label="Loggalitic" />
     </application>
 
 </manifest>

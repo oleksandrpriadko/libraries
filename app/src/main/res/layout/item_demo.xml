@@ -2,48 +2,55 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/itemCardView"
+    style="@style/CardViewStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/white"
-    app:cardElevation="2dp">
+    tools:layout_margin="@dimen/margin_left_right_card"
+    tools:layout_width="100dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_begin="200dp" />
+        <View
+            android:id="@+id/ratioView"
+            android:layout_width="@dimen/constraint_match"
+            android:layout_height="@dimen/constraint_match"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/imageView_demo_avatar"
+            android:id="@+id/avatarImageView"
             android:layout_width="@dimen/constraint_match"
             android:layout_height="@dimen/constraint_match"
             android:contentDescription="@null"
-            app:layout_constraintBottom_toTopOf="@id/guideline"
+            android:padding="@dimen/margin_top_bottom_card"
+            app:layout_constraintBottom_toTopOf="@id/nameTextView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="spread"
-            tools:src="@drawable/ic_hexagon_black_24dp" />
+            tools:src="@drawable/ic_analytics_512" />
 
         <TextView
-            android:id="@+id/textView_demo_name"
-            android:layout_width="@dimen/constraint_match"
+            android:id="@+id/nameTextView"
+            style="@style/Text"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/colorBlackAlpha"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:maxLines="1"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Display1"
-            android:textColor="@android:color/white"
-            app:layout_constraintBottom_toBottomOf="@id/imageView_demo_avatar"
-            app:layout_constraintEnd_toEndOf="@id/imageView_demo_avatar"
-            app:layout_constraintStart_toStartOf="@id/imageView_demo_avatar"
-            app:layout_constraintVertical_bias="1.0"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/avatarImageView"
+            app:layout_constraintStart_toStartOf="@id/avatarImageView"
+            app:layout_constraintTop_toBottomOf="@id/avatarImageView"
             tools:text="Demo name" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

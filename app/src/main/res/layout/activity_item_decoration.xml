@@ -10,20 +10,18 @@
         android:id="@+id/recyclerView"
         android:layout_width="@dimen/constraint_match"
         android:layout_height="@dimen/constraint_match"
-        android:background="@android:color/holo_blue_light"
+        android:layout_marginBottom="@dimen/margin_top_bottom_card"
         app:layout_constraintBottom_toTopOf="@id/grid_options"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.constraintlayout.widget.Barrier
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/item_demo" />
 
     <GridLayout
         android:id="@+id/grid_options"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:columnCount="2"
         android:orientation="vertical"
         android:rowCount="3"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -31,43 +29,52 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/recyclerView">
 
-        <Button
+        <TextView
             android:id="@+id/layoutManagerButton"
-            android:layout_width="wrap_content"
+            style="@style/Clickable"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_top_bottom_card"
             android:text="Layout Manager" />
 
-        <Button
+        <TextView
             android:id="@+id/marginButton"
-            android:layout_width="wrap_content"
+            style="@style/Clickable"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_top_bottom_card"
             android:text="Margin" />
 
-        <Button
+        <TextView
             android:id="@+id/button_orientation"
-            android:layout_width="wrap_content"
+            style="@style/Clickable"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_top_bottom_card"
             android:text="Orientation" />
 
         <CheckBox
             android:id="@+id/marginFirstCheckbox"
+            style="@style/Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Margin First Item"
+            android:text="Margin First"
             android:textAllCaps="true" />
 
         <CheckBox
             android:id="@+id/marginLastCheckbox"
+            style="@style/Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Margin Last Item"
+            android:text="Margin Last"
             android:textAllCaps="true" />
 
         <CheckBox
             android:id="@+id/includeEdgeCheckbox"
+            style="@style/Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Include Edge (Grid only)"
+            android:text="Include Edge (Grid)"
             android:textAllCaps="true" />
     </GridLayout>
 

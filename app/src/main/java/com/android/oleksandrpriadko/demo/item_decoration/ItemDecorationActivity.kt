@@ -77,7 +77,10 @@ class ItemDecorationActivity : AppCompatActivity() {
 
         val demoList = ArrayList<Demo>()
         for (i in 0..9) {
-            val demo = Demo(null, "Dummy $i", null, 0)
+            val demo = Demo(null,
+                    "Dummy $i",
+                    null,
+                    R.drawable.ic_gears_512)
             demoList.add(demo)
         }
         adapterDemos.setData(demoList)
