@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
 
         demo = Demo(
                 LoggaliticDemoActivity::class.java,
-                "Loggalitic",
+                "LogPublishService",
                 null,
                 0)
         demoList.add(demo)

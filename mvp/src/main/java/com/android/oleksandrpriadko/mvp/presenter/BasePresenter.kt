@@ -4,7 +4,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 
-import com.android.oleksandrpriadko.loggalitic.Loggalitic
+import com.android.oleksandrpriadko.loggalitic.LogPublishService
 
 abstract class BasePresenter<T : LifecycleOwner>(view: T?) : DefaultLifecycleObserver {
 
@@ -49,7 +49,7 @@ abstract class BasePresenter<T : LifecycleOwner>(view: T?) : DefaultLifecycleObs
 
     private fun logState(message: String) {
         if (enableLog()) {
-            Loggalitic.logger().d(javaClass.simpleName, message)
+            LogPublishService.logger().d(javaClass.simpleName, message)
         }
     }
 }

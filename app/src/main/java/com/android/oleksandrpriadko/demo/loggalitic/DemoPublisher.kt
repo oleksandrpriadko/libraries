@@ -2,7 +2,7 @@ package com.android.oleksandrpriadko.demo.loggalitic
 
 import android.util.Log
 import com.android.oleksandrpriadko.demo.App
-import com.android.oleksandrpriadko.loggalitic.Loggalitic
+import com.android.oleksandrpriadko.loggalitic.LogPublishService
 import com.android.oleksandrpriadko.loggalitic.analytics.AnalyticsEvent
 import com.android.oleksandrpriadko.loggalitic.analytics.Publisher
 import com.android.oleksandrpriadko.loggalitic.policy.Policy
@@ -21,7 +21,7 @@ class DemoPublisher(policy: Policy) : Publisher(policy) {
             Answers.getInstance().logCustom(fabricConverter.convert(event))
             return true
         } else {
-            Loggalitic.logger().d(tag,
+            LogPublishService.logger().d(tag,
                     "send: failed. reason = ${FabricConverter::class.java.simpleName} is null")
             return false
         }
@@ -47,7 +47,7 @@ class DemoPublisher(policy: Policy) : Publisher(policy) {
             Analytics.trackEvent(pair.first, pair.second)
             true
         } else {
-            Loggalitic.logger().d(tag,
+            LogPublishService.logger().d(tag,
                     "send: failed. reason = ${AppCenterConverter::class.java.simpleName} is null")
             false
         }

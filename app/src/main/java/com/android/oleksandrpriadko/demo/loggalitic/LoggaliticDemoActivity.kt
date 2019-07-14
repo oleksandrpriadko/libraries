@@ -5,7 +5,7 @@ import android.text.TextUtils
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.android.oleksandrpriadko.demo.R
-import com.android.oleksandrpriadko.loggalitic.Loggalitic
+import com.android.oleksandrpriadko.loggalitic.LogPublishService
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.android.synthetic.main.activity_loggalitic_demo.*
 
@@ -36,13 +36,13 @@ class LoggaliticDemoActivity : AppCompatActivity() {
     }
 
     private fun event(eventName: String) {
-        val isSent = Loggalitic.publisher().event(eventName)
+        val isSent = LogPublishService.publisher().event(eventName)
         val concatenated = extendLogs(eventName)
         displayLogs(isSent, concatenated)
     }
 
     private fun event(eventName: String, description: String) {
-        val isSent = Loggalitic.publisher().event(eventName, description)
+        val isSent = LogPublishService.publisher().event(eventName, description)
         val concatenated = extendLogs(eventName, description)
         displayLogs(isSent, concatenated)
     }

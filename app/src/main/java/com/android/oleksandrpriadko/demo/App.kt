@@ -7,7 +7,7 @@ import com.android.oleksandrpriadko.demo.loggalitic.AppCenterConverter
 import com.android.oleksandrpriadko.demo.loggalitic.DemoPublisher
 import com.android.oleksandrpriadko.demo.loggalitic.FabricConverter
 import com.android.oleksandrpriadko.demo.loggalitic.FireBaseConverter
-import com.android.oleksandrpriadko.loggalitic.Loggalitic
+import com.android.oleksandrpriadko.loggalitic.LogPublishService
 import com.android.oleksandrpriadko.loggalitic.logger.DefaultLogger
 import com.android.oleksandrpriadko.loggalitic.policy.DefaultPolicy
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -24,7 +24,7 @@ class App : Application() {
 
         val policy = initPolicy()
 
-        Loggalitic.init(initLogger(policy), initPublisher(policy))
+        LogPublishService.init(initLogger(policy), initPublisher(policy))
     }
 
     private fun initPolicy(): DefaultPolicy {

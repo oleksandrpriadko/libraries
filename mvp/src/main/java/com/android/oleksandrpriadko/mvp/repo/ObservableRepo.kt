@@ -4,7 +4,7 @@ import androidx.annotation.CallSuper
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle.State.DESTROYED
 import androidx.lifecycle.LifecycleOwner
-import com.android.oleksandrpriadko.loggalitic.Loggalitic
+import com.android.oleksandrpriadko.loggalitic.LogPublishService
 import java.util.*
 
 abstract class ObservableRepo(lifecycleOwner: LifecycleOwner) {
@@ -73,7 +73,7 @@ abstract class ObservableRepo(lifecycleOwner: LifecycleOwner) {
     abstract fun cleanUp()
 
     private fun logState(message: String) {
-        Loggalitic.logger().d(javaClass.simpleName, message)
+        LogPublishService.logger().d(javaClass.simpleName, message)
     }
 
     inner class LifecycleBoundObserver constructor(val lifecycleOwner: LifecycleOwner)
