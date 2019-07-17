@@ -33,6 +33,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':core')
 
     implementation 'androidx.appcompat:appcompat:' + androidX
     implementation 'androidx.constraintlayout:constraintlayout:' + constraintLayout

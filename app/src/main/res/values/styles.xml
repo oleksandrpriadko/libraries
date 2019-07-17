@@ -39,4 +39,36 @@
         <item name="contentPadding">@dimen/padding_left_right_card</item>
     </style>
 
+    <!--        Cocktail themes  -->
+    <style name="CocktailTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/background_screen_cocktail</item>
+        <item name="colorPrimaryDark">@color/background_secondary_cocktail</item>
+        <item name="colorAccent">@color/accent_primary_cocktail</item>
+        <item name="android:windowBackground">@color/background_screen_cocktail</item>
+        <item name="android:buttonTint">@color/background_clickable_cocktail</item>
+    </style>
+
+    <style name="TextCocktail" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:textColor">@color/text_color_cocktail</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+    </style>
+
+    <style name="TextCocktailShadow" parent="TextCocktail">
+        <item name="android:shadowRadius">7</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowColor">@color/text_color_cocktail</item>
+    </style>
+
+    <style name="TextCocktailLargeBoldShadow" parent="TextCocktailShadow">
+        <item name="android:textColor">@color/background_screen_cocktail</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Display2</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CardViewStyleCocktail" parent="CardView">
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="cardCornerRadius">@dimen/radius_large_cocktail_card</item>
+    </style>
+
 </resources>

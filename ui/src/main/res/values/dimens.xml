@@ -2,4 +2,5 @@
 <resources>
     <dimen name="constraint_match">0dp</dimen>
     <dimen name="padding_default">8dp</dimen>
+    <dimen name="min_height_curved_image_view">100dp</dimen>
 </resources>

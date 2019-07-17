@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name=".MainActivityConcept">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,13 +28,19 @@
             android:name=".item_decoration.ItemDecorationActivity"
             android:label="ItemDecoration" />
 
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="35ba9af7c2f219ba35a8a57ea690f62d5a52318e" />
-
         <activity
             android:name=".loggalitic.LogPublishActivity"
             android:label="Loggalitic" />
+
+        <activity
+            android:name=".cocktails.CocktailActivity"
+            android:label="Cocktails"
+            android:theme="@style/CocktailTheme" />
+
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="35ba9af7c2f219ba35a8a57ea690f62d5a52318e" />
     </application>
 
 </manifest>

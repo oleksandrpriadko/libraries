@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-
-    <color name="colorBlackAlpha">#61000000</color>
-
-
+    <!--    Base    -->
     <!--    backgrounds     -->
     <color name="background_screen">#1F2850</color>
     <color name="background_secondary">#192042</color>
@@ -18,4 +12,17 @@
     <!--    text    -->
     <color name="text_color">@android:color/white</color>
     <color name="text_color_secondary">#4596A8B8</color>
+    
+    <!--    Cocktail -->
+    <!--    backgrounds     -->
+    <color name="background_screen_cocktail">#F2F2F2</color>
+    <color name="background_secondary_cocktail">#8E6374</color>
+    <color name="background_primary_cocktail">#D696AC</color>
+    <color name="background_clickable_cocktail">#EDDFE5</color>
+    <!--    accent  -->
+    <color name="accent_primary_cocktail">#E6A999</color>
+    <!--<color name="accent_secondary">#34DCAF</color>-->
+    <!--    text    -->
+    <color name="text_color_cocktail">#40242C</color>
+    <color name="text_color_secondary_cocktail">#5C2A38</color>
 </resources>

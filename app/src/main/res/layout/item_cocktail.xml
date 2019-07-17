@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:ignore="ContentDescription, KeyboardInaccessibleWidget"
+    tools:layout_gravity="bottom">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/avatarCardView"
+        style="@style/CardViewStyleCocktail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/avatarImageView"
+                android:layout_width="@dimen/width_cocktail_avatar"
+                android:layout_height="540dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/drawable_test" />
+
+            <TextView
+                style="@style/TextCocktailLargeBoldShadow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/avatarImageView"
+                android:layout_alignEnd="@id/avatarImageView"
+                android:layout_alignStart="@id/avatarImageView"
+                android:layout_marginBottom="20dp"
+                android:layout_marginStart="20dp"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:text="Good cocktail receipt" />
+
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

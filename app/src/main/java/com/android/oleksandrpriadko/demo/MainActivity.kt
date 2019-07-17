@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.oleksandrpriadko.demo.adapter.AdapterDemos
 import com.android.oleksandrpriadko.demo.adapter.Demo
+import com.android.oleksandrpriadko.demo.cocktails.CocktailActivity
 import com.android.oleksandrpriadko.demo.item_decoration.ItemDecorationActivity
 import com.android.oleksandrpriadko.demo.loggalitic.LogPublishActivity
 import com.android.oleksandrpriadko.extension.dimenPixelSize
@@ -14,15 +15,15 @@ import com.android.oleksandrpriadko.recycler_adapter.BaseItemListener
 import com.android.oleksandrpriadko.recycler_decoration.ItemDecorationVerticalGridMargin
 import com.crashlytics.android.answers.Answers
 import io.fabric.sdk.android.Fabric
-import kotlinx.android.synthetic.main.activity_main_concept.*
+import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
-class MainActivityConcept : FragmentActivity() {
+class MainActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Fabric.with(this, Answers())
-        setContentView(R.layout.activity_main_concept)
+        setContentView(R.layout.activity_main)
 
         intRecViewDemos()
     }
@@ -54,7 +55,7 @@ class MainActivityConcept : FragmentActivity() {
             }
 
             override fun itemClicked(position: Int, item: Demo) {
-                val intent = Intent(this@MainActivityConcept, item.clazz)
+                val intent = Intent(this@MainActivity, item.clazz)
                 startActivity(intent)
             }
         }
@@ -72,6 +73,13 @@ class MainActivityConcept : FragmentActivity() {
                 "Analytics",
                 null,
                 R.drawable.ic_analytics_512)
+        demoList.add(demo)
+
+        demo = Demo(
+                CocktailActivity::class.java,
+                "Cocktails",
+                null,
+                R.drawable.ic_cocktail_512)
         demoList.add(demo)
 
         adapterDemos.setData(demoList)

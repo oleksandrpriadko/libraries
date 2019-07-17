@@ -38,6 +38,7 @@ dependencies {
     implementation project(':recycler-decoration')
     implementation project(':loggalitic')
     implementation project(':overlay')
+    implementation project(':ui')
 
     implementation 'com.google.firebase:firebase-core:17.0.1'
     implementation 'com.microsoft.appcenter:appcenter-analytics:1.5.1'

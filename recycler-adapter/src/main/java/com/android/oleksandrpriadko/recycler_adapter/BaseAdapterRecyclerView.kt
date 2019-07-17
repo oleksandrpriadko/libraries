@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 abstract class BaseAdapterRecyclerView<
         D,
         H : RecyclerView.ViewHolder,
-        I : BaseItemListener<D>>(itemListener: I)
+        I : BaseItemListener<D>?>(itemListener: I?)
     : RecyclerView.Adapter<H>() {
 
     var itemListener: I? = itemListener
