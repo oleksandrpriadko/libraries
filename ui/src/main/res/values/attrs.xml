@@ -3,4 +3,11 @@
     <declare-styleable name="CurvedImageView">
         <attr name="curveColor" format="color" />
     </declare-styleable>
+
+    <declare-styleable name="AttachedTabsView">
+        <attr name="marginTabs" format="dimension" />
+        <attr name="curveColorTabs" format="color" />
+        <attr name="areChipsOnTop" format="boolean" />
+        <attr name="selectedItem" format="integer" />
+    </declare-styleable>
 </resources>

@@ -53,6 +53,15 @@
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
     </style>
 
+    <style name="ClickableCocktail" parent="TextCocktail">
+        <item name="android:background">@drawable/background_clickable_cocktail</item>
+        <item name="android:paddingBottom">@dimen/margin_top_bottom_card</item>
+        <item name="android:paddingEnd">@dimen/margin_left_right_card</item>
+        <item name="android:paddingStart">@dimen/margin_left_right_card</item>
+        <item name="android:paddingTop">@dimen/margin_top_bottom_card</item>
+        <item name="android:gravity">center</item>
+    </style>
+
     <style name="TextCocktailShadow" parent="TextCocktail">
         <item name="android:shadowRadius">7</item>
         <item name="android:shadowDy">1</item>

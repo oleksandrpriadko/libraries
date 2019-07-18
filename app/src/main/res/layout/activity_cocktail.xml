@@ -5,10 +5,51 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <com.android.oleksandrpriadko.ui.attachedchips.AttachedTabsView
+        android:id="@+id/searchView"
+        android:layout_width="@dimen/constraint_match"
+        android:layout_height="@dimen/constraint_match"
+        app:curveColorTabs="@color/background_clickable_cocktail"
+        app:areChipsOnTop="false"
+        app:layout_constraintBottom_toTopOf="@id/itemsCarousel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:selectedItem="0">
+
+        <TextView
+            android:id="@+id/cocktailTab"
+            style="@style/ClickableCocktail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Cocktail"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/ingredientTab"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/ingredientTab"
+            style="@style/ClickableCocktail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Ingredient"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/cocktailTab"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </com.android.oleksandrpriadko.ui.attachedchips.AttachedTabsView>
+
     <com.android.oleksandrpriadko.recycler_view.FlingRecyclerView
         android:id="@+id/itemsCarousel"
         android:layout_width="@dimen/constraint_match"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
         android:orientation="horizontal"
         app:flingMode="low"
         app:layoutManager="com.android.oleksandrpriadko.recycler_view.SliderLayoutManager"
@@ -17,7 +58,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
-        android:layout_marginBottom="20dp"
         tools:itemCount="15"
         tools:listitem="@layout/item_cocktail" />
 

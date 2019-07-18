@@ -14,3 +14,11 @@ fun Path.cubicToPointF(pointCurveStartF: PointF,
             pointCurveEndF.x, pointCurveEndF.y,
             pointEndF.x, pointEndF.y)
 }
+
+fun Path.lineToPointF(pointF: PointF) {
+    lineTo(pointF.x, pointF.y)
+}
+
+fun Path.addRectFPointsF(leftTop: PointF, rightBottom: PointF) {
+    addRect(leftTop.x, leftTop.y, rightBottom.x, rightBottom.y, Path.Direction.CW)
+}

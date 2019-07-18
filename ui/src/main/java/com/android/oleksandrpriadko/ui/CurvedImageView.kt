@@ -44,7 +44,7 @@ class CurvedImageView : ImageView {
                     R.styleable.CurvedImageView,
                     0,
                     0).apply {
-                curveColor = getColor(R.styleable.CurvedImageView_curveColor, Color.WHITE)
+                curveColor = getColor(R.styleable.CurvedImageView_curveColor, curveColor)
                 recycle()
             }
         }
