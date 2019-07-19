@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.android.oleksandrpriadko.ui.attachedchips.AttachedTabsView
+    <com.android.oleksandrpriadko.ui.attachedtabs.AttachedTabsView
         android:id="@+id/searchView"
         android:layout_width="@dimen/constraint_match"
         android:layout_height="wrap_content"
@@ -66,7 +66,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1" />
 
-    </com.android.oleksandrpriadko.ui.attachedchips.AttachedTabsView>
+    </com.android.oleksandrpriadko.ui.attachedtabs.AttachedTabsView>
 
     <com.android.oleksandrpriadko.recycler_view.FlingRecyclerView
         android:id="@+id/itemsCarousel"

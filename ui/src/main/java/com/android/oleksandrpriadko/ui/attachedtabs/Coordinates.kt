@@ -1,4 +1,4 @@
-package com.android.oleksandrpriadko.ui.attachedchips
+package com.android.oleksandrpriadko.ui.attachedtabs
 
 import android.graphics.PointF
 import android.graphics.Rect

@@ -1,4 +1,4 @@
-package com.android.oleksandrpriadko.ui.attachedchips
+package com.android.oleksandrpriadko.ui.attachedtabs
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -20,11 +20,7 @@ import kotlin.math.roundToInt
 
 class AttachedTabsView : ConstraintLayout {
 
-    var indexOfSelectedItem = 0
-        set(value) {
-            field = value
-            invalidate()
-        }
+    private var indexOfSelectedItem = 0
 
     var selectedItemBackground: Drawable? = null
         set(value) {
@@ -189,23 +185,34 @@ class AttachedTabsView : ConstraintLayout {
 
     private val onChildTouchListener = OnTouchListener { touchedView, motioEvent ->
         if (motioEvent.action == MotionEvent.ACTION_UP) {
-            requestEndAnimator()
-
-            coordinatesDestination = getCoordinatesFromView(touchedView)
-
-            var indexOfNewSelectedItem = 0
-            children.forEachIndexed { index, view ->
-                if (view === touchedView) {
-                    indexOfNewSelectedItem = index
-                }
-            }
-            direction = if (indexOfNewSelectedItem >= indexOfSelectedItem) Direction.CW else Direction.CCW
-
-            indexOfSelectedItem = indexOfNewSelectedItem
-            animator = createAnimator()
-            animator.start()
+            selectItem(touchedView)
         }
         false
+    }
+
+    fun selectItem(index: Int) {
+        val selectedView: View? = getChildAt(index)
+        if (selectedView != null) {
+            selectItem(selectedView)
+        }
+    }
+
+    private fun selectItem(selectedView: View) {
+        requestEndAnimator()
+
+        coordinatesDestination = getCoordinatesFromView(selectedView)
+
+        var indexOfNewSelectedItem = 0
+        children.forEachIndexed { index, view ->
+            if (view === selectedView) {
+                indexOfNewSelectedItem = index
+            }
+        }
+        direction = if (indexOfNewSelectedItem >= indexOfSelectedItem) Direction.CW else Direction.CCW
+
+        indexOfSelectedItem = indexOfNewSelectedItem
+        animator = createAnimator()
+        animator.start()
     }
 
     private fun getCoordinatesFromView(v: View): Coordinates {
