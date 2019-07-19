@@ -8,40 +8,68 @@
     <com.android.oleksandrpriadko.ui.attachedchips.AttachedTabsView
         android:id="@+id/searchView"
         android:layout_width="@dimen/constraint_match"
-        android:layout_height="@dimen/constraint_match"
-        app:curveColorTabs="@color/background_clickable_cocktail"
-        app:areChipsOnTop="false"
+        android:layout_height="wrap_content"
+        android:background="@color/background_screen_cocktail"
+        android:paddingTop="5dp"
+        app:curveColorTabs="@color/background_secondary_cocktail"
         app:layout_constraintBottom_toTopOf="@id/itemsCarousel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:selectedItem="0">
+        app:layout_constraintVertical_bias="0"
+        app:selectedItem="2"
+        app:selectedItemBackground="@drawable/background_clickable_cocktail">
 
         <TextView
             android:id="@+id/cocktailTab"
             style="@style/ClickableCocktail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground"
             android:gravity="center"
+            android:outlineProvider="bounds"
             android:text="Cocktail"
-            android:layout_alignParentEnd="true"
-            android:layout_centerInParent="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/ingredientTab"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1" />
 
         <TextView
             android:id="@+id/ingredientTab"
             style="@style/ClickableCocktail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground"
             android:gravity="center"
+            android:outlineProvider="bounds"
             android:text="Ingredient"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/glassTab"
             app:layout_constraintStart_toEndOf="@id/cocktailTab"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1" />
+
+        <TextView
+            android:id="@+id/glassTab"
+            style="@style/ClickableCocktail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:outlineProvider="bounds"
+            android:text="Glass"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/ingredientTab"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1" />
 
     </com.android.oleksandrpriadko.ui.attachedchips.AttachedTabsView>
 

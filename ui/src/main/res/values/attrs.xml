@@ -7,7 +7,8 @@
     <declare-styleable name="AttachedTabsView">
         <attr name="marginTabs" format="dimension" />
         <attr name="curveColorTabs" format="color" />
-        <attr name="areChipsOnTop" format="boolean" />
+        <attr name="areTabsOnTop" format="boolean" />
         <attr name="selectedItem" format="integer" />
+        <attr name="selectedItemBackground" format="reference|color" />
     </declare-styleable>
 </resources>

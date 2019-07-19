@@ -6,23 +6,33 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.graphics.Path.Direction
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
-import com.android.oleksandrpriadko.extension.addRectFPointsF
-import com.android.oleksandrpriadko.extension.cubicToPointF
-import com.android.oleksandrpriadko.extension.lineToPointF
-import com.android.oleksandrpriadko.extension.moveToPointF
+import com.android.oleksandrpriadko.extension.*
 import com.android.oleksandrpriadko.ui.R
+import kotlin.math.roundToInt
 
 
 class AttachedTabsView : ConstraintLayout {
 
-    private var indexOfSelectedItem = 0
+    var indexOfSelectedItem = 0
+        set(value) {
+            field = value
+            invalidate()
+        }
 
-    var areChipsOnTop = false
+    var selectedItemBackground: Drawable? = null
+        set(value) {
+            field = value
+            invalidate()
+        }
+
+    var areTabsOnTop = false
         set(value) {
             field = value
             invalidate()
@@ -34,7 +44,7 @@ class AttachedTabsView : ConstraintLayout {
         }
 
     private var animationProgress = 0f
-    var direction = Direction.CW
+    private var direction = Direction.CW
 
     private var coordinatesStart = Coordinates.NOT_SET
     private var coordinatesDestination = Coordinates.NOT_SET
@@ -71,8 +81,9 @@ class AttachedTabsView : ConstraintLayout {
                     0,
                     0).apply {
                 curveColor = getColor(R.styleable.AttachedTabsView_curveColorTabs, curveColor)
-                areChipsOnTop = getBoolean(R.styleable.AttachedTabsView_areChipsOnTop, areChipsOnTop)
+                areTabsOnTop = getBoolean(R.styleable.AttachedTabsView_areTabsOnTop, areTabsOnTop)
                 indexOfSelectedItem = getInt(R.styleable.AttachedTabsView_selectedItem, indexOfSelectedItem)
+                selectedItemBackground = getDrawable(R.styleable.AttachedTabsView_selectedItemBackground)
                 recycle()
             }
         }
@@ -95,75 +106,34 @@ class AttachedTabsView : ConstraintLayout {
             coordinatesDestination = Coordinates.NOT_SET
         }
 
-        if (areChipsOnTop) {
+        if (areTabsOnTop) {
             initValuesForChipsAbove()
         } else {
-            paveTheWay(animationProgress)
+            paveTheWay()
         }
 
         canvas?.drawPath(path, paint)
+
+        canvas?.let {
+            selectedItemBackground?.draw(it)
+        }
+
         super.dispatchDraw(canvas)
     }
 
-    private fun initValuesForChipsAbove() {
-//        val index = Random.nextInt(3)
-//        widthF = width.toFloat()
-//        heightF = height.toFloat()
-//
-//        val selectedChip = chipList[index]
-//
-//        val chipCenterY = (selectedChip.top + selectedChip.measuredHeight * 0.5).toFloat()
-//        val distanceChipCenterYToBottom = heightF - chipCenterY
-//
-//        rectF = RectF(selectedChip.left.toFloat(),
-//                chipCenterY,
-//                selectedChip.right.toFloat(),
-//                heightF)
-//
-//        startPointF = PointF(rectF.left - 130, heightF)
-//        endPointF = PointF(rectF.right + 130, heightF)
-//
-//        val distanceStartToRect = rectF.left
-//        curve2PointF = PointF(rectF.left, rectF.top)
-//        curve0PointF = PointF(
-//                (distanceStartToRect * RATIO_CURVE_POINT_0_xUNDER).toFloat(),
-//                chipCenterY + (distanceChipCenterYToBottom * RATIO_CURVE_POINT_0_Y_UNDER).toFloat())
-//        curve1PointF = PointF(
-//                (distanceStartToRect * RATIO_CURVE_POINT_1_xUNDER).toFloat(),
-//                chipCenterY + (distanceChipCenterYToBottom * RATIO_CURVE_POINT_1_Y_UNDER).toFloat())
-//
-//        val distanceRectToEnd = widthF - rectF.right
-//        curve3PointF = PointF(
-//                rectF.right + (distanceRectToEnd * RATIO_CURVE_POINT_3_xUNDER).toFloat(),
-//                chipCenterY + (distanceChipCenterYToBottom * RATIO_CURVE_POINT_3_Y_UNDER).toFloat())
-//        curve4PointF = PointF(
-//                rectF.right + (distanceRectToEnd * RATIO_CURVE_POINT_4_xUNDER).toFloat(),
-//                chipCenterY + (distanceChipCenterYToBottom * RATIO_CURVE_POINT_4_Y_UNDER).toFloat())
-//
-//        path.apply {
-//            reset()
-//
-//            // curve left
-//            moveToPointF(startPointF)
-//            cubicToPointF(curve0PointF, curve1PointF, curve2PointF)
-//            lineTo(curve2PointF.x, heightF)
-//
-//            // rectangle below selected item
-//            addRect(rectF, Path.Direction.CW)
-//
-//            // curve right
-//            moveTo(rectF.right, chipCenterY)
-//            cubicToPointF(curve3PointF, curve4PointF, endPointF)
-//            lineTo(rectF.right, heightF)
-//            close()
-//        }
-    }
+    private fun initValuesForChipsAbove() {}
 
-    private fun paveTheWay(progress: Float) {
+    private fun paveTheWay() {
         if (coordinatesDestination === Coordinates.NOT_SET) {
             paveTheWayToStart()
+            selectedItemBackground?.let {
+                it.bounds = coordinatesStart.drawableBounds
+            }
         } else {
-            paveTheWayToDestination(progress)
+            paveTheWayToDestination()
+            selectedItemBackground?.let {
+                it.bounds = moveBounds(animationProgress)
+            }
         }
     }
 
@@ -191,56 +161,59 @@ class AttachedTabsView : ConstraintLayout {
         }
     }
 
-    private fun paveTheWayToDestination(progress: Float) {
+    private fun paveTheWayToDestination() {
         path.apply {
             reset()
             coordinatesDestination.apply {
-                moveToPointF(movePoint(coordinatesStart.start, start, progress, direction))
+                moveToPointF(movePoint(coordinatesStart.start, start, animationProgress, direction))
                 cubicToPointF(
-                        movePoint(coordinatesStart.leftCurveStart, leftCurveStart, progress, direction),
-                        movePoint(coordinatesStart.leftCurveMiddle, leftCurveMiddle, progress, direction),
-                        movePoint(coordinatesStart.leftCurveEnd, leftCurveEnd, progress, direction))
-                lineToPointF(movePoint(coordinatesStart.leftLine, leftLine, progress, direction))
+                        movePoint(coordinatesStart.leftCurveStart, leftCurveStart, animationProgress, direction),
+                        movePoint(coordinatesStart.leftCurveMiddle, leftCurveMiddle, animationProgress, direction),
+                        movePoint(coordinatesStart.leftCurveEnd, leftCurveEnd, animationProgress, direction))
+                lineToPointF(movePoint(coordinatesStart.leftLine, leftLine, animationProgress, direction))
 
                 addRectFPointsF(
-                        movePoint(coordinatesStart.rectLeftTop, rectLeftTop, progress, direction),
-                        movePoint(coordinatesStart.rectRightBottom, rectRightBottom, progress, direction))
+                        movePoint(coordinatesStart.rectLeftTop, rectLeftTop, animationProgress, direction),
+                        movePoint(coordinatesStart.rectRightBottom, rectRightBottom, animationProgress, direction))
 
-                moveToPointF(movePoint(coordinatesStart.rectRightBottom, rectRightBottom, progress, direction))
+                moveToPointF(movePoint(coordinatesStart.rectRightBottom, rectRightBottom, animationProgress, direction))
                 cubicToPointF(
-                        movePoint(coordinatesStart.rightCurveStart, rightCurveStart, progress, direction),
-                        movePoint(coordinatesStart.rightCurveMiddle, rightCurveMiddle, progress, direction),
-                        movePoint(coordinatesStart.rightCurveEnd, rightCurveEnd, progress, direction))
-                lineToPointF(movePoint(coordinatesStart.rightLine, rightLine, progress, direction))
+                        movePoint(coordinatesStart.rightCurveStart, rightCurveStart, animationProgress, direction),
+                        movePoint(coordinatesStart.rightCurveMiddle, rightCurveMiddle, animationProgress, direction),
+                        movePoint(coordinatesStart.rightCurveEnd, rightCurveEnd, animationProgress, direction))
+                lineToPointF(movePoint(coordinatesStart.rightLine, rightLine, animationProgress, direction))
             }
             close()
         }
     }
 
-    private val onChildTouchListener = OnTouchListener { touchedView, _ ->
-        requestEndAnimator()
+    private val onChildTouchListener = OnTouchListener { touchedView, motioEvent ->
+        if (motioEvent.action == MotionEvent.ACTION_UP) {
+            requestEndAnimator()
 
-        coordinatesDestination = getCoordinatesFromView(touchedView)
+            coordinatesDestination = getCoordinatesFromView(touchedView)
 
-        var indexOfNewSelectedItem = 0
-        children.forEachIndexed { index, view ->
-            if (view === touchedView) {
-                indexOfNewSelectedItem = index
+            var indexOfNewSelectedItem = 0
+            children.forEachIndexed { index, view ->
+                if (view === touchedView) {
+                    indexOfNewSelectedItem = index
+                }
             }
-        }
-        direction = if (indexOfNewSelectedItem >= indexOfSelectedItem) Direction.CW else Direction.CCW
+            direction = if (indexOfNewSelectedItem >= indexOfSelectedItem) Direction.CW else Direction.CCW
 
-        indexOfSelectedItem = indexOfNewSelectedItem
-        animator = createAnimator()
-        animator.start()
+            indexOfSelectedItem = indexOfNewSelectedItem
+            animator = createAnimator()
+            animator.start()
+        }
         false
     }
 
     private fun getCoordinatesFromView(v: View): Coordinates {
-        if (areChipsOnTop) {
+        if (areTabsOnTop) {
             return Coordinates.NOT_SET
         } else {
             val viewCenterY: Float = v.y + v.measuredHeight / 2
+            val viewBounds = Rect(v.left, v.top, v.right, v.bottom)
             return Coordinates(
                     start = PointF(v.x - viewCenterY, 0f),
                     leftCurveStart = PointF(v.x - viewCenterY / 2, 0f),
@@ -252,7 +225,8 @@ class AttachedTabsView : ConstraintLayout {
                     rightCurveStart = PointF(v.right.toFloat(), viewCenterY / 2),
                     rightCurveMiddle = PointF(v.right.toFloat() + viewCenterY / 2, 0f),
                     rightCurveEnd = PointF(v.right.toFloat() + viewCenterY, 0f),
-                    rightLine = PointF(v.right.toFloat(), 0f))
+                    rightLine = PointF(v.right.toFloat(), 0f),
+                    drawableBounds = viewBounds)
         }
     }
 
@@ -263,7 +237,6 @@ class AttachedTabsView : ConstraintLayout {
                     addUpdateListener {
                         animationProgress = it.animatedValue as Float
                         invalidate()
-                        requestLayout()
                     }
                     addListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator?) {
@@ -282,6 +255,26 @@ class AttachedTabsView : ConstraintLayout {
             }
             Direction.CCW -> {
                 PointF(pointS.x - (pointS.x - pointE.x) * progress, pointS.y)
+            }
+        }
+    }
+
+    private fun moveBounds(progress: Float): Rect {
+        val bounds: Rect
+        return when (direction) {
+            Direction.CW -> {
+                val shiftXLeft = ((coordinatesDestination.drawableBounds.left - coordinatesStart.drawableBounds.left) * progress).roundToInt()
+                val shiftXRight = ((coordinatesDestination.drawableBounds.right - coordinatesStart.drawableBounds.right) * progress).roundToInt()
+                bounds = Rect(coordinatesStart.drawableBounds)
+                bounds.offsetX(shiftXLeft, shiftXRight)
+                bounds
+            }
+            Direction.CCW -> {
+                val shiftXLeft = ((coordinatesStart.drawableBounds.left - coordinatesDestination.drawableBounds.left) * progress).roundToInt()
+                val shiftXRight = ((coordinatesStart.drawableBounds.right - coordinatesDestination.drawableBounds.right) * progress).roundToInt()
+                bounds = Rect(coordinatesStart.drawableBounds)
+                bounds.offsetX(-shiftXLeft, -shiftXRight)
+                bounds
             }
         }
     }
