@@ -18,18 +18,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0"
         app:selectedItem="2"
-        app:selectedItemBackground="@drawable/background_clickable_cocktail">
+        app:selectedItemBackground="@drawable/selector_search_tab">
 
         <TextView
             android:id="@+id/cocktailTab"
-            style="@style/ClickableCocktail"
+            style="@style/ClickableNoBackgroundCocktail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
             android:clickable="true"
             android:foreground="?attr/selectableItemBackground"
             android:gravity="center"
-            android:outlineProvider="bounds"
             android:text="Cocktail"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/ingredientTab"
@@ -39,14 +37,12 @@
 
         <TextView
             android:id="@+id/ingredientTab"
-            style="@style/ClickableCocktail"
+            style="@style/ClickableNoBackgroundCocktail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
             android:clickable="true"
             android:foreground="?attr/selectableItemBackground"
             android:gravity="center"
-            android:outlineProvider="bounds"
             android:text="Ingredient"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/glassTab"
@@ -56,10 +52,9 @@
 
         <TextView
             android:id="@+id/glassTab"
-            style="@style/ClickableCocktail"
+            style="@style/ClickableNoBackgroundCocktail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
             android:clickable="true"
             android:foreground="?attr/selectableItemBackground"
             android:gravity="center"

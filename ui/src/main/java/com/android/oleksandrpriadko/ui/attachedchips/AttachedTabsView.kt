@@ -236,6 +236,9 @@ class AttachedTabsView : ConstraintLayout {
                 .apply {
                     addUpdateListener {
                         animationProgress = it.animatedValue as Float
+                        if (animationProgress == 0f) {
+                            applyDrawableState(stateDrawableAnimating)
+                        }
                         invalidate()
                     }
                     addListener(object : AnimatorListenerAdapter() {
@@ -243,6 +246,7 @@ class AttachedTabsView : ConstraintLayout {
                             super.onAnimationEnd(animation)
                             coordinatesStart = coordinatesDestination.copy()
                             coordinatesDestination = Coordinates.NOT_SET
+                            applyDrawableState(null)
                         }
                     })
                 }
@@ -284,5 +288,19 @@ class AttachedTabsView : ConstraintLayout {
             animator.end()
             animator.removeAllUpdateListeners()
         }
+    }
+
+    private fun applyDrawableState(requiredState: IntArray?) {
+        if (requiredState != null) {
+            val requiredStates = super.onCreateDrawableState(requiredState.size)
+            mergeDrawableStates(requiredStates, requiredState)
+            selectedItemBackground?.state = requiredStates
+        } else {
+            selectedItemBackground?.state = IntArray(0)
+        }
+    }
+
+    companion object {
+        val stateDrawableAnimating = IntArray(1) { R.attr.state_animating }
     }
 }
