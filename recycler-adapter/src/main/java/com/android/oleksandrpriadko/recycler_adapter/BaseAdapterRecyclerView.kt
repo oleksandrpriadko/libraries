@@ -11,7 +11,6 @@ abstract class BaseAdapterRecyclerView<
     : RecyclerView.Adapter<H>() {
 
     var itemListener: I? = itemListener
-        private set
     protected var items: MutableList<D> = mutableListOf()
     private var inflater: LayoutInflater? = null
 

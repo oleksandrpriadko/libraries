@@ -8,8 +8,6 @@ group = 'com.github.oleksanrpriadko.libraries'
 android {
     compileSdkVersion rootProject.compileSdkVersion
 
-
-
     defaultConfig {
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
@@ -28,7 +26,6 @@ android {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
     }
-
 }
 
 dependencies {
@@ -40,8 +37,13 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:' + constraintLayout
     implementation 'com.google.android.material:material:' + materialVersion
 
+    implementation 'androidx.lifecycle:lifecycle-common-java8:2.0.0'
+
     implementation 'androidx.core:core-ktx:' + androidX
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    testImplementation "junit:junit:$rootProject.junit"
+    testImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"
 }
 repositories {
     mavenCentral()

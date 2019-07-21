@@ -15,7 +15,7 @@ import com.android.oleksandrpriadko.demo.adapter.Demo
 import com.android.oleksandrpriadko.recycler_adapter.BaseItemListener
 import com.android.oleksandrpriadko.recycler_decoration.ItemDecorationMargin
 import com.android.oleksandrpriadko.recycler_decoration.ItemDecorationVerticalGridMargin
-import kotlinx.android.synthetic.main.activity_item_decoration.*
+import kotlinx.android.synthetic.main.main_activity_item_decoration.*
 import java.util.*
 
 class ItemDecorationActivity : AppCompatActivity() {
@@ -43,7 +43,7 @@ class ItemDecorationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_item_decoration)
+        setContentView(R.layout.main_activity_item_decoration)
 
         createAdapter()
 
@@ -80,7 +80,7 @@ class ItemDecorationActivity : AppCompatActivity() {
             val demo = Demo(null,
                     "Dummy $i",
                     null,
-                    R.drawable.ic_gears_512)
+                    R.drawable.main_ic_gears_512)
             demoList.add(demo)
         }
         adapterDemos.setData(demoList)
@@ -91,9 +91,9 @@ class ItemDecorationActivity : AppCompatActivity() {
     private fun click(view: View) {
         val popupMenu = PopupMenu(this, view)
         when (view.id) {
-            R.id.layoutManagerButton -> popupMenu.inflate(R.menu.item_decoration_layout_manager)
-            R.id.marginButton -> popupMenu.inflate(R.menu.item_decoration_margin)
-            R.id.button_orientation -> popupMenu.inflate(R.menu.item_decoration_orientation)
+            R.id.layoutManagerButton -> popupMenu.inflate(R.menu.main_item_decoration_layout_manager)
+            R.id.marginButton -> popupMenu.inflate(R.menu.main_item_decoration_margin)
+            R.id.button_orientation -> popupMenu.inflate(R.menu.main_item_decoration_orientation)
         }
         popupMenu.show()
         popupMenu.setOnMenuItemClickListener(onMenuItemClickListener)

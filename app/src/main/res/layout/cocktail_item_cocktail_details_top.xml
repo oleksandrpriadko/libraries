@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.android.oleksandrpriadko.ui.CurvedImageView
+        android:id="@+id/avatarImageView"
+        android:layout_width="@dimen/constraint_match"
+        android:layout_height="@dimen/constraint_match"
+        android:foreground="@drawable/cocktail_foreground_frame_cocktail_details"
+        android:src="@drawable/cocktail_drawable_test"
+        app:curveColor="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@id/ingredientsChipGroup"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        style="@style/TextCocktailLargeBoldShadow"
+        android:layout_width="@dimen/constraint_match"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:ellipsize="end"
+        android:gravity="start"
+        android:text="Good cocktail receipt"
+        app:layout_constraintBottom_toBottomOf="@id/avatarImageView"
+        app:layout_constraintEnd_toEndOf="@id/avatarImageView"
+        app:layout_constraintStart_toStartOf="@id/avatarImageView"
+        app:layout_constraintTop_toTopOf="@id/avatarImageView"
+        app:layout_constraintVertical_bias="1" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/ingredientsChipGroup"
+        android:layout_width="@dimen/constraint_match"
+        android:layout_height="wrap_content"
+        app:flow_verticalBias="0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/avatarImageView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

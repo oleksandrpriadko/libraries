@@ -9,10 +9,9 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/avatarCardView"
-        style="@style/CardViewStyleCocktail"
+        style="@style/CardViewCocktail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
         app:cardUseCompatPadding="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
@@ -26,10 +25,10 @@
 
             <ImageView
                 android:id="@+id/avatarImageView"
-                android:layout_width="@dimen/width_cocktail_avatar"
+                android:layout_width="@dimen/cocktail_width_avatar"
                 android:layout_height="540dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/drawable_test" />
+                android:src="@drawable/cocktail_drawable_test" />
 
             <TextView
                 style="@style/TextCocktailLargeBoldShadow"

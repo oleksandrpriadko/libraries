@@ -39,7 +39,7 @@ ext {
     versionsName = "1.4.2"
     versionsCode = 34
 
-    androidX = '1.0.2'
+    androidX = '1.1.0-rc01'
 
     constraintLayout = '2.0.0-beta2'
     materialVersion = '1.0.0'

@@ -9,7 +9,7 @@
         <attr name="curveColorTabs" format="color" />
         <attr name="areTabsOnTop" format="boolean" />
         <attr name="selectedItem" format="integer" />
-        <attr name="selectedItemBackground" format="reference|color" />
+        <attr name="floatingDrawable" format="reference|color" />
     </declare-styleable>
     <declare-styleable name="TabState">
         <attr name="state_animating" format="boolean" />

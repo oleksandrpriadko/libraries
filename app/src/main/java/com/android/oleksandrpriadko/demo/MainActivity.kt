@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.oleksandrpriadko.demo.adapter.AdapterDemos
 import com.android.oleksandrpriadko.demo.adapter.Demo
-import com.android.oleksandrpriadko.demo.cocktails.CocktailActivity
+import com.android.oleksandrpriadko.demo.cocktails.search.SearchActivity
 import com.android.oleksandrpriadko.demo.item_decoration.ItemDecorationActivity
 import com.android.oleksandrpriadko.demo.loggalitic.LogPublishActivity
 import com.android.oleksandrpriadko.extension.dimenPixelSize
@@ -15,7 +15,7 @@ import com.android.oleksandrpriadko.recycler_adapter.BaseItemListener
 import com.android.oleksandrpriadko.recycler_decoration.ItemDecorationVerticalGridMargin
 import com.crashlytics.android.answers.Answers
 import io.fabric.sdk.android.Fabric
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.main_activity_main.*
 import java.util.*
 
 class MainActivity : FragmentActivity() {
@@ -23,7 +23,7 @@ class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Fabric.with(this, Answers())
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.main_activity_main)
 
         intRecViewDemos()
     }
@@ -39,10 +39,10 @@ class MainActivity : FragmentActivity() {
 
         val itemDecorationMargin = ItemDecorationVerticalGridMargin(
                 spanCount = spanCount,
-                left = dimenPixelSize(R.dimen.margin_left_right_card),
-                top = dimenPixelSize(R.dimen.margin_top_bottom_card),
-                right = dimenPixelSize(R.dimen.margin_left_right_card),
-                bottom = dimenPixelSize(R.dimen.margin_top_bottom_card),
+                left = dimenPixelSize(R.dimen.main_margin_left_right_card),
+                top = dimenPixelSize(R.dimen.main_margin_top_bottom_card),
+                right = dimenPixelSize(R.dimen.main_margin_left_right_card),
+                bottom = dimenPixelSize(R.dimen.main_margin_top_bottom_card),
                 includeEdge = true
         )
         recyclerView.addItemDecoration(itemDecorationMargin)
@@ -65,21 +65,21 @@ class MainActivity : FragmentActivity() {
                 ItemDecorationActivity::class.java,
                 "ItemDecoration",
                 null,
-                R.drawable.ic_workflow_512)
+                R.drawable.main_ic_workflow_512)
         demoList.add(demo)
 
         demo = Demo(
                 LogPublishActivity::class.java,
                 "Analytics",
                 null,
-                R.drawable.ic_analytics_512)
+                R.drawable.main_ic_analytics_512)
         demoList.add(demo)
 
         demo = Demo(
-                CocktailActivity::class.java,
+                SearchActivity::class.java,
                 "Cocktails",
                 null,
-                R.drawable.ic_cocktail_512)
+                R.drawable.main_ic_cocktail_512)
         demoList.add(demo)
 
         adapterDemos.setData(demoList)

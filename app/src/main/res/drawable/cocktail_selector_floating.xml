@@ -1,0 +1,7 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:drawable="@drawable/cocktail_background_floating_selected" app:state_animating="true" />
+
+    <item android:drawable="@drawable/cocktail_background_floating_selected" android:state_selected="true" />
+
+    <item android:drawable="@drawable/cocktail_background_floating_selected" />
+</selector>

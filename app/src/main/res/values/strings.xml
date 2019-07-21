@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">demo</string>
+    <string name="app_name">Portfolio</string>
     <string name="api_key_app_centre" translatable="false">72ae1509-feb5-48e5-acbb-34c53e404b13</string>
 </resources>

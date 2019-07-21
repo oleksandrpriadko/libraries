@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.abs
 import kotlin.math.sqrt
 
-class SliderLayoutManager : LinearLayoutManager {
+class ScalableLinearLayoutManager : LinearLayoutManager {
 
     constructor(context: Context?)
             : super(context)
@@ -19,7 +19,6 @@ class SliderLayoutManager : LinearLayoutManager {
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int)
             : super(context, attrs, defStyleAttr, defStyleRes)
 
-    var callback: OnItemSelectedListener? = null
     private lateinit var recyclerView: RecyclerView
 
     override fun onAttachedToWindow(view: RecyclerView?) {
@@ -48,50 +47,37 @@ class SliderLayoutManager : LinearLayoutManager {
         val mid = width / 2.0f
         for (i in 0 until childCount) {
 
-            // Calculating the distance of the child from the center
             val child = getChildAt(i)
             val childMid = (getDecoratedLeft(child!!) + getDecoratedRight(child)) / 2.0f
             val distanceFromCenter = abs(mid - childMid)
 
-            // The scaling formula
             val scale = 1 - sqrt((distanceFromCenter / width).toDouble()).toFloat() * 0.12f
 
-            // Set scale to view
             child.scaleX = scale
             child.scaleY = scale
         }
     }
 
-    override fun onScrollStateChanged(state: Int) {
-        super.onScrollStateChanged(state)
+//    override fun onScrollStateChanged(state: Int) {
+//
+//        if (state == RecyclerView.SCROLL_STATE_IDLE) {
+//
+//            val recyclerViewCenterX = getRecyclerViewCenterX()
+//            var minDistance = recyclerView.width
+//            var position = -1
+//            for (i in 0 until recyclerView.childCount) {
+//                val child = recyclerView.getChildAt(i)
+//                val childCenterX = getDecoratedLeft(child) + (getDecoratedRight(child) - getDecoratedLeft(child)) / 2
+//                val newDistance = abs(childCenterX - recyclerViewCenterX)
+//                if (newDistance < minDistance) {
+//                    minDistance = newDistance
+//                    position = recyclerView.getChildLayoutPosition(child)
+//                }
+//            }
+//        }
+//    }
 
-        // When scroll stops we notify on the selected item
-        if (state == RecyclerView.SCROLL_STATE_IDLE) {
-
-            // Find the closest child to the recyclerView center --> this is the selected item.
-            val recyclerViewCenterX = getRecyclerViewCenterX()
-            var minDistance = recyclerView.width
-            var position = -1
-            for (i in 0 until recyclerView.childCount) {
-                val child = recyclerView.getChildAt(i)
-                val childCenterX = getDecoratedLeft(child) + (getDecoratedRight(child) - getDecoratedLeft(child)) / 2
-                val newDistance = abs(childCenterX - recyclerViewCenterX)
-                if (newDistance < minDistance) {
-                    minDistance = newDistance
-                    position = recyclerView.getChildLayoutPosition(child)
-                }
-            }
-
-            // Notify on item selection
-            callback?.onItemSelected(position)
-        }
-    }
-
-    private fun getRecyclerViewCenterX(): Int {
-        return (recyclerView.right - recyclerView.left) / 2 + recyclerView.left
-    }
-
-    interface OnItemSelectedListener {
-        fun onItemSelected(layoutPosition: Int)
-    }
+//    private fun getRecyclerViewCenterX(): Int {
+//        return (recyclerView.right - recyclerView.left) / 2 + recyclerView.left
+//    }
 }

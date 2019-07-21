@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/itemCardView"
-    style="@style/CardViewStyle"
+    style="@style/CardViewMain"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:layout_margin="@dimen/margin_left_right_card"
+    tools:layout_margin="@dimen/main_margin_left_right_card"
     tools:layout_width="100dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -28,17 +28,17 @@
             android:layout_width="@dimen/constraint_match"
             android:layout_height="@dimen/constraint_match"
             android:contentDescription="@null"
-            android:padding="@dimen/margin_top_bottom_card"
+            android:padding="@dimen/main_margin_top_bottom_card"
             app:layout_constraintBottom_toTopOf="@id/nameTextView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="spread"
-            tools:src="@drawable/ic_analytics_512" />
+            tools:src="@drawable/main_ic_analytics_512" />
 
         <TextView
             android:id="@+id/nameTextView"
-            style="@style/Text"
+            style="@style/TextMain"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="marquee"

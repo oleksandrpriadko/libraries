@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/margin_top_bottom_card"
-    android:paddingEnd="@dimen/margin_left_right_card"
-    android:paddingStart="@dimen/margin_left_right_card"
-    android:paddingTop="@dimen/margin_top_bottom_card"
+    android:paddingBottom="@dimen/main_margin_top_bottom_card"
+    android:paddingEnd="@dimen/main_margin_left_right_card"
+    android:paddingStart="@dimen/main_margin_left_right_card"
+    android:paddingTop="@dimen/main_margin_top_bottom_card"
     tools:context=".loggalitic.LogPublishActivity">
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/nameEditText"
-        style="@style/EditText"
+        style="@style/InputMain"
         android:layout_width="@dimen/constraint_match"
         android:layout_height="wrap_content"
         android:hint="Name of the event"
@@ -25,10 +25,10 @@
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/descriptionEditText"
-        style="@style/EditText"
+        style="@style/InputMain"
         android:layout_width="@dimen/constraint_match"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_top_bottom_card"
+        android:layout_marginTop="@dimen/main_margin_top_bottom_card"
         android:hint="Description of the event"
         android:imeOptions="actionDone"
         android:inputType="textAutoComplete"
@@ -51,7 +51,7 @@
 
         <TextView
             android:id="@+id/publishedLoggedTextView"
-            style="@style/Text"
+            style="@style/TextMain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:text="Published/Logged events" />
@@ -59,7 +59,7 @@
 
     <TextView
         android:id="@+id/publishLogButton"
-        style="@style/Clickable"
+        style="@style/ClickableMain"
         android:layout_width="@dimen/constraint_match"
         android:layout_height="wrap_content"
         android:layout_marginBottom="1dp"

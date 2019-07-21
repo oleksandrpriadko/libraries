@@ -1,91 +1,97 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/background_screen</item>
-        <item name="colorPrimaryDark">@color/background_secondary</item>
-        <item name="colorAccent">@color/accent_primary</item>
-        <item name="android:windowBackground">@color/background_screen</item>
-        <item name="android:buttonTint">@color/background_clickable</item>
+    <style name="MainTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/main_background_screen</item>
+        <item name="colorPrimaryDark">@color/main_background_secondary</item>
+        <item name="colorAccent">@color/main_accent_primary</item>
+        <item name="android:windowBackground">@color/main_background_screen</item>
+        <item name="android:buttonTint">@color/main_background_clickable</item>
+        <item name="android:windowActivityTransitions">true</item>
     </style>
 
-    <style name="EditText" parent="Text">
-        <item name="android:background">@drawable/background_edit_text</item>
-        <item name="android:paddingBottom">@dimen/margin_top_bottom_card</item>
-        <item name="android:paddingEnd">@dimen/margin_left_right_card</item>
-        <item name="android:paddingStart">@dimen/margin_left_right_card</item>
-        <item name="android:paddingTop">@dimen/margin_top_bottom_card</item>
-        <item name="android:textColorHint">@color/text_color_secondary</item>
+    <style name="InputMain" parent="TextMain">
+        <item name="android:background">@drawable/main_background_input</item>
+        <item name="android:paddingBottom">@dimen/main_margin_top_bottom_card</item>
+        <item name="android:paddingEnd">@dimen/main_margin_left_right_card</item>
+        <item name="android:paddingStart">@dimen/main_margin_left_right_card</item>
+        <item name="android:paddingTop">@dimen/main_margin_top_bottom_card</item>
+        <item name="android:textColorHint">@color/main_text_color_secondary</item>
     </style>
 
-    <style name="Clickable" parent="Text">
-        <item name="android:background">@drawable/background_clickable</item>
-        <item name="android:paddingBottom">@dimen/margin_top_bottom_card</item>
-        <item name="android:paddingEnd">@dimen/margin_left_right_card</item>
-        <item name="android:paddingStart">@dimen/margin_left_right_card</item>
-        <item name="android:paddingTop">@dimen/margin_top_bottom_card</item>
+    <style name="ClickableMain" parent="TextMain">
+        <item name="android:background">@drawable/main_background_clickable</item>
+        <item name="android:paddingBottom">@dimen/main_margin_top_bottom_card</item>
+        <item name="android:paddingEnd">@dimen/main_margin_left_right_card</item>
+        <item name="android:paddingStart">@dimen/main_margin_left_right_card</item>
+        <item name="android:paddingTop">@dimen/main_margin_top_bottom_card</item>
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="Text" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:textColor">@color/text_color</item>
+    <style name="TextMain" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:textColor">@color/main_text_color</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
     </style>
 
-    <style name="CardViewStyle" parent="CardView">
+    <style name="CardViewMain" parent="CardView">
         <item name="android:foreground">?attr/selectableItemBackground</item>
-        <item name="cardBackgroundColor">@color/background_primary</item>
-        <item name="cardCornerRadius">@dimen/radius_card</item>
-        <item name="contentPadding">@dimen/padding_left_right_card</item>
+        <item name="cardBackgroundColor">@color/main_background_primary</item>
+        <item name="cardCornerRadius">@dimen/main_radius_card</item>
+        <item name="contentPadding">@dimen/main_padding_left_right_card</item>
     </style>
 
     <!--        Cocktail themes  -->
     <style name="CocktailTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/background_screen_cocktail</item>
-        <item name="colorPrimaryDark">@color/background_secondary_cocktail</item>
-        <item name="colorAccent">@color/accent_primary_cocktail</item>
-        <item name="android:windowBackground">@color/background_screen_cocktail</item>
-        <item name="android:buttonTint">@color/background_clickable_cocktail</item>
+        <item name="colorPrimary">@color/cocktail_background_screen</item>
+        <item name="colorPrimaryDark">@color/cocktail_background_screen</item>
+        <item name="colorAccent">@color/cocktail_accent_primary</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowBackground">@color/cocktail_background_screen</item>
     </style>
 
     <style name="TextCocktail" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:textColor">@color/text_color_cocktail</item>
+        <item name="android:textColor">@color/cocktail_text_color</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
     </style>
 
     <style name="ClickableCocktail" parent="TextCocktail">
-        <item name="android:background">@drawable/background_clickable_cocktail</item>
-        <item name="android:paddingBottom">@dimen/margin_top_bottom_card</item>
-        <item name="android:paddingEnd">@dimen/margin_left_right_card</item>
-        <item name="android:paddingStart">@dimen/margin_left_right_card</item>
-        <item name="android:paddingTop">@dimen/margin_top_bottom_card</item>
-        <item name="android:gravity">center</item>
-    </style>
-
-    <style name="ClickableNoBackgroundCocktail" parent="TextCocktail">
-        <item name="android:paddingBottom">@dimen/margin_top_bottom_card</item>
-        <item name="android:paddingEnd">@dimen/margin_left_right_card</item>
-        <item name="android:paddingStart">@dimen/margin_left_right_card</item>
-        <item name="android:paddingTop">@dimen/margin_top_bottom_card</item>
-        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/cocktail_background_clickable</item>
+        <item name="android:paddingBottom">@dimen/main_margin_top_bottom_card</item>
+        <item name="android:paddingEnd">@dimen/main_margin_left_right_card</item>
+        <item name="android:paddingStart">@dimen/main_margin_left_right_card</item>
+        <item name="android:paddingTop">@dimen/main_margin_top_bottom_card</item>
     </style>
 
     <style name="TextCocktailShadow" parent="TextCocktail">
         <item name="android:shadowRadius">7</item>
         <item name="android:shadowDy">1</item>
         <item name="android:shadowDx">1</item>
-        <item name="android:shadowColor">@color/text_color_cocktail</item>
+        <item name="android:shadowColor">@color/cocktail_text_color</item>
     </style>
 
     <style name="TextCocktailLargeBoldShadow" parent="TextCocktailShadow">
-        <item name="android:textColor">@color/background_screen_cocktail</item>
+        <item name="android:textColor">@color/cocktail_background_screen</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Display2</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="CardViewStyleCocktail" parent="CardView">
+    <style name="CardViewCocktail" parent="CardView">
         <item name="android:foreground">?attr/selectableItemBackground</item>
-        <item name="cardCornerRadius">@dimen/radius_large_cocktail_card</item>
+        <item name="cardCornerRadius">@dimen/cocktail_radius_large_card</item>
+    </style>
+
+    <style name="InputCocktail" parent="ClickableCocktail">
+        <item name="android:background">@drawable/cocktail_background_input</item>
+        <item name="android:textColorHint">@color/cocktail_text_color_secondary</item>
+        <item name="android:textColor">@color/cocktail_text_color</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="SearchTabCocktail" parent="ClickableCocktail">
+        <item name="android:textColor">@drawable/cocktail_selector_tab_text_colours</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:clickable">true</item>
+        <item name="android:gravity">center</item>
     </style>
 
 </resources>
