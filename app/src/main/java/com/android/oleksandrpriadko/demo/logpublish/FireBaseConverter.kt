@@ -1,4 +1,4 @@
-package com.android.oleksandrpriadko.demo.loggalitic
+package com.android.oleksandrpriadko.demo.logpublish
 
 import android.os.Bundle
 import androidx.core.util.Pair

@@ -1,4 +1,15 @@
 <resources>
-    <string name="app_name">Portfolio</string>
+    <string name="app_name" translatable="false">Portfolio</string>
+    <string name="host" translatable="false">cocktails.android.oleksandrpriadko.com</string>
+    <string name="pathPrefixSearch" translatable="false">/search</string>
+    <string name="pathPrefixCocktail" translatable="false">/cocktail</string>
     <string name="api_key_app_centre" translatable="false">72ae1509-feb5-48e5-acbb-34c53e404b13</string>
+    <string name="lorem_ipsum">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Hac habitasse platea dictumst vestibulum rhoncus est. Vitae congue mauris rhoncus aenean vel. Nibh praesent tristique magna sit amet purus gravida. Nisl condimentum id venenatis a condimentum. Eget egestas purus viverra accumsan in nisl nisi. Eu scelerisque felis imperdiet proin fermentum leo vel. In hac habitasse platea dictumst. Velit ut tortor pretium viverra suspendisse. Integer malesuada nunc vel risus commodo. Morbi tincidunt ornare massa eget egestas purus viverra accumsan in. Tellus pellentesque eu tincidunt tortor. In arcu cursus euismod quis viverra nibh cras. In iaculis nunc sed augue lacus viverra vitae congue. Vitae congue eu consequat ac felis donec et odio pellentesque.
+
+Feugiat in ante metus dictum at. Duis at consectetur lorem donec massa sapien. Amet facilisis magna etiam tempor orci eu. Odio euismod lacinia at quis risus sed. Fusce id velit ut tortor pretium viverra. Arcu risus quis varius quam. Feugiat in ante metus dictum at tempor. Viverra aliquet eget sit amet tellus cras adipiscing. Purus in mollis nunc sed id semper risus in. Sem viverra aliquet eget sit. Tincidunt dui ut ornare lectus sit amet est.
+
+Est velit egestas dui id ornare arcu.
+    </string>
+    <string name="cocktails_with_ingredient">Cocktails with ingredient</string>
 </resources>

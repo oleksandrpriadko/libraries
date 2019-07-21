@@ -29,23 +29,45 @@
             android:label="ItemDecoration" />
 
         <activity
-            android:name=".loggalitic.LogPublishActivity"
-            android:label="Loggalitic" />
+            android:name=".logpublish.LogPublishActivity"
+            android:label="LogPublish" />
 
         <activity
             android:name=".cocktails.search.SearchActivity"
             android:label="Cocktails"
-            android:theme="@style/CocktailTheme"
-            android:windowSoftInputMode="adjustPan" />
+            android:launchMode="singleTask"
+            android:theme="@style/CocktailTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="@string/host"
+                    android:pathPrefix="@string/pathPrefixSearch"
+                    android:scheme="http" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".cocktails.cocktaildetails.CocktailDetailsActivity"
-            android:theme="@style/CocktailTheme" />
+            android:theme="@style/CocktailTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
 
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="@string/host"
+                    android:pathPrefix="@string/pathPrefixCocktail"
+                    android:scheme="http" />
+            </intent-filter>
+        </activity>
 
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="35ba9af7c2f219ba35a8a57ea690f62d5a52318e" />
     </application>
-
 </manifest>

@@ -1,4 +1,4 @@
-package com.android.oleksandrpriadko.demo.loggalitic
+package com.android.oleksandrpriadko.demo.logpublish
 
 import android.util.Log
 import com.android.oleksandrpriadko.demo.App

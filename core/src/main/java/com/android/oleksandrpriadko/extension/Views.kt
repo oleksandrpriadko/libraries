@@ -1,8 +1,10 @@
 package com.android.oleksandrpriadko.extension
 
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.annotation.LayoutRes
 
 fun View.show() {
     visibility = View.VISIBLE
@@ -34,3 +36,10 @@ fun View.frameLayoutParams(height: Int = FrameLayout.LayoutParams.WRAP_CONTENT,
 }
 
 fun View.hasParent(): Boolean = parent != null
+
+fun <T>ViewGroup.inflateOn(@LayoutRes layoutId: Int,
+                        addToParent: Boolean = false): T {
+
+    return LayoutInflater.from(context).inflate(layoutId, this, addToParent) as T
+
+}

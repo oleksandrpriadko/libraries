@@ -37,6 +37,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:' + androidX
     implementation 'com.squareup.okhttp3:logging-interceptor:' + rootProject.okhttp
     implementation 'androidx.core:core-ktx:' + androidX
+    implementation 'com.google.code.gson:gson:2.8.5'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 repositories {

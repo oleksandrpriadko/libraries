@@ -18,4 +18,10 @@
         tools:itemCount="2"
         tools:listitem="@layout/cocktail_item_cocktail_details_top" />
 
+    <include
+        android:id="@+id/ingredientPopup"
+        layout="@layout/cocktail_ingredient_popup"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

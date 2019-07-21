@@ -2,14 +2,14 @@ package com.android.oleksandrpriadko.demo.cocktails.search
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.android.oleksandrpriadko.demo.R
 import com.android.oleksandrpriadko.demo.cocktails.cocktaildetails.CocktailDetailsActivity
 import com.android.oleksandrpriadko.demo.cocktails.model.Cocktail
 import com.android.oleksandrpriadko.recycler_adapter.BaseItemListenerAdapter
 import kotlinx.android.synthetic.main.cocktail_activity_cocktail_search.*
 
-class SearchActivity : FragmentActivity() {
+class SearchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,5 +37,10 @@ class SearchActivity : FragmentActivity() {
                 startActivity(Intent(this@SearchActivity, CocktailDetailsActivity::class.java))
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+
     }
 }

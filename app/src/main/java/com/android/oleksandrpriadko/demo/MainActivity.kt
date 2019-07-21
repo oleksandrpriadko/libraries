@@ -2,14 +2,14 @@ package com.android.oleksandrpriadko.demo
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.oleksandrpriadko.demo.adapter.AdapterDemos
 import com.android.oleksandrpriadko.demo.adapter.Demo
 import com.android.oleksandrpriadko.demo.cocktails.search.SearchActivity
 import com.android.oleksandrpriadko.demo.item_decoration.ItemDecorationActivity
-import com.android.oleksandrpriadko.demo.loggalitic.LogPublishActivity
+import com.android.oleksandrpriadko.demo.logpublish.LogPublishActivity
 import com.android.oleksandrpriadko.extension.dimenPixelSize
 import com.android.oleksandrpriadko.recycler_adapter.BaseItemListener
 import com.android.oleksandrpriadko.recycler_decoration.ItemDecorationVerticalGridMargin
@@ -18,7 +18,7 @@ import io.fabric.sdk.android.Fabric
 import kotlinx.android.synthetic.main.main_activity_main.*
 import java.util.*
 
-class MainActivity : FragmentActivity() {
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

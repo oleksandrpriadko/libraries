@@ -3,10 +3,10 @@ package com.android.oleksandrpriadko.demo
 import android.app.Application
 import android.util.Log
 
-import com.android.oleksandrpriadko.demo.loggalitic.AppCenterConverter
-import com.android.oleksandrpriadko.demo.loggalitic.DemoPublisher
-import com.android.oleksandrpriadko.demo.loggalitic.FabricConverter
-import com.android.oleksandrpriadko.demo.loggalitic.FireBaseConverter
+import com.android.oleksandrpriadko.demo.logpublish.AppCenterConverter
+import com.android.oleksandrpriadko.demo.logpublish.DemoPublisher
+import com.android.oleksandrpriadko.demo.logpublish.FabricConverter
+import com.android.oleksandrpriadko.demo.logpublish.FireBaseConverter
 import com.android.oleksandrpriadko.loggalitic.LogPublishService
 import com.android.oleksandrpriadko.loggalitic.logger.DefaultLogger
 import com.android.oleksandrpriadko.loggalitic.policy.DefaultPolicy

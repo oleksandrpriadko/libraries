@@ -1,4 +1,4 @@
-package com.android.oleksandrpriadko.demo.loggalitic
+package com.android.oleksandrpriadko.demo.logpublish
 
 import com.android.oleksandrpriadko.core.policy.AnalyticsEvent
 import com.android.oleksandrpriadko.loggalitic.analytics.converter.Converter
