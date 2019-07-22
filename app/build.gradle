@@ -52,8 +52,13 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:' + constraintLayout
     implementation 'com.google.android.material:material:' + materialVersion
+    implementation 'com.squareup.retrofit2:converter-gson:' + rootProject.retrofit
+    implementation 'androidx.lifecycle:lifecycle-common-java8:' + lifecycleJava
+    implementation 'com.squareup.okhttp3:logging-interceptor:' + rootProject.okhttp
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    implementation 'com.airbnb.android:lottie:3.0.7'
 }
 
 apply plugin: 'com.google.gms.google-services'

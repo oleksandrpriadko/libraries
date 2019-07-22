@@ -1,5 +1,6 @@
 package com.android.oleksandrpriadko.recycler_adapter
 
+import android.content.Context
 import android.view.View
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
@@ -35,5 +36,25 @@ open class BaseHolderPicasso(itemView: View) : RecyclerView.ViewHolder(itemView)
                 .placeholder(placeHolderId)
                 .error(R.drawable.ic_error_outline_black_24dp)
                 .into(imageView)
+    }
+
+    companion object {
+
+        private fun getPicasso(context: Context): Picasso {
+            val picasso = Picasso.with(context)
+            picasso.setIndicatorsEnabled(false)
+            picasso.isLoggingEnabled = false
+            return picasso
+        }
+
+        fun loadImage(url: String?,
+                      imageView: ImageView,
+                      @DrawableRes placeHolderId: Int) {
+            getPicasso(imageView.context)
+                    .load(url)
+                    .placeholder(placeHolderId)
+                    .error(R.drawable.ic_error_outline_black_24dp)
+                    .into(imageView)
+        }
     }
 }

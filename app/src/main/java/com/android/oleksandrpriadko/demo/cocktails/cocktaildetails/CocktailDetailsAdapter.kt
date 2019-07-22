@@ -4,12 +4,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IntDef
-import androidx.recyclerview.widget.RecyclerView
 import com.android.oleksandrpriadko.demo.R
 import com.android.oleksandrpriadko.demo.cocktails.cocktaildetails.CocktailDetailsAdapter.Companion.IMAGE_INGREDIENTS
 import com.android.oleksandrpriadko.demo.cocktails.cocktaildetails.CocktailDetailsAdapter.Companion.INSTRUCTION
+import com.android.oleksandrpriadko.demo.cocktails.model.DrinkDetails
 import com.android.oleksandrpriadko.extension.inflateOn
 import com.android.oleksandrpriadko.recycler_adapter.BaseAdapterRecyclerView
+import com.android.oleksandrpriadko.recycler_adapter.BaseHolderPicasso
 import com.android.oleksandrpriadko.recycler_adapter.BaseItemListener
 import com.google.android.material.chip.Chip
 import kotlinx.android.synthetic.main.cocktail_item_cocktail_details_bottom.view.*
@@ -25,6 +26,8 @@ class CocktailDetailsAdapter(itemListener: ItemListener? = null) :
         setData(mutableListOf(SelectedPage.TOP, SelectedPage.BOTTOM))
     }
 
+    var drinkDetails: DrinkDetails = DrinkDetails()
+
     override fun onGetHolder(inflater: LayoutInflater,
                              parent: ViewGroup,
                              @ViewType viewType: Int): Holder {
@@ -39,7 +42,7 @@ class CocktailDetailsAdapter(itemListener: ItemListener? = null) :
     }
 
     override fun onBindHolder(holder: Holder, position: Int) {
-        holder.onBind()
+        holder.onBind(drinkDetails)
 
     }
 
@@ -60,31 +63,43 @@ class CocktailDetailsAdapter(itemListener: ItemListener? = null) :
     }
 }
 
-abstract class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+abstract class Holder(itemView: View) : BaseHolderPicasso(itemView) {
 
-    abstract fun onBind()
+    abstract fun onBind(drinkDetails: DrinkDetails)
 }
 
 class TopHolder(itemView: ViewGroup, private val itemListener: ItemListener?) : Holder(itemView) {
-    override fun onBind() {
-        for (i in 0..10) {
-            (itemView as ViewGroup).inflateOn<Chip>(
-                    R.layout.cocktail_item_ingredient, false).apply {
-                text = "Chip # $i"
-                chipIcon = context.getDrawable(R.drawable.ic_error_outline_black_24dp)
-                itemView.ingredientsChipGroup.addView(this)
-                setOnClickListener {
-                    itemListener?.onIngredientClick()
-                }
-            }
-        }
+    override fun onBind(drinkDetails: DrinkDetails) {
+        loadAvatar(drinkDetails.strDrinkThumb)
+
+        displayIngredientsChips(drinkDetails)
+
+        itemView.nameTextView.text = drinkDetails.strDrink
     }
 
+    private fun loadAvatar(imageUrl: String?) {
+        loadImage(imageUrl, itemView.avatarImageView, R.drawable.main_ic_cocktail_512)
+    }
+
+    private fun displayIngredientsChips(drinkDetails: DrinkDetails) {
+        for (ingredient in drinkDetails.listOfIngredients) {
+            (itemView as ViewGroup).inflateOn<Chip>(
+                    R.layout.cocktail_item_ingredient,
+                    false)
+                    .apply {
+                        text = ingredient
+                        itemView.ingredientsChipGroup.addView(this)
+                        setOnClickListener {
+                            itemListener?.onIngredientClick(ingredient)
+                        }
+                    }
+        }
+    }
 }
 
 class BottomHolder(itemView: View) : Holder(itemView) {
-    override fun onBind() {
-        itemView.instructionsTextView.text = itemView.context.getString(R.string.lorem_ipsum)
+    override fun onBind(drinkDetails: DrinkDetails) {
+        itemView.instructionsTextView.text = drinkDetails.strInstructions
     }
 }
 
@@ -95,7 +110,7 @@ enum class SelectedPage(val description: String) {
 
 interface ItemListener : BaseItemListener<SelectedPage> {
 
-    fun onIngredientClick()
+    fun onIngredientClick(ingredientName: String?)
 
 }
 

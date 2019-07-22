@@ -11,15 +11,15 @@ import com.android.oleksandrpriadko.recycler_adapter.BaseItemListener
 import kotlinx.android.synthetic.main.cocktail_item_cocktail_search_screen.view.*
 
 class CocktailSearchScreenAdapter(itemListener: BaseItemListener<Cocktail>? = null)
-    : BaseAdapterRecyclerView<Cocktail, Holder, BaseItemListener<Cocktail>>(itemListener) {
+    : BaseAdapterRecyclerView<Cocktail, CocktailSearchScreenHolder, BaseItemListener<Cocktail>>(itemListener) {
 
     override fun isItemViewClickable(): Boolean = false
 
-    override fun onGetHolder(inflater: LayoutInflater, parent: ViewGroup, viewType: Int): Holder {
-        return Holder(inflater.inflate(R.layout.cocktail_item_cocktail_search_screen, parent, false))
+    override fun onGetHolder(inflater: LayoutInflater, parent: ViewGroup, viewType: Int): CocktailSearchScreenHolder {
+        return CocktailSearchScreenHolder(inflater.inflate(R.layout.cocktail_item_cocktail_search_screen, parent, false))
     }
 
-    override fun onBindHolder(holder: Holder, position: Int) {
+    override fun onBindHolder(holder: CocktailSearchScreenHolder, position: Int) {
         holder.onBind(items[position])
         holder.itemView.avatarCardView.setOnClickListener {
             itemListener?.itemClicked(position, items[position])
@@ -27,7 +27,7 @@ class CocktailSearchScreenAdapter(itemListener: BaseItemListener<Cocktail>? = nu
     }
 }
 
-class Holder(iteView: View) : RecyclerView.ViewHolder(iteView) {
+class CocktailSearchScreenHolder(iteView: View) : RecyclerView.ViewHolder(iteView) {
 
     fun onBind(cocktail: Cocktail) {
     }

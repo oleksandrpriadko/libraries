@@ -9,7 +9,7 @@ import java.util.*
 
 abstract class ObservableRepo(lifecycleOwner: LifecycleOwner) {
 
-    private val mLifecycleBoundObservers = ArrayList<LifecycleBoundObserver>()
+    private val lifecycleBoundObservers = ArrayList<LifecycleBoundObserver>()
 
     init {
         requestObserve(lifecycleOwner)
@@ -28,12 +28,12 @@ abstract class ObservableRepo(lifecycleOwner: LifecycleOwner) {
         }
 
         val lifecycleBoundObserver = LifecycleBoundObserver(lifecycleOwner)
-        mLifecycleBoundObservers.add(lifecycleBoundObserver)
+        lifecycleBoundObservers.add(lifecycleBoundObserver)
         logState("added")
     }
 
     private fun isAlreadyAdded(incomingLifecycleOwner: LifecycleOwner): Boolean {
-        for (lifecycleBoundObserver in mLifecycleBoundObservers) {
+        for (lifecycleBoundObserver in lifecycleBoundObservers) {
             if (lifecycleBoundObserver.lifecycleOwner == incomingLifecycleOwner) {
                 return true
             }
@@ -42,7 +42,7 @@ abstract class ObservableRepo(lifecycleOwner: LifecycleOwner) {
     }
 
     private fun findObserver(lifecycleOwner: LifecycleOwner): LifecycleBoundObserver? {
-        for (lifecycleBoundObserver in mLifecycleBoundObservers) {
+        for (lifecycleBoundObserver in lifecycleBoundObservers) {
             if (lifecycleBoundObserver.lifecycleOwner === lifecycleOwner) {
                 return lifecycleBoundObserver
             }
@@ -54,20 +54,20 @@ abstract class ObservableRepo(lifecycleOwner: LifecycleOwner) {
     fun requestRemoveObserver(lifecycleOwner: LifecycleOwner) {
         val lifecycleBoundObserver = findObserver(lifecycleOwner)
         if (lifecycleBoundObserver != null) {
-            mLifecycleBoundObservers.remove(lifecycleBoundObserver)
+            lifecycleBoundObservers.remove(lifecycleBoundObserver)
             logState("removed")
         } else {
             logState("not found, nothing to remove")
         }
 
         if (!hasObservers()) {
-            logState("no observers, destroy " + mLifecycleBoundObservers.size)
+            logState("no observers, destroy " + lifecycleBoundObservers.size)
             cleanUp()
         }
     }
 
     fun hasObservers(): Boolean {
-        return mLifecycleBoundObservers.isNotEmpty()
+        return lifecycleBoundObservers.isNotEmpty()
     }
 
     abstract fun cleanUp()

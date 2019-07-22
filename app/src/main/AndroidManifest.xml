@@ -44,8 +44,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="@string/host"
-                    android:pathPrefix="@string/pathPrefixSearch"
+                    android:host="@string/cocktail_host"
+                    android:pathPrefix="@string/cocktail_pathPrefixSearch"
                     android:scheme="http" />
             </intent-filter>
         </activity>
@@ -60,8 +60,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="@string/host"
-                    android:pathPrefix="@string/pathPrefixCocktail"
+                    android:host="@string/cocktail_host"
+                    android:pathPrefix="@string/cocktail_pathPrefixCocktail"
                     android:scheme="http" />
             </intent-filter>
         </activity>

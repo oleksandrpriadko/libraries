@@ -37,7 +37,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:' + constraintLayout
     implementation 'com.google.android.material:material:' + materialVersion
 
-    implementation 'androidx.lifecycle:lifecycle-common-java8:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-common-java8:' + lifecycleJava
 
     implementation 'androidx.core:core-ktx:' + androidX
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

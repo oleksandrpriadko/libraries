@@ -49,13 +49,13 @@ class RetrofitRepoExtension(
         retrofit = null
     }
 
-    interface Listener {
+interface Listener {
 
-        fun onLoadingStarted()
+    fun onLoadingStarted()
 
-        fun onLoadingDone()
+    fun onLoadingDone()
 
-        fun onLoadingError(throwable: Throwable)
+    fun onLoadingError(throwable: Throwable)
 
     }
 }

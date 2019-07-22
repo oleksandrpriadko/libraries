@@ -62,6 +62,14 @@
         <item name="android:paddingTop">@dimen/main_margin_top_bottom_card</item>
     </style>
 
+    <style name="ClickableCocktailSearchResult" parent="TextCocktail">
+        <item name="android:background">@drawable/cocktail_background_clickable</item>
+        <item name="android:paddingBottom">@dimen/cocktail_padding_top_bottom_search_result_text</item>
+        <item name="android:paddingEnd">@dimen/cocktail_padding_left_right_search_result_text</item>
+        <item name="android:paddingStart">@dimen/cocktail_padding_left_right_search_result_text</item>
+        <item name="android:paddingTop">@dimen/cocktail_padding_top_bottom_search_result_text</item>
+    </style>
+
     <style name="TextCocktailShadow" parent="TextCocktail">
         <item name="android:shadowRadius">7</item>
         <item name="android:shadowDy">1</item>
@@ -92,6 +100,15 @@
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:clickable">true</item>
         <item name="android:gravity">center</item>
+    </style>
+
+    <style name="ChipActionCocktail" parent="@style/Widget.MaterialComponents.Chip.Action">
+        <item name="android:textColor">@color/cocktail_text_color</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+        <item name="android:paddingBottom">@dimen/cocktail_padding_top_bottom_search_result_text</item>
+        <item name="android:paddingEnd">@dimen/cocktail_padding_left_right_search_result_text</item>
+        <item name="android:paddingStart">@dimen/cocktail_padding_left_right_search_result_text</item>
+        <item name="android:paddingTop">@dimen/cocktail_padding_top_bottom_search_result_text</item>
     </style>
 
 </resources>

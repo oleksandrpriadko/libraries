@@ -20,10 +20,13 @@
         app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
+        android:id="@+id/nameTextView"
         style="@style/TextCocktailLargeBoldShadow"
         android:layout_width="@dimen/constraint_match"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_marginBottom="40dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
         android:ellipsize="end"
         android:gravity="start"
         android:text="Good cocktail receipt"
@@ -37,7 +40,10 @@
         android:id="@+id/ingredientsChipGroup"
         android:layout_width="@dimen/constraint_match"
         android:layout_height="wrap_content"
-        app:flow_verticalBias="0"
+        android:layout_marginBottom="@dimen/main_margin_top_bottom_card"
+        android:layout_marginEnd="@dimen/main_margin_left_right_card"
+        android:layout_marginStart="@dimen/main_margin_left_right_card"
+        android:layout_marginTop="@dimen/main_margin_top_bottom_card"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
