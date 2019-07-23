@@ -12,7 +12,7 @@ import com.android.oleksandrpriadko.extension.*
 import com.android.oleksandrpriadko.mvp.presenter.BasePresenter
 import kotlin.math.roundToInt
 
-class AttachedTabsPresenter(presenterView: PresenterView)
+class AttachedTabsPresenter(presenterView: PresenterView, isInEditMode: Boolean)
     : BasePresenter<PresenterView>(presenterView) {
 
     private var indexOfSelectedItem = 0
@@ -22,6 +22,10 @@ class AttachedTabsPresenter(presenterView: PresenterView)
 
     private var coordinatesStart = Coordinates.NOT_SET
     private var coordinatesDestination = Coordinates.NOT_SET
+
+    init {
+        super.isViewInEditMode = isInEditMode
+    }
 
     fun selectItem(index: Int, areTabsOnTop: Boolean) {
         if (indexOfSelectedItem == index) {

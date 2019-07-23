@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.android.oleksandrpriadko.ui.attachedtabs.AttachedTabsView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/searchTabs"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/cocktail_background_screen"
+    android:paddingTop="5dp"
+    app:areTabsOnTop="true"
+    app:curveColorTabs="@color/cocktail_background_secondary"
+    app:floatingDrawable="@drawable/cocktail_selector_floating"
+    app:selectedItem="0">
+
+    <TextView
+        android:id="@+id/cocktailTab"
+        style="@style/SearchTabCocktail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cocktail"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/ingredientTab"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/ingredientTab"
+        style="@style/SearchTabCocktail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ingredient"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glassTab"
+        app:layout_constraintStart_toEndOf="@id/cocktailTab"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/glassTab"
+        style="@style/SearchTabCocktail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Glass"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ingredientTab"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</com.android.oleksandrpriadko.ui.attachedtabs.AttachedTabsView>

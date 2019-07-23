@@ -11,7 +11,7 @@ abstract class BasePresenter<T : LifecycleOwner>(view: T?) : DefaultLifecycleObs
     protected var view: T? = view
         get() {
             field?.let {
-                if (it.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
+                if (it.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED) || isViewInEditMode) {
                     return it
                 }
             }
@@ -52,4 +52,6 @@ abstract class BasePresenter<T : LifecycleOwner>(view: T?) : DefaultLifecycleObs
             LogPublishService.logger().d(javaClass.simpleName, message)
         }
     }
+
+    open var isViewInEditMode = false
 }

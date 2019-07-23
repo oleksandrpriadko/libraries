@@ -4,12 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="5dp"
     tools:ignore="ContentDescription">
 
     <androidx.cardview.widget.CardView
+        app:cardUseCompatPadding="true"
         android:id="@+id/avatarCardView"
         style="@style/CardViewCocktail"
+        app:cardCornerRadius="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"
@@ -22,7 +23,7 @@
 
         <ImageView
             android:id="@+id/avatarImageView"
-            android:layout_width="150dp"
+            android:layout_width="180dp"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
             android:src="@drawable/cocktail_drawable_test" />
@@ -33,8 +34,8 @@
         style="@style/ClickableCocktailSearchResult"
         android:layout_width="@dimen/constraint_match"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:layout_marginStart="10dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginStart="5dp"
         android:background="@drawable/cocktail_background_search_result_text"
         android:elevation="2dp"
         android:ellipsize="end"

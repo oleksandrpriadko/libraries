@@ -3,13 +3,13 @@ package com.android.oleksandrpriadko.demo.cocktails.search
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearSnapHelper
 import com.android.oleksandrpriadko.demo.R
 import com.android.oleksandrpriadko.demo.cocktails.cocktaildetails.CocktailDetailsActivity
 import com.android.oleksandrpriadko.demo.cocktails.model.Cocktail
 import com.android.oleksandrpriadko.demo.cocktails.model.Drink
 import com.android.oleksandrpriadko.recycler_adapter.BaseItemListenerAdapter
-import kotlinx.android.synthetic.main.cocktail_activity_cocktail_search.*
+import kotlinx.android.synthetic.main.cocktail_activity_search.*
+import kotlinx.android.synthetic.main.cocktail_layout_input.*
 
 class SearchActivity : AppCompatActivity(), PresenterView {
 
@@ -20,7 +20,7 @@ class SearchActivity : AppCompatActivity(), PresenterView {
 
         presenter = SearchPresenter(getString(R.string.cocktail_base_url), this)
 
-        setContentView(R.layout.cocktail_activity_cocktail_search)
+        setContentView(R.layout.cocktail_activity_search)
 
         val adapter = CocktailSearchScreenAdapter()
         val items = mutableListOf(
@@ -37,17 +37,11 @@ class SearchActivity : AppCompatActivity(), PresenterView {
                 Cocktail("eleventh item in a row is here"))
         adapter.setData(items)
         itemsCarouselRecyclerView.adapter = adapter
-        adapter.itemListener = object : BaseItemListenerAdapter<Cocktail>() {
-            override fun itemClicked(position: Int, item: Cocktail) {
-                super.itemClicked(position, item)
-            }
-        }
-
-        LinearSnapHelper().attachToRecyclerView(searchResultsRecView)
 
         searchInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 presenter.filterByIngredient(searchInput.text.toString())
+                searchWrapLayout.transitionToEnd()
             }
             false
         }
@@ -58,7 +52,7 @@ class SearchActivity : AppCompatActivity(), PresenterView {
             setData(foundDrinks)
             itemListener = object : BaseItemListenerAdapter<Drink>() {
                 override fun itemClicked(position: Int, item: Drink) {
-                    presenter.onCocktailClicked(item)
+                    presenter.onDrinkClicked(item)
                 }
             }
         }
@@ -66,5 +60,24 @@ class SearchActivity : AppCompatActivity(), PresenterView {
 
     override fun openCocktailDetails(drinkId: String) {
         CocktailDetailsActivity.loadCocktailById(this, drinkId)
+    }
+
+    override fun expandResultsLayout(expand: Boolean) {
+        when {
+            expand -> searchWrapLayout.transitionToEnd()
+            else -> searchWrapLayout.transitionToStart()
+        }
+    }
+
+    override fun showLoadingLayout(show: Boolean) {
+
+    }
+
+    override fun onBackPressed() {
+        if (searchWrapLayout.progress > 0f) {
+            searchWrapLayout.transitionToStart()
+        } else {
+            super.onBackPressed()
+        }
     }
 }

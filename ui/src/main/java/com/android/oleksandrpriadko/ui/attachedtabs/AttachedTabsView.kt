@@ -18,6 +18,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
 import com.android.oleksandrpriadko.ui.R
 
 class AttachedTabsView : ConstraintLayout, PresenterView {
@@ -46,7 +47,7 @@ class AttachedTabsView : ConstraintLayout, PresenterView {
 
     private var animator = ValueAnimator()
 
-    private val presenter = AttachedTabsPresenter(this)
+    private val presenter = AttachedTabsPresenter(this, isInEditMode)
 
     constructor(context: Context?) : super(context) {
         init(null)
@@ -75,7 +76,9 @@ class AttachedTabsView : ConstraintLayout, PresenterView {
                     0).apply {
                 curveColor = getColor(R.styleable.AttachedTabsView_curveColorTabs, curveColor)
                 areTabsOnTop = getBoolean(R.styleable.AttachedTabsView_areTabsOnTop, areTabsOnTop)
-                presenter.selectItem(getInt(R.styleable.AttachedTabsView_selectedItem, 0), areTabsOnTop)
+                presenter.selectItem(
+                        getInt(R.styleable.AttachedTabsView_selectedItem, 0),
+                        areTabsOnTop)
                 selectedItemBackground = getDrawable(R.styleable.AttachedTabsView_floatingDrawable)
                 recycle()
             }
@@ -175,7 +178,19 @@ class AttachedTabsView : ConstraintLayout, PresenterView {
     }
 
     override fun getLifecycle(): Lifecycle {
-        return (context as FragmentActivity).lifecycle
+        return (context as? FragmentActivity)?.lifecycle ?: object : Lifecycle() {
+            override fun addObserver(observer: LifecycleObserver) {
+
+            }
+
+            override fun removeObserver(observer: LifecycleObserver) {
+
+            }
+
+            override fun getCurrentState(): State {
+                return State.DESTROYED
+            }
+        }
     }
 
     companion object {
