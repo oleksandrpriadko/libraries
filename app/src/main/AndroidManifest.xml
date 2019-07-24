@@ -66,6 +66,10 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".cocktails.splash.CocktailSplashActivity"
+            android:theme="@style/CocktailThemeSplash" />
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="35ba9af7c2f219ba35a8a57ea690f62d5a52318e" />

@@ -7,17 +7,17 @@
     android:layout_height="wrap_content"
     android:background="@drawable/cocktail_background_search_wrap"
     android:elevation="1dp"
-    android:outlineProvider="background"
     android:paddingBottom="5dp"
+    android:outlineProvider="background"
     app:layoutDescription="@xml/cocktail_scene_input_results"
     app:motionProgress="0"
-    tools:showIn="@layout/cocktail_activity_search">
+    tools:ignore="RtlSymmetry">
 
     <include
         layout="@layout/cocktail_layout_search_tabs"
         android:layout_width="@dimen/constraint_match"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/searchInput"
+        app:layout_constraintBottom_toTopOf="@id/inputScrollView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -30,25 +30,60 @@
         android:layout_height="@dimen/constraint_match"
         android:background="@drawable/cocktail_background_input_results" />
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/searchInput"
-        style="@style/InputCocktail"
+    <View
         android:layout_width="@dimen/constraint_match"
+        android:layout_height="@dimen/constraint_match"
+        android:id="@+id/inputBackgroundView"
+        android:background="@drawable/cocktail_background_input" />
+
+    <HorizontalScrollView
+        android:id="@+id/inputScrollView"
+        android:layout_width="@dimen/constraint_match"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
         android:layout_height="wrap_content"
-        android:hint="Input text"
-        android:imeOptions="actionSearch"
-        android:inputType="textAutoComplete"
-        android:maxLines="1"
-        android:outlineProvider="background" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchTabs">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/ingredientsChipGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/searchInput"
+                android:layout_alignTop="@id/searchInput" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/searchInput"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/ingredientsChipGroup"
+                android:background="@android:color/transparent"
+                android:gravity="center_vertical"
+                android:layout_centerVertical="true"
+                android:hint="Input text"
+                android:imeOptions="actionSearch"
+                android:inputType="textAutoComplete"
+                android:maxLines="1"
+                android:outlineProvider="background"
+                android:textColorHint="@color/cocktail_text_color_secondary" />
+
+        </RelativeLayout>
+
+    </HorizontalScrollView>
 
     <Space
         android:id="@+id/centerOfInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/searchInput"
-        app:layout_constraintEnd_toEndOf="@id/searchInput"
-        app:layout_constraintStart_toStartOf="@id/searchInput"
-        app:layout_constraintTop_toTopOf="@id/searchInput" />
+        app:layout_constraintBottom_toBottomOf="@id/inputScrollView"
+        app:layout_constraintEnd_toEndOf="@id/inputScrollView"
+        app:layout_constraintStart_toStartOf="@id/inputScrollView"
+        app:layout_constraintTop_toTopOf="@id/inputScrollView" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/searchResultsRecView"

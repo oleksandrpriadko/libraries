@@ -2,6 +2,9 @@ package com.android.oleksandrpriadko.demo
 
 import android.app.Application
 import android.util.Log
+import androidx.room.Room
+import com.android.oleksandrpriadko.demo.cocktails.CocktailManagerFinder
+import com.android.oleksandrpriadko.demo.cocktails.model.CocktailAppDatabase
 
 import com.android.oleksandrpriadko.demo.logpublish.AppCenterConverter
 import com.android.oleksandrpriadko.demo.logpublish.DemoPublisher
@@ -25,6 +28,10 @@ class App : Application() {
         val policy = initPolicy()
 
         LogPublishService.init(initLogger(policy), initPublisher(policy))
+        CocktailManagerFinder.databaseCocktail = Room
+                .databaseBuilder(applicationContext, CocktailAppDatabase::class.java, "ingredients")
+                .allowMainThreadQueries()
+                .build()
     }
 
     private fun initPolicy(): DefaultPolicy {

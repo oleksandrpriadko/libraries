@@ -236,6 +236,8 @@ class AttachedTabsPresenter(presenterView: PresenterView, isInEditMode: Boolean)
             }
         }
     }
+
+    fun getIngexOfSelectedItem(): Int = indexOfSelectedItem
 }
 
 interface PresenterView : LifecycleOwner {

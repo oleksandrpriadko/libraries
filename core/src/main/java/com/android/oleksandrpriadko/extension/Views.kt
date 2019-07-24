@@ -39,7 +39,6 @@ fun View.hasParent(): Boolean = parent != null
 
 fun <T> ViewGroup.inflateOn(@LayoutRes layoutId: Int,
                             addToParent: Boolean = false): T {
-
     return LayoutInflater.from(context).inflate(layoutId, this, addToParent) as T
 
 }

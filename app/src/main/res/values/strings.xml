@@ -1,10 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">Portfolio</string>
-    <string name="cocktail_base_url">https://www.thecocktaildb.com/api/json/v1/1/</string>
-    <string name="cocktail_host" translatable="false">cocktails.android.oleksandrpriadko.com</string>
-    <string name="cocktail_pathPrefixSearch" translatable="false">/search</string>
-    <string name="cocktail_pathPrefixCocktail" translatable="false">/cocktail</string>
     <string name="api_key_app_centre" translatable="false">72ae1509-feb5-48e5-acbb-34c53e404b13</string>
+
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Hac habitasse platea dictumst vestibulum rhoncus est. Vitae congue mauris rhoncus aenean vel. Nibh praesent tristique magna sit amet purus gravida. Nisl condimentum id venenatis a condimentum. Eget egestas purus viverra accumsan in nisl nisi. Eu scelerisque felis imperdiet proin fermentum leo vel. In hac habitasse platea dictumst. Velit ut tortor pretium viverra suspendisse. Integer malesuada nunc vel risus commodo. Morbi tincidunt ornare massa eget egestas purus viverra accumsan in. Tellus pellentesque eu tincidunt tortor. In arcu cursus euismod quis viverra nibh cras. In iaculis nunc sed augue lacus viverra vitae congue. Vitae congue eu consequat ac felis donec et odio pellentesque.
 
@@ -12,5 +9,13 @@ Feugiat in ante metus dictum at. Duis at consectetur lorem donec massa sapien. A
 
 Est velit egestas dui id ornare arcu.
     </string>
+
+    <!--    Cocktail    -->
+    <string name="cocktail_base_url">https://www.thecocktaildb.com/api/json/v1/1/</string>
+    <string name="cocktail_host" translatable="false">cocktails.android.oleksandrpriadko.com</string>
+    <string name="cocktail_pathPrefixSearch" translatable="false">/search</string>
+    <string name="cocktail_pathPrefixCocktail" translatable="false">/cocktail</string>
     <string name="cocktails_with_ingredient">Cocktails with ingredient</string>
+    <string name="cocktail_hint_by_ingredients">Ingredient name</string>
+    <string name="cocktail_hint_by_name">Drink name</string>
 </resources>

@@ -7,20 +7,29 @@
         app:constraintSetStart="@id/collapsed">
         <OnClick
             app:clickAction="toggle"
-            app:targetId="@id/searchInput">
+            app:targetId="@id/inputScrollView">
 
         </OnClick>
     </Transition>
 
     <ConstraintSet android:id="@+id/collapsed">
         <Constraint
-            android:id="@+id/searchInput"
+            android:id="@+id/inputScrollView"
             android:layout_width="@dimen/constraint_match"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/searchTabs" />
+
+        <Constraint
+            android:id="@+id/inputBackgroundView"
             android:layout_marginEnd="5dp"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/inputScrollView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/searchTabs" />
@@ -30,8 +39,8 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/constraint_match"
             app:layout_constraintBottom_toBottomOf="@id/centerOfInput"
-            app:layout_constraintEnd_toEndOf="@id/searchInput"
-            app:layout_constraintStart_toStartOf="@id/searchInput"
+            app:layout_constraintEnd_toEndOf="@id/inputScrollView"
+            app:layout_constraintStart_toStartOf="@id/inputScrollView"
             app:layout_constraintTop_toBottomOf="@id/centerOfInput" />
 
         <Constraint
@@ -39,20 +48,30 @@
             android:layout_width="@dimen/constraint_match"
             android:layout_height="@dimen/constraint_match"
             app:layout_constraintBottom_toBottomOf="@id/centerOfInput"
-            app:layout_constraintEnd_toEndOf="@id/searchInput"
-            app:layout_constraintStart_toStartOf="@id/searchInput"
+            app:layout_constraintEnd_toEndOf="@id/inputScrollView"
+            app:layout_constraintStart_toStartOf="@id/inputScrollView"
             app:layout_constraintTop_toTopOf="@id/centerOfInput" />
 
     </ConstraintSet>
     <ConstraintSet android:id="@+id/expanded">
         <Constraint
-            android:id="@+id/searchInput"
+            android:id="@+id/inputScrollView"
             android:layout_width="@dimen/constraint_match"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="10dp"
+            android:elevation="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/searchTabs" />
+
+        <Constraint
+            android:id="@+id/inputBackgroundView"
             android:layout_marginEnd="5dp"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
-            android:elevation="5dp"
+            app:layout_constraintBottom_toBottomOf="@id/inputScrollView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/searchTabs" />
@@ -63,17 +82,17 @@
             android:layout_height="480dp"
             android:layout_marginEnd="5dp"
             android:layout_marginStart="5dp"
-            app:layout_constraintEnd_toEndOf="@id/searchInput"
-            app:layout_constraintStart_toStartOf="@id/searchInput"
-            app:layout_constraintTop_toBottomOf="@id/searchInput" />
+            app:layout_constraintEnd_toEndOf="@id/inputScrollView"
+            app:layout_constraintStart_toStartOf="@id/inputScrollView"
+            app:layout_constraintTop_toBottomOf="@id/inputScrollView" />
 
         <Constraint
             android:id="@+id/backgroundInputResults"
             android:layout_width="@dimen/constraint_match"
             android:layout_height="@dimen/constraint_match"
             app:layout_constraintBottom_toBottomOf="@id/belowResultsSpace"
-            app:layout_constraintEnd_toEndOf="@id/searchInput"
-            app:layout_constraintStart_toStartOf="@id/searchInput"
+            app:layout_constraintEnd_toEndOf="@id/inputScrollView"
+            app:layout_constraintStart_toStartOf="@id/inputScrollView"
             app:layout_constraintTop_toTopOf="@id/centerOfInput" />
 
     </ConstraintSet>

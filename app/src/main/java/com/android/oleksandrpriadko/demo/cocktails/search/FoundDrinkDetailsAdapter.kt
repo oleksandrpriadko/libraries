@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.android.oleksandrpriadko.demo.R
-import com.android.oleksandrpriadko.demo.cocktails.model.Drink
+import com.android.oleksandrpriadko.demo.cocktails.model.DrinkDetails
 import com.android.oleksandrpriadko.extension.inflateOn
 import com.android.oleksandrpriadko.recycler_adapter.BaseAdapterRecyclerView
 import com.android.oleksandrpriadko.recycler_adapter.BaseHolderPicasso
@@ -12,10 +12,10 @@ import com.android.oleksandrpriadko.recycler_adapter.BaseItemListener
 import kotlinx.android.synthetic.main.cocktail_item_search_result.view.*
 import kotlinx.android.synthetic.main.main_item_demo.view.avatarImageView
 
-class FoundDrinksAdapter : BaseAdapterRecyclerView<
-        Drink,
+class FoundDrinkDetailsAdapter : BaseAdapterRecyclerView<
+        DrinkDetails,
         FoundDrinksHolder,
-        BaseItemListener<Drink>>(itemListener = null) {
+        BaseItemListener<DrinkDetails>>(itemListener = null) {
 
     override fun isItemViewClickable() = false
 
@@ -35,9 +35,9 @@ class FoundDrinksAdapter : BaseAdapterRecyclerView<
 
 class FoundDrinksHolder(itemView: View) : BaseHolderPicasso(itemView) {
 
-    fun onBind(drink: Drink) {
-        itemView.drinkNameTextView.text = drink.strDrink
-        loadImage(drink.strDrinkThumb, itemView.avatarImageView, R.drawable.main_ic_cocktail_512)
+    fun onBind(drinkDetails: DrinkDetails) {
+        itemView.drinkNameTextView.text = drinkDetails.strDrink
+        loadImage(drinkDetails.strDrinkThumb, itemView.avatarImageView, R.drawable.main_ic_cocktail_512)
     }
 
 }

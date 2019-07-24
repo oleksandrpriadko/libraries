@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.oleksandrpriadko.demo.adapter.AdapterDemos
 import com.android.oleksandrpriadko.demo.adapter.Demo
-import com.android.oleksandrpriadko.demo.cocktails.search.SearchActivity
+import com.android.oleksandrpriadko.demo.cocktails.splash.CocktailSplashActivity
 import com.android.oleksandrpriadko.demo.item_decoration.ItemDecorationActivity
 import com.android.oleksandrpriadko.demo.logpublish.LogPublishActivity
 import com.android.oleksandrpriadko.extension.dimenPixelSize
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         demoList.add(demo)
 
         demo = Demo(
-                SearchActivity::class.java,
+                CocktailSplashActivity::class.java,
                 "Cocktails",
                 null,
                 R.drawable.main_ic_cocktail_512)

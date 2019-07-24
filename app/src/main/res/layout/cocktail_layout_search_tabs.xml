@@ -12,36 +12,25 @@
     app:selectedItem="0">
 
     <TextView
-        android:id="@+id/cocktailTab"
+        android:id="@+id/byIngredientsTab"
         style="@style/SearchTabCocktail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cocktail"
+        android:text="By Ingredients"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/ingredientTab"
+        app:layout_constraintEnd_toStartOf="@id/byNameTab"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/ingredientTab"
+        android:id="@+id/byNameTab"
         style="@style/SearchTabCocktail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ingredient"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/glassTab"
-        app:layout_constraintStart_toEndOf="@id/cocktailTab"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/glassTab"
-        style="@style/SearchTabCocktail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Glass"
+        android:text="By Name"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/ingredientTab"
+        app:layout_constraintStart_toEndOf="@id/byIngredientsTab"
         app:layout_constraintTop_toTopOf="parent" />
 
 </com.android.oleksandrpriadko.ui.attachedtabs.AttachedTabsView>

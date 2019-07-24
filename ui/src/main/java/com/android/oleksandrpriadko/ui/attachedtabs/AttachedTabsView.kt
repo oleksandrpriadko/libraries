@@ -177,6 +177,8 @@ class AttachedTabsView : ConstraintLayout, PresenterView {
         }
     }
 
+    fun getIndexOfSelectedItem(): Int = presenter.getIngexOfSelectedItem()
+
     override fun getLifecycle(): Lifecycle {
         return (context as? FragmentActivity)?.lifecycle ?: object : Lifecycle() {
             override fun addObserver(observer: LifecycleObserver) {

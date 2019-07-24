@@ -5,6 +5,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
+import java.io.IOException
 
 class RetrofitRepoExtension(
         private val baseUrl: String,
@@ -41,21 +42,38 @@ class RetrofitRepoExtension(
                 .build()
     }
 
-    fun <A> getApi(apiClass: Class<A>): A {
+    fun <T> getApi(apiClass: Class<T>): T {
         return retrofit!!.create(apiClass)
+    }
+
+    fun isOnline(): Boolean {
+        val runtime = Runtime.getRuntime()
+        try {
+            val ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8")
+            val exitValue = ipProcess.waitFor()
+            return exitValue == 0
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+
+        return false
     }
 
     override fun cleanUp() {
         retrofit = null
     }
 
-interface Listener {
+    interface Listener {
 
-    fun onLoadingStarted()
+        fun onLoadingStarted()
 
-    fun onLoadingDone()
+        fun onLoadingDone()
 
-    fun onLoadingError(throwable: Throwable)
+        fun onLoadingError(throwable: Throwable)
+
+        fun onNoInternet()
 
     }
 }
