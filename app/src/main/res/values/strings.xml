@@ -11,11 +11,12 @@ Est velit egestas dui id ornare arcu.
     </string>
 
     <!--    Cocktail    -->
-    <string name="cocktail_base_url">https://www.thecocktaildb.com/api/json/v1/1/</string>
+    <string name="cocktail_base_url">https://www.thecocktaildb.com/api/json/v2/1/</string>
     <string name="cocktail_host" translatable="false">cocktails.android.oleksandrpriadko.com</string>
     <string name="cocktail_pathPrefixSearch" translatable="false">/search</string>
     <string name="cocktail_pathPrefixCocktail" translatable="false">/cocktail</string>
     <string name="cocktails_with_ingredient">Cocktails with ingredient</string>
     <string name="cocktail_hint_by_ingredients">Ingredient name</string>
     <string name="cocktail_hint_by_name">Drink name</string>
+    <string name="sorry_we_couldn_t_find_any_matches">Sorry we couldn\'t find any matches</string>
 </resources>

@@ -6,15 +6,14 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.android.oleksandrpriadko.demo.R
-import com.android.oleksandrpriadko.demo.cocktails.BundleConst
-import com.android.oleksandrpriadko.demo.cocktails.model.CocktailApi
+import com.android.oleksandrpriadko.demo.cocktails.model.BundleConst
 import com.android.oleksandrpriadko.demo.cocktails.model.DrinkDetails
 import com.android.oleksandrpriadko.demo.cocktails.search.SearchActivity
 import com.android.oleksandrpriadko.extension.hide
 import com.android.oleksandrpriadko.extension.show
 import com.android.oleksandrpriadko.recycler_adapter.BaseHolderPicasso
 import kotlinx.android.synthetic.main.cocktail_activity_cocktail_details.*
-import kotlinx.android.synthetic.main.cocktail_ingredient_popup.view.*
+import kotlinx.android.synthetic.main.cocktail_ingredient_popup_layout.view.*
 
 class CocktailDetailsActivity : AppCompatActivity(), PresenterView {
 
@@ -39,26 +38,32 @@ class CocktailDetailsActivity : AppCompatActivity(), PresenterView {
     }
 
     private fun initDetailsRecView() {
-        ingredientPopup.setOnClickListener {
-            ingredientPopup.hide()
+        ingredientLayout.setOnClickListener {
+            presenter.onIngredientLayoutClicked()
         }
 
         LinearSnapHelper().attachToRecyclerView(cocktailDetailsRecView)
         cocktailDetailsRecView.adapter = detailsAdapter
         detailsAdapter.itemListener = object : ItemListener {
             override fun onIngredientClick(ingredientName: String?) {
-                ingredientName?.let {
-                    ingredientPopup.show()
-                    BaseHolderPicasso.loadImage(CocktailApi.createIngredientImageUrl(ingredientName),
-                            ingredientPopup.avatarImageView,
-                            R.drawable.main_ic_cocktail_512)
-                }
+                presenter.onIngredientChipClicked(ingredientName)
             }
 
             override fun isEmpty(isEmpty: Boolean) {}
 
             override fun itemClicked(position: Int, item: SelectedPage) {}
         }
+    }
+
+    override fun showIngredientPopup(show: Boolean) {
+        if (show) ingredientLayout.show() else ingredientLayout.hide()
+    }
+
+    override fun loadIngredientImage(imageUrl: String) {
+        BaseHolderPicasso.loadImage(imageUrl,
+                ingredientLayout.avatarImageView,
+                R.drawable.main_ic_cocktail_512)
+
     }
 
     private fun requestLoadCocktail(intent: Intent?) {
@@ -68,9 +73,13 @@ class CocktailDetailsActivity : AppCompatActivity(), PresenterView {
         }
     }
 
-    override fun onDrinkDetailsLoaded(drinkDetails: DrinkDetails) {
+    override fun populateDrinkDetails(drinkDetails: DrinkDetails) {
         detailsAdapter.drinkDetails = drinkDetails
         detailsAdapter.notifyDataSetChanged()
+    }
+
+    override fun openSearchWithIngredient(shownIngredientName: String) {
+        SearchActivity.addIngredientAsChip(this, shownIngredientName)
     }
 
     companion object {

@@ -19,8 +19,8 @@
         tools:listitem="@layout/cocktail_item_cocktail_details_top" />
 
     <include
-        android:id="@+id/ingredientPopup"
-        layout="@layout/cocktail_ingredient_popup"
+        android:id="@+id/ingredientLayout"
+        layout="@layout/cocktail_ingredient_popup_layout"
         android:visibility="gone"
         tools:visibility="visible" />
 

@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class SearchDrinkByNameResponse {
+public class PopularDrinksResponse {
 
     @Expose
     private List<DrinkDetails> drinks;

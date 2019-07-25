@@ -42,6 +42,8 @@ class AttachedTabsView : ConstraintLayout, PresenterView {
 
     var onItemSelectedListener: OnItemSelectedListener? = null
 
+    var animationDuration: Long = 500
+
     private val path: Path = Path()
     private val paint: Paint = Paint()
 
@@ -80,6 +82,7 @@ class AttachedTabsView : ConstraintLayout, PresenterView {
                         getInt(R.styleable.AttachedTabsView_selectedItem, 0),
                         areTabsOnTop)
                 selectedItemBackground = getDrawable(R.styleable.AttachedTabsView_floatingDrawable)
+                animationDuration = getInt(R.styleable.AttachedTabsView_animationDuration, animationDuration.toInt()).toLong()
                 recycle()
             }
         }
@@ -127,7 +130,7 @@ class AttachedTabsView : ConstraintLayout, PresenterView {
 
     override fun createAnimator() {
         animator = ValueAnimator.ofFloat(0f, 1f)
-                .setDuration(500)
+                .setDuration(animationDuration)
                 .apply {
                     interpolator = AccelerateDecelerateInterpolator()
                     addUpdateListener {

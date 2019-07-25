@@ -13,6 +13,8 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
 
     private var currentSearchType = SearchType.BY_INGREDIENTS
 
+    private var currentState: State = State.RESULTS_CAROUSEL
+
     fun onSearchTypeChanged(newSearchType: SearchType) {
         currentSearchType = newSearchType
         when (currentSearchType) {
@@ -27,6 +29,8 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
     }
 
     fun onSearchTriggered() {
+        view?.hideSoftKeyboard()
+        view?.clearSearResults()
         when (currentSearchType) {
             SearchType.BY_INGREDIENTS -> {
                 filterByIngredients(getSelectedIngredientsNames())
@@ -70,55 +74,92 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
                 }
 
                 override fun onLoadingStarted() {
-                    view?.showLoadingLayout(true)
+                    saveAndApplyState(State.LOADING_SEARCH)
                 }
 
                 override fun onLoadingDone() {
-                    view?.showLoadingLayout(false)
+                    saveAndApplyState(State.RESULTS_SEARCH)
                 }
 
                 override fun onLoadingError(throwable: Throwable) {
-                    view?.showLoadingLayout(false)
+
                 }
 
                 override fun noDrinksFound() {
-
+                    saveAndApplyState(State.EMPTY_SEARCH)
                 }
 
                 override fun onDrinksFound(foundDrinkDetails: MutableList<DrinkDetails>) {
-                    view?.populateResults(foundDrinkDetails)
+                    view?.populateSearchResults(foundDrinkDetails)
+                    view?.scrollSearchResultsToTop()
                 }
             })
         }
     }
 
+    fun searchPopularDrinks() {
+        repo.popularDrinks(object : LoadingListener {
+            override fun onNoInternet() {
+
+            }
+
+            override fun onLoadingStarted() {
+                saveAndApplyState(State.LOADING_CAROUSEL)
+            }
+
+            override fun onLoadingDone() {
+                saveAndApplyState(State.RESULTS_CAROUSEL)
+            }
+
+            override fun onLoadingError(throwable: Throwable) {
+
+            }
+
+            override fun noDrinksFound() {
+
+            }
+
+            override fun onDrinksFound(foundDrinkDetails: MutableList<DrinkDetails>) {
+                view?.populateCarouselList(foundDrinkDetails)
+                view?.scrollCarouselToStart()
+            }
+        })
+    }
+
     private fun filterByIngredients(ingredientNames: List<IngredientName>) {
         if (ingredientNames.isNotEmpty()) {
-            repo.filterByIngredient(ingredientNames = ingredientNames, loadingListener = object : LoadingListener {
+            repo.filterByIngredients(ingredientNamesListToString(ingredientNames), loadingListener = object : LoadingListener {
                 override fun onNoInternet() {
 
                 }
 
                 override fun onLoadingStarted() {
-                    view?.showLoadingLayout(true)
+                    saveAndApplyState(State.LOADING_SEARCH)
                 }
 
                 override fun onLoadingDone() {
-                    view?.showLoadingLayout(false)
+                    saveAndApplyState(State.RESULTS_SEARCH)
                 }
 
                 override fun onLoadingError(throwable: Throwable) {
-                    view?.showLoadingLayout(false)
+
                 }
 
                 override fun onFilterByIngredient(foundDrinkDetails: MutableList<DrinkDetails>) {
-                    view?.populateResults(foundDrinkDetails)
+                    view?.populateSearchResults(foundDrinkDetails)
+                    view?.scrollSearchResultsToTop()
                 }
 
                 override fun noDrinksFound() {
-
+                    saveAndApplyState(State.EMPTY_SEARCH)
                 }
             })
+        }
+    }
+
+    private fun ingredientNamesListToString(ingredientNames: List<IngredientName>): String {
+        return ingredientNames.joinToString(separator = ",") {
+            it.strIngredient1.replace("\\s".toRegex(), "_")
         }
     }
 
@@ -129,15 +170,15 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
             }
 
             override fun onLoadingStarted() {
-                view?.showLoadingLayout(true)
+                saveAndApplyState(State.LOADING_CAROUSEL)
             }
 
             override fun onLoadingDone() {
-                view?.showLoadingLayout(false)
+                saveAndApplyState(State.RESULTS_CAROUSEL)
             }
 
             override fun onLoadingError(throwable: Throwable) {
-                view?.showLoadingLayout(false)
+
             }
 
             override fun onListOfIngredientsLoaded(ingredientNames: MutableList<IngredientName>) {
@@ -160,14 +201,15 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
     fun onIngredientMatchSelected(name: String) {
         repo.findIngredient(name)?.let {
             view?.addChipIngredient(it)
-            view?.clearInputText()
+            view?.clearSearchInputText()
             view?.hideFoundIngredientMatches()
+            view?.scrollSearchInputToEnd()
         }
     }
 
     fun onIngredientMatchSelected(ingredientName: IngredientName) {
         view?.addChipIngredient(ingredientName)
-        view?.clearInputText()
+        view?.clearSearchInputText()
         view?.hideFoundIngredientMatches()
     }
 
@@ -183,15 +225,26 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
             SearchType.BY_NAME -> resources.getString(R.string.cocktail_hint_by_name)
         }
     }
+
+    fun onBackPressed() {
+        if (currentState == State.RESULTS_CAROUSEL) {
+            view?.superOnBackPressed()
+        } else {
+            saveAndApplyState(State.RESULTS_CAROUSEL)
+        }
+    }
+
+    private fun saveAndApplyState(newState: State) {
+        currentState = newState
+        view?.applyState(newState)
+    }
 }
 
 interface PresenterView : LifecycleOwner {
 
-    fun showLoadingLayout(show: Boolean)
+    fun populateSearchResults(foundDrinkDetails: MutableList<DrinkDetails>)
 
-    fun showResults(show: Boolean)
-
-    fun populateResults(foundDrinkDetails: MutableList<DrinkDetails>)
+    fun scrollSearchResultsToTop()
 
     fun openCocktailDetails(drinkId: String)
 
@@ -207,16 +260,36 @@ interface PresenterView : LifecycleOwner {
 
     fun getSelectedIngredients(): List<String>
 
-    fun clearInputText()
+    fun clearSearchInputText()
 
     fun showFoundIngredientMatches(matches: List<String>)
 
     fun hideFoundIngredientMatches()
 
     fun updateSearchInputHint()
+
+    fun hideSoftKeyboard()
+
+    fun populateCarouselList(foundDrinkDetails: MutableList<DrinkDetails>)
+
+    fun scrollCarouselToStart()
+
+    fun applyState(state: State)
+
+    fun superOnBackPressed()
+
+    fun clearSearResults()
 }
 
 enum class SearchType {
     BY_INGREDIENTS,
     BY_NAME
+}
+
+enum class State {
+    LOADING_CAROUSEL,
+    RESULTS_CAROUSEL,
+    LOADING_SEARCH,
+    RESULTS_SEARCH,
+    EMPTY_SEARCH
 }

@@ -7,10 +7,9 @@ import androidx.recyclerview.widget.RecyclerView
 abstract class BaseAdapterRecyclerView<
         D,
         H : RecyclerView.ViewHolder,
-        I : BaseItemListener<D>?>(itemListener: I?)
+        I : BaseItemListener<D>?>(var itemListener: I?)
     : RecyclerView.Adapter<H>() {
 
-    var itemListener: I? = itemListener
     protected var items: MutableList<D> = mutableListOf()
     private var inflater: LayoutInflater? = null
 
@@ -28,6 +27,10 @@ abstract class BaseAdapterRecyclerView<
 
     fun getData(): List<D> {
         return items
+    }
+
+    fun clearData() {
+        items.clear()
     }
 
     protected fun removeDataItem(position: Int) {

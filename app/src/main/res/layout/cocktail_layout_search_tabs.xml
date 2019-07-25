@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.android.oleksandrpriadko.ui.attachedtabs.AttachedTabsView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/searchTabs"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/cocktail_background_screen"
     android:paddingTop="5dp"
+    app:animationDuration="@android:integer/config_shortAnimTime"
     app:areTabsOnTop="true"
     app:curveColorTabs="@color/cocktail_background_secondary"
     app:floatingDrawable="@drawable/cocktail_selector_floating"

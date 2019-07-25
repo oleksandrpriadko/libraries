@@ -1,6 +1,7 @@
-package com.android.oleksandrpriadko.demo.cocktails.model
+package com.android.oleksandrpriadko.demo.cocktails.managers
 
 import androidx.room.*
+import com.android.oleksandrpriadko.demo.cocktails.model.IngredientName
 
 @Dao
 interface IngredientDao {
@@ -17,7 +18,10 @@ interface IngredientDao {
     fun insert(ingredientName: IngredientName)
 
     @Delete
-    fun delete(user: IngredientName)
+    fun delete(ingredientName: IngredientName)
+
+    @Query("DELETE FROM INGREDIENTS")
+    fun deleteAll()
 }
 
 @Database(entities = [IngredientName::class], version = 1)

@@ -1,7 +1,7 @@
 package com.android.oleksandrpriadko.demo.cocktails.search
 
 import androidx.lifecycle.LifecycleOwner
-import com.android.oleksandrpriadko.demo.cocktails.CocktailManagerFinder
+import com.android.oleksandrpriadko.demo.cocktails.managers.CocktailManagerFinder
 import com.android.oleksandrpriadko.demo.cocktails.model.*
 import com.android.oleksandrpriadko.mvp.repo.ObservableRepo
 import com.android.oleksandrpriadko.mvp.repo_extension.RetrofitRepoExtension
@@ -20,8 +20,8 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
     fun searchDrink(name: String, loadingListener: LoadingListener) {
         loadingListener.onLoadingStarted()
 
-        getApi().searchDrink(name).enqueue(object : Callback<SearchDrinkByNameResponse> {
-            override fun onResponse(call: Call<SearchDrinkByNameResponse>, response: Response<SearchDrinkByNameResponse>) {
+        getApi().searchDrink(name).enqueue(object : Callback<FoundDrinksResponse> {
+            override fun onResponse(call: Call<FoundDrinksResponse>, response: Response<FoundDrinksResponse>) {
                 loadingListener.onLoadingDone()
                 if (response.isSuccessful) {
                     onDrinksLoaded(response.body(), loadingListener)
@@ -30,14 +30,36 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
                 }
             }
 
-            override fun onFailure(call: Call<SearchDrinkByNameResponse>, t: Throwable) {
+            override fun onFailure(call: Call<FoundDrinksResponse>, t: Throwable) {
                 loadingListener.onLoadingDone()
                 loadingListener.onLoadingError(t)
+                loadingListener.noDrinksFound()
             }
         })
     }
 
-    private fun onDrinksLoaded(response: SearchDrinkByNameResponse?, loadingListener: LoadingListener) {
+    fun popularDrinks(loadingListener: LoadingListener) {
+        loadingListener.onLoadingStarted()
+
+        getApi().loadPopularDrinks().enqueue(object : Callback<FoundDrinksResponse> {
+            override fun onResponse(call: Call<FoundDrinksResponse>, response: Response<FoundDrinksResponse>) {
+                if (response.isSuccessful) {
+                    onDrinksLoaded(response.body(), loadingListener)
+                } else {
+                    loadingListener.onLoadingError(Throwable("not successful response"))
+                }
+                loadingListener.onLoadingDone()
+            }
+
+            override fun onFailure(call: Call<FoundDrinksResponse>, t: Throwable) {
+                loadingListener.onLoadingError(t)
+                loadingListener.onLoadingDone()
+            }
+
+        })
+    }
+
+    private fun onDrinksLoaded(response: FoundDrinksResponse?, loadingListener: LoadingListener) {
         response?.let {
             val foundDrinks = it.drinkDetails
             when {
@@ -47,11 +69,11 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
         }
     }
 
-    fun filterByIngredient(ingredientNames: List<IngredientName>, loadingListener: LoadingListener) {
+    fun filterByIngredients(ingredientNamesCommaSeparated: String, loadingListener: LoadingListener) {
         loadingListener.onLoadingStarted()
-        getApi().filterByIngredient(ingredientNames[0].strIngredient1).enqueue(object : Callback<FilterByIngredientResponse> {
-            override fun onResponse(call: Call<FilterByIngredientResponse>,
-                                    response: Response<FilterByIngredientResponse>) {
+        getApi().filterByIngredients(ingredientNamesCommaSeparated).enqueue(object : Callback<FoundDrinksResponse> {
+            override fun onResponse(call: Call<FoundDrinksResponse>,
+                                    response: Response<FoundDrinksResponse>) {
                 loadingListener.onLoadingDone()
                 if (response.isSuccessful) {
                     loadingListener.onFilterByIngredient(
@@ -59,9 +81,10 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
                 }
             }
 
-            override fun onFailure(call: Call<FilterByIngredientResponse>, t: Throwable) {
+            override fun onFailure(call: Call<FoundDrinksResponse>, t: Throwable) {
                 loadingListener.onLoadingDone()
                 loadingListener.onLoadingError(t)
+                loadingListener.noDrinksFound()
             }
 
         })
@@ -69,20 +92,16 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
 
     fun loadListOfIngredients(loadingListener: LoadingListener) {
         loadingListener.onLoadingStarted()
-        if (CocktailManagerFinder.databaseCocktail.ingredientDao().getAll().isNotEmpty()) {
-            loadingListener.onListOfIngredientsLoaded(CocktailManagerFinder.databaseCocktail.ingredientDao().getAll())
-        } else {
-            getApi().listOfIngredients().enqueue(object : Callback<ListOfIngredientsResponse> {
-                override fun onResponse(call: Call<ListOfIngredientsResponse>, response: Response<ListOfIngredientsResponse>) {
-                    onIngredientsLoaded(loadingListener, response)
-                }
+        getApi().listOfIngredients().enqueue(object : Callback<ListOfIngredientsResponse> {
+            override fun onResponse(call: Call<ListOfIngredientsResponse>, response: Response<ListOfIngredientsResponse>) {
+                onIngredientsLoaded(loadingListener, response)
+            }
 
-                override fun onFailure(call: Call<ListOfIngredientsResponse>, t: Throwable) {
-                    loadingListener.onLoadingDone()
-                    loadingListener.onLoadingError(t)
-                }
-            })
-        }
+            override fun onFailure(call: Call<ListOfIngredientsResponse>, t: Throwable) {
+                loadingListener.onLoadingDone()
+                loadingListener.onLoadingError(t)
+            }
+        })
     }
 
     private fun onIngredientsLoaded(loadingListener: LoadingListener,
@@ -91,21 +110,25 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
         if (response.isSuccessful) {
             val loadedIngredients =
                     response.body()?.ingredientNameList ?: mutableListOf<IngredientName>()
-            for (ingredientName in loadedIngredients) {
-                CocktailManagerFinder.databaseCocktail.ingredientDao().insert(ingredientName)
+            if (loadedIngredients.isNotEmpty()) {
+                CocktailManagerFinder.databaseManager.ingredientDao().deleteAll()
+                for (ingredientName in loadedIngredients) {
+                    CocktailManagerFinder.databaseManager.ingredientDao().insert(ingredientName)
+                }
             }
-            loadingListener.onListOfIngredientsLoaded(loadedIngredients)
+            loadingListener.onListOfIngredientsLoaded(
+                    CocktailManagerFinder.databaseManager.ingredientDao().getAll())
         }
     }
 
     private fun getApi() = retrofitRepoExtension.getApi(CocktailApi::class.java)
 
     fun findIngredientMatches(name: String): List<IngredientName>? {
-        return CocktailManagerFinder.databaseCocktail.ingredientDao().findMatchesByName("%$name%")
+        return CocktailManagerFinder.databaseManager.ingredientDao().findMatchesByName("%$name%")
     }
 
     fun findIngredient(name: String): IngredientName? {
-        return CocktailManagerFinder.databaseCocktail.ingredientDao().findByName(name)
+        return CocktailManagerFinder.databaseManager.ingredientDao().findByName(name)
     }
 
     override fun cleanUp() {}

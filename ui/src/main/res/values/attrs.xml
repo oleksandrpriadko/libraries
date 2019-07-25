@@ -10,6 +10,7 @@
         <attr name="areTabsOnTop" format="boolean" />
         <attr name="selectedItem" format="integer" />
         <attr name="floatingDrawable" format="reference|color" />
+        <attr name="animationDuration" format="integer" />
     </declare-styleable>
     <declare-styleable name="TabState">
         <attr name="state_animating" format="boolean" />

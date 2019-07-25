@@ -26,7 +26,7 @@
             <ImageView
                 android:id="@+id/avatarImageView"
                 android:layout_width="@dimen/cocktail_width_avatar"
-                android:layout_height="540dp"
+                android:layout_height="440dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/cocktail_drawable_test" />
 
@@ -34,6 +34,7 @@
                 style="@style/TextCocktailLargeBoldShadow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/nameTextView"
                 android:layout_alignBottom="@id/avatarImageView"
                 android:layout_alignEnd="@id/avatarImageView"
                 android:layout_alignStart="@id/avatarImageView"

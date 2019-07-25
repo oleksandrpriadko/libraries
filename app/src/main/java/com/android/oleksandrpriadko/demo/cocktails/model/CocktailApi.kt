@@ -7,7 +7,7 @@ import retrofit2.http.Query
 interface CocktailApi {
 
     @GET(ACTION_SEARCH)
-    fun searchDrink(@Query(SEARCH_COCKTAIL) name: String): Call<SearchDrinkByNameResponse>
+    fun searchDrink(@Query(SEARCH_COCKTAIL) name: String): Call<FoundDrinksResponse>
 
     @GET(ACTION_SEARCH)
     fun searchIngredient(@Query(SEARCH_INGREDIENT) name: String): Call<Any>
@@ -19,16 +19,20 @@ interface CocktailApi {
     fun lookupIngredient(@Query(LOOKUP_INGREDIENT) name: String): Call<Any>
 
     @GET(ACTION_FILTER)
-    fun filterByIngredient(@Query(FILTER_INGREDIENT) name: String): Call<FilterByIngredientResponse>
+    fun filterByIngredients(@Query(FILTER_INGREDIENTS) name: String): Call<FoundDrinksResponse>
 
     @GET(ACTION_LIST + LIST_INGREDIENTS)
     fun listOfIngredients(): Call<ListOfIngredientsResponse>
+
+    @GET(ACTION_POPULAR)
+    fun loadPopularDrinks(): Call<FoundDrinksResponse>
 
     companion object {
         const val ACTION_SEARCH = "search.php"
         const val ACTION_LOOKUP = "lookup.php"
         const val ACTION_FILTER = "filter.php"
         const val ACTION_LIST = "list.php"
+        const val ACTION_POPULAR = "popular.php"
 
         const val SEARCH_COCKTAIL = "s"
         const val SEARCH_INGREDIENT = "i"
@@ -36,7 +40,7 @@ interface CocktailApi {
         const val LOOKUP_COCKTAIL = "i"
         const val LOOKUP_INGREDIENT = "iid"
 
-        const val FILTER_INGREDIENT = "i"
+        const val FILTER_INGREDIENTS = "i"
 
         const val LIST_INGREDIENTS = "?i=list"
 
@@ -63,5 +67,5 @@ enum class LookupType(val description: String) {
 }
 
 enum class FilterType(val description: String) {
-    FILTER_INGREDIENT(CocktailApi.FILTER_INGREDIENT)
+    FILTER_INGREDIENT(CocktailApi.FILTER_INGREDIENTS)
 }

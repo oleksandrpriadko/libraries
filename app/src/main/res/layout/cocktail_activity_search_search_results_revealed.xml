@@ -6,33 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.android.oleksandrpriadko.recycler_view.FlingRecyclerView
-        android:id="@+id/itemsCarouselRecyclerView"
-        android:layout_width="@dimen/constraint_match"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:flingMode="low"
-        app:layoutManager="com.android.oleksandrpriadko.recycler_view.ScalableLinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchWrapLayout"
-        app:layout_constraintVertical_bias="1"
-        tools:itemCount="15"
-        tools:listitem="@layout/cocktail_item_cocktail_search_screen" />
-
-    <com.android.oleksandrpriadko.demo.cocktails.CocktailLoadingView
-        android:id="@+id/carouselLoadingLayout"
-        android:layout_width="@dimen/constraint_match"
-        android:layout_height="@dimen/constraint_match"
-        android:background="@color/cocktail_background_screen"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchWrapLayout" />
-
-    <com.android.oleksandrpriadko.ui.attachedtabs.AttachedTabsView
+    <com.android.oleksandrpriadko.ui.attachedtabs.AttachedTabsView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/searchTabs"
         android:layout_width="@dimen/constraint_match"
         android:layout_height="wrap_content"
@@ -73,24 +47,48 @@
 
     </com.android.oleksandrpriadko.ui.attachedtabs.AttachedTabsView>
 
+    <com.android.oleksandrpriadko.recycler_view.FlingRecyclerView
+        android:id="@+id/itemsCarouselRecyclerView"
+        android:layout_width="@dimen/constraint_match"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:flingMode="low"
+        app:layoutManager="com.android.oleksandrpriadko.recycler_view.ScalableLinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchWrapLayout"
+        app:layout_constraintVertical_bias="1"
+        tools:itemCount="15"
+        tools:listitem="@layout/cocktail_item_cocktail_search_screen" />
+
+    <com.android.oleksandrpriadko.demo.cocktails.CocktailLoadingView
+        android:id="@+id/carouselLoadingLayout"
+        android:layout_width="@dimen/constraint_match"
+        android:layout_height="@dimen/constraint_match"
+        android:background="@color/cocktail_background_screen"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchWrapLayout" />
+
     <View
         android:id="@+id/searchWrapLayout"
         android:layout_width="@dimen/constraint_match"
         android:layout_height="@dimen/constraint_match"
         android:background="@drawable/cocktail_background_search_wrap"
-        android:clickable="true"
-        app:layout_constraintBottom_toBottomOf="@id/belowInputSpace"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchTabs"
-        tools:ignore="KeyboardInaccessibleWidget" />
+        app:layout_constraintTop_toBottomOf="@id/searchTabs" />
 
     <View
         android:id="@+id/searchActionLayoutBackground"
         android:layout_width="@dimen/constraint_match"
         android:layout_height="@dimen/constraint_match"
         android:background="@color/cocktail_background_clickable"
-        app:layout_constraintBottom_toBottomOf="@id/centerOfInput"
+        app:layout_constraintBottom_toBottomOf="@id/searchResultsRecView"
         app:layout_constraintEnd_toEndOf="@id/inputBackgroundView"
         app:layout_constraintStart_toStartOf="@id/inputBackgroundView"
         app:layout_constraintTop_toTopOf="@id/centerOfInput" />
@@ -124,10 +122,11 @@
         android:id="@+id/searchResultsRecView"
         android:layout_width="@dimen/constraint_match"
         android:layout_height="@dimen/constraint_match"
+        android:layout_marginBottom="5dp"
         android:layoutAnimation="@anim/recycler_item_slide_up"
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:layout_constraintBottom_toBottomOf="@id/inputScrollView"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/inputScrollView"
         app:layout_constraintStart_toStartOf="@id/inputScrollView"
         app:layout_constraintTop_toBottomOf="@id/inputScrollView"
@@ -165,7 +164,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/inputBackgroundView" />
 
-    <RelativeLayout
+    <HorizontalScrollView
         android:id="@+id/inputScrollView"
         android:layout_width="@dimen/constraint_match"
         android:layout_height="wrap_content"
@@ -178,28 +177,36 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/searchTabs">
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/ingredientsChipGroup"
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:visibility="gone"
-            android:layout_marginBottom="10dp"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/searchInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/ingredientsChipGroup"
-            android:background="@android:color/transparent"
-            android:gravity="center_vertical"
-            android:hint="@string/cocktail_hint_by_ingredients"
-            android:imeOptions="actionSearch"
-            android:inputType="textAutoComplete"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textColorHint="@color/cocktail_text_color_secondary" />
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/ingredientsChipGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/searchInput"
+                android:layout_alignTop="@id/searchInput" />
 
-    </RelativeLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/searchInput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/ingredientsChipGroup"
+                android:background="@android:color/transparent"
+                android:gravity="center_vertical"
+                android:hint="@string/cocktail_hint_by_ingredients"
+                android:imeOptions="actionSearch"
+                android:inputType="textAutoComplete"
+                android:maxLines="1"
+                android:outlineProvider="background"
+                android:singleLine="true"
+                android:textColorHint="@color/cocktail_text_color_secondary" />
+
+        </RelativeLayout>
+
+    </HorizontalScrollView>
 
     <Space
         android:id="@+id/centerOfInput"
