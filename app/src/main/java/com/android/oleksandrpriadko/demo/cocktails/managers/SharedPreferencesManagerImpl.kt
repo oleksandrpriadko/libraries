@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 
-class SharedPreferencesmanagerImpl(context: Context) : SharedPreferencesManager {
+class SharedPreferencesManagerImpl(context: Context) : SharedPreferencesManager {
 
     private val preferences: SharedPreferences
 

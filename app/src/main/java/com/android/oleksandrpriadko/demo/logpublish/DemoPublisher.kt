@@ -1,7 +1,7 @@
 package com.android.oleksandrpriadko.demo.logpublish
 
 import android.util.Log
-import com.android.oleksandrpriadko.demo.App
+import com.android.oleksandrpriadko.demo.main.App
 import com.android.oleksandrpriadko.loggalitic.LogPublishService
 import com.android.oleksandrpriadko.core.policy.AnalyticsEvent
 import com.android.oleksandrpriadko.loggalitic.analytics.Publisher

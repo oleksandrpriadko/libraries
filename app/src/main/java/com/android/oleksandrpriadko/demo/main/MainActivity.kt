@@ -1,12 +1,13 @@
-package com.android.oleksandrpriadko.demo
+package com.android.oleksandrpriadko.demo.main
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.android.oleksandrpriadko.demo.adapter.AdapterDemos
-import com.android.oleksandrpriadko.demo.adapter.Demo
+import com.android.oleksandrpriadko.demo.R
+import com.android.oleksandrpriadko.demo.main.adapter.AdapterDemos
+import com.android.oleksandrpriadko.demo.main.adapter.Demo
 import com.android.oleksandrpriadko.demo.cocktails.splash.CocktailSplashActivity
 import com.android.oleksandrpriadko.demo.item_decoration.ItemDecorationActivity
 import com.android.oleksandrpriadko.demo.logpublish.LogPublishActivity

@@ -1,4 +1,4 @@
-package com.android.oleksandrpriadko.demo.adapter
+package com.android.oleksandrpriadko.demo.main.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +7,7 @@ import androidx.annotation.DrawableRes
 
 import com.android.oleksandrpriadko.demo.R
 import com.android.oleksandrpriadko.recycler_adapter.BaseAdapterRecyclerView
-import com.android.oleksandrpriadko.recycler_adapter.BaseHolderPicasso
+import com.android.oleksandrpriadko.recycler_adapter.PicassoHolder
 import com.android.oleksandrpriadko.recycler_adapter.BaseItemListener
 import kotlinx.android.synthetic.main.main_item_demo.view.*
 
@@ -34,7 +34,7 @@ class AdapterDemos(itemListener: BaseItemListener<Demo>?)
         holder.loadAvatar(demo.avatarUrl, demo.iconResId)
     }
 
-    inner class Holder(itemView: View) : BaseHolderPicasso(itemView) {
+    inner class Holder(itemView: View) : PicassoHolder(itemView) {
 
         fun loadAvatar(url: String?, @DrawableRes iconResId: Int) {
             if (iconResId == 0) {

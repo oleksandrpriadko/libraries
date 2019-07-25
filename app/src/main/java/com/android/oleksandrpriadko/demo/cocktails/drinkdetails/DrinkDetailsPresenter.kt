@@ -1,14 +1,14 @@
-package com.android.oleksandrpriadko.demo.cocktails.cocktaildetails
+package com.android.oleksandrpriadko.demo.cocktails.drinkdetails
 
 import androidx.lifecycle.LifecycleOwner
 import com.android.oleksandrpriadko.demo.cocktails.model.CocktailApi
 import com.android.oleksandrpriadko.demo.cocktails.model.DrinkDetails
 import com.android.oleksandrpriadko.mvp.presenter.BasePresenter
 
-class CocktailDetailsPresenter(presenterView: PresenterView,
-                               baseUrl: String) : BasePresenter<PresenterView>(presenterView) {
+class DrinkDetailsPresenter(presenterView: PresenterView,
+                            baseUrl: String) : BasePresenter<PresenterView>(presenterView) {
 
-    private val repo = CocktailDetailsRepo(presenterView, baseUrl)
+    private val repo = DrinkDetailsRepo(presenterView, baseUrl)
 
     private var shownIngredientName: String? = null
 
@@ -30,7 +30,7 @@ class CocktailDetailsPresenter(presenterView: PresenterView,
 
             }
 
-            override fun onDrinkDetails(drinkDetails: DrinkDetails) {
+            override fun onDrinkDetailsLoaded(drinkDetails: DrinkDetails) {
                 view?.populateDrinkDetails(drinkDetails)
             }
         })

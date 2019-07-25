@@ -17,7 +17,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
 import com.android.oleksandrpriadko.demo.R
-import com.android.oleksandrpriadko.demo.cocktails.cocktaildetails.CocktailDetailsActivity
+import com.android.oleksandrpriadko.demo.cocktails.drinkdetails.DrinkDetailsActivity
 import com.android.oleksandrpriadko.demo.cocktails.model.BundleConst
 import com.android.oleksandrpriadko.demo.cocktails.model.DrinkDetails
 import com.android.oleksandrpriadko.demo.cocktails.model.IngredientName
@@ -35,7 +35,7 @@ class SearchActivity : AppCompatActivity(), PresenterView {
 
     private var presenter: SearchPresenter? = null
 
-    private var popupMenuIngredientMatches: ListPopupWindow? = null
+    private var popupListIngredientMatches: ListPopupWindow? = null
 
     private val constraintSetLoadingCarousel: ConstraintSet = ConstraintSet()
     private val constraintSetResultsCarousel: ConstraintSet = ConstraintSet()
@@ -45,30 +45,14 @@ class SearchActivity : AppCompatActivity(), PresenterView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         presenter = SearchPresenter(getString(R.string.cocktail_base_url), this)
 
         setContentView(R.layout.cocktail_activity_search)
 
         initConstraintSets()
-
-        searchTabs.onItemSelectedListener = object : OnItemSelectedListener {
-            override fun onItemSelected(selectedView: View, indexOfSelected: Int) {
-                val newSearchType =
-                        when (indexOfSelected) {
-                            0 -> SearchType.BY_INGREDIENTS
-                            1 -> SearchType.BY_NAME
-                            else -> SearchType.BY_NAME
-                        }
-                presenter?.onSearchTypeChanged(newSearchType)
-            }
-        }
-        initDrinksList()
-
-        prepareSearchInput()
-
+        prepareSearch()
+        initCarousel()
         presenter?.loadAllIngredients()
-
         presenter?.searchPopularDrinks()
     }
 
@@ -85,7 +69,7 @@ class SearchActivity : AppCompatActivity(), PresenterView {
                 this, R.layout.cocktail_activity_search_search_empty_revealed)
     }
 
-    private fun initDrinksList() {
+    private fun initCarousel() {
         val adapter = CarouselDrinksAdapter()
         adapter.itemListener = object : BaseItemListenerAdapter<DrinkDetails>() {
             override fun itemClicked(position: Int, item: DrinkDetails) {
@@ -95,7 +79,19 @@ class SearchActivity : AppCompatActivity(), PresenterView {
         itemsCarouselRecyclerView.adapter = adapter
     }
 
-    private fun prepareSearchInput() {
+    private fun prepareSearch() {
+        searchTabs.onItemSelectedListener = object : OnItemSelectedListener {
+            override fun onItemSelected(selectedView: View, indexOfSelected: Int) {
+                val newSearchType =
+                        when (indexOfSelected) {
+                            0 -> SearchType.BY_INGREDIENTS
+                            1 -> SearchType.BY_NAME
+                            else -> SearchType.BY_NAME
+                        }
+                presenter?.onSearchTypeChanged(newSearchType)
+            }
+        }
+
         searchInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 presenter?.onSearchTriggered()
@@ -139,17 +135,17 @@ class SearchActivity : AppCompatActivity(), PresenterView {
     }
 
     override fun populateSearchResults(foundDrinkDetails: MutableList<DrinkDetails>) {
-        val foundDrinksAdapter = FoundDrinkDetailsAdapter()
-        foundDrinksAdapter.setData(foundDrinkDetails)
-        foundDrinksAdapter.itemListener = object : BaseItemListenerAdapter<DrinkDetails>() {
+        val drinkDetailsAdapter = DrinkDetailsAdapter()
+        drinkDetailsAdapter.setData(foundDrinkDetails)
+        drinkDetailsAdapter.itemListener = object : BaseItemListenerAdapter<DrinkDetails>() {
             override fun itemClicked(position: Int, item: DrinkDetails) {
                 presenter?.onDrinkClicked(item)
             }
         }
-        searchResultsRecView.adapter = foundDrinksAdapter
+        searchResultsRecView.adapter = drinkDetailsAdapter
     }
 
-    override fun clearSearResults() {
+    override fun clearSearchResults() {
         searchResultsRecView.adapter?.let {
             if (it is BaseAdapterRecyclerView<*, *, *>) {
                 it.clearData()
@@ -157,21 +153,21 @@ class SearchActivity : AppCompatActivity(), PresenterView {
         }
     }
 
-    override fun scrollSearchResultsToTop() {
+    override fun scrollToFirstSearchResult() {
         searchResultsRecView.layoutManager?.scrollToPosition(0)
     }
 
-    override fun openCocktailDetails(drinkId: String) {
-        CocktailDetailsActivity.loadCocktailById(this, drinkId)
+    override fun showDrinkDetails(drinkId: String) {
+        DrinkDetailsActivity.loadDrinkById(this, drinkId)
     }
 
     override fun showFoundIngredientMatches(matches: List<String>) {
         if (matches.isNotEmpty()) {
-            if (popupMenuIngredientMatches == null) {
-                popupMenuIngredientMatches = ListPopupWindow(this)
+            if (popupListIngredientMatches == null) {
+                popupListIngredientMatches = ListPopupWindow(this)
             }
 
-            popupMenuIngredientMatches?.let {
+            popupListIngredientMatches?.let {
                 it.anchorView = inputScrollView
                 it.inputMethodMode = INPUT_METHOD_NEEDED
                 it.setAdapter(ArrayAdapter(this, android.R.layout.simple_list_item_1, matches).apply { notifyDataSetChanged() })
@@ -185,29 +181,31 @@ class SearchActivity : AppCompatActivity(), PresenterView {
     }
 
     override fun hideFoundIngredientMatches() {
-        popupMenuIngredientMatches?.dismiss()
+        popupListIngredientMatches?.dismiss()
     }
 
-    override fun addChipIngredient(ingredientName: IngredientName) {
+    override fun addSelectedIngredient(ingredientName: IngredientName) {
         val chip = ingredientsChipGroup.inflateOn<Chip>(R.layout.cocktail_chip_search)
         chip.text = ingredientName.strIngredient1
         chip.setOnCloseIconClickListener {
             ingredientsChipGroup.removeView(chip)
+            ingredientsChipGroup.show(ingredientsChipGroup.childCount > 0)
         }
         ingredientsChipGroup.addView(chip)
         ingredientsChipGroup.show()
     }
 
-    override fun requestRemoveChipIngredient(ingredientName: IngredientName) {
+    override fun requestRemoveSelectedIngredient(ingredientName: IngredientName) {
         for (i in 0 until ingredientsChipGroup.childCount) {
             val chip: Chip = ingredientsChipGroup.getChildAt(i) as Chip
             if (chip.text == ingredientName.strIngredient1) {
                 ingredientsChipGroup.removeView(chip)
             }
         }
+        ingredientsChipGroup.show(ingredientsChipGroup.childCount > 0)
     }
 
-    override fun requestRemoveAllChipsIngredients() {
+    override fun requestRemoveAllSelectedIngredients() {
         ingredientsChipGroup.removeAllViews()
         ingredientsChipGroup.hide()
     }
@@ -218,7 +216,7 @@ class SearchActivity : AppCompatActivity(), PresenterView {
         searchInput.hint = presenter?.getSearchInputHint(resources)
     }
 
-    override fun hideSoftKeyboard() {
+    override fun hideKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(searchInput.windowToken, 0)
     }
@@ -241,11 +239,11 @@ class SearchActivity : AppCompatActivity(), PresenterView {
         }
     }
 
-    override fun populateCarouselList(foundDrinkDetails: MutableList<DrinkDetails>) {
+    override fun populateCarousel(foundDrinkDetails: MutableList<DrinkDetails>) {
         (itemsCarouselRecyclerView.adapter as CarouselDrinksAdapter).setData(foundDrinkDetails)
     }
 
-    override fun scrollCarouselToStart() {
+    override fun scrollToFirstCarouselResult() {
 
     }
 
@@ -265,7 +263,7 @@ class SearchActivity : AppCompatActivity(), PresenterView {
 
     companion object {
 
-        fun addIngredientAsChip(context: Context, ingredientName: String) {
+        fun addIngredientToSelected(context: Context, ingredientName: String) {
             context.startActivity(Intent(context, SearchActivity::class.java).apply {
                 putExtra(BundleConst.INGREDIENT_NAME, ingredientName)
             })

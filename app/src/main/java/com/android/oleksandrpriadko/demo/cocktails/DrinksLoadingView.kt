@@ -10,7 +10,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.android.oleksandrpriadko.demo.R
 import com.android.oleksandrpriadko.extension.dimenPixelSize
 
-class CocktailLoadingView : ConstraintLayout {
+class DrinksLoadingView : ConstraintLayout {
 
     private val itemSize: Float
 

@@ -17,10 +17,10 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
             baseUrl,
             converterFactory = GsonConverterFactory.create())
 
-    fun searchDrink(name: String, loadingListener: LoadingListener) {
+    fun searchDrinkByName(name: String, loadingListener: LoadingListener) {
         loadingListener.onLoadingStarted()
 
-        getApi().searchDrink(name).enqueue(object : Callback<FoundDrinksResponse> {
+        getApi().searchDrinkByName(name).enqueue(object : Callback<FoundDrinksResponse> {
             override fun onResponse(call: Call<FoundDrinksResponse>, response: Response<FoundDrinksResponse>) {
                 loadingListener.onLoadingDone()
                 if (response.isSuccessful) {
@@ -38,7 +38,7 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
         })
     }
 
-    fun popularDrinks(loadingListener: LoadingListener) {
+    fun loadPopularDrinks(loadingListener: LoadingListener) {
         loadingListener.onLoadingStarted()
 
         getApi().loadPopularDrinks().enqueue(object : Callback<FoundDrinksResponse> {
@@ -69,14 +69,14 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
         }
     }
 
-    fun filterByIngredients(ingredientNamesCommaSeparated: String, loadingListener: LoadingListener) {
+    fun filterDrinksByIngredients(ingredientNamesCommaSeparated: String, loadingListener: LoadingListener) {
         loadingListener.onLoadingStarted()
-        getApi().filterByIngredients(ingredientNamesCommaSeparated).enqueue(object : Callback<FoundDrinksResponse> {
+        getApi().filterDrinksByIngredients(ingredientNamesCommaSeparated).enqueue(object : Callback<FoundDrinksResponse> {
             override fun onResponse(call: Call<FoundDrinksResponse>,
                                     response: Response<FoundDrinksResponse>) {
                 loadingListener.onLoadingDone()
                 if (response.isSuccessful) {
-                    loadingListener.onFilterByIngredient(
+                    loadingListener.onFilterByIngredientDone(
                             response.body()?.drinkDetails ?: mutableListOf<DrinkDetails>())
                 }
             }
@@ -90,22 +90,28 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
         })
     }
 
-    fun loadListOfIngredients(loadingListener: LoadingListener) {
+    fun loadListOfAllIngredients(loadingListener: LoadingListener) {
         loadingListener.onLoadingStarted()
-        getApi().listOfIngredients().enqueue(object : Callback<ListOfIngredientsResponse> {
+        getApi().loadListOfAllIngredients().enqueue(object : Callback<ListOfIngredientsResponse> {
             override fun onResponse(call: Call<ListOfIngredientsResponse>, response: Response<ListOfIngredientsResponse>) {
-                onIngredientsLoaded(loadingListener, response)
+                onAllIngredientsLoaded(loadingListener, response)
             }
 
             override fun onFailure(call: Call<ListOfIngredientsResponse>, t: Throwable) {
                 loadingListener.onLoadingDone()
-                loadingListener.onLoadingError(t)
+                val allIngredients = CocktailManagerFinder.databaseManager
+                        .ingredientDao().getAll()
+                if (allIngredients.isNotEmpty()) {
+                    loadingListener.onListOfIngredientsLoaded(allIngredients)
+                } else {
+                    loadingListener.onLoadingError(t)
+                }
             }
         })
     }
 
-    private fun onIngredientsLoaded(loadingListener: LoadingListener,
-                                    response: Response<ListOfIngredientsResponse>) {
+    private fun onAllIngredientsLoaded(loadingListener: LoadingListener,
+                                       response: Response<ListOfIngredientsResponse>) {
         loadingListener.onLoadingDone()
         if (response.isSuccessful) {
             val loadedIngredients =
@@ -127,7 +133,7 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
         return CocktailManagerFinder.databaseManager.ingredientDao().findMatchesByName("%$name%")
     }
 
-    fun findIngredient(name: String): IngredientName? {
+    fun findIngredientByName(name: String): IngredientName? {
         return CocktailManagerFinder.databaseManager.ingredientDao().findByName(name)
     }
 

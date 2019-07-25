@@ -1,4 +1,4 @@
-package com.android.oleksandrpriadko.demo.adapter
+package com.android.oleksandrpriadko.demo.main.adapter
 
 import androidx.annotation.DrawableRes
 

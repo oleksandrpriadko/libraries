@@ -1,4 +1,4 @@
-package com.android.oleksandrpriadko.demo.cocktails.cocktaildetails
+package com.android.oleksandrpriadko.demo.cocktails.drinkdetails
 
 import android.content.Context
 import android.content.Intent
@@ -11,19 +11,19 @@ import com.android.oleksandrpriadko.demo.cocktails.model.DrinkDetails
 import com.android.oleksandrpriadko.demo.cocktails.search.SearchActivity
 import com.android.oleksandrpriadko.extension.hide
 import com.android.oleksandrpriadko.extension.show
-import com.android.oleksandrpriadko.recycler_adapter.BaseHolderPicasso
+import com.android.oleksandrpriadko.recycler_adapter.PicassoHolder
 import kotlinx.android.synthetic.main.cocktail_activity_cocktail_details.*
 import kotlinx.android.synthetic.main.cocktail_ingredient_popup_layout.view.*
 
-class CocktailDetailsActivity : AppCompatActivity(), PresenterView {
+class DrinkDetailsActivity : AppCompatActivity(), PresenterView {
 
-    private lateinit var presenter: CocktailDetailsPresenter
-    private val detailsAdapter = CocktailDetailsAdapter()
+    private lateinit var presenter: DrinkDetailsPresenter
+    private val detailsAdapter = DrinkDetailsAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        presenter = CocktailDetailsPresenter(this, getString(R.string.cocktail_base_url))
+        presenter = DrinkDetailsPresenter(this, getString(R.string.cocktail_base_url))
 
         setContentView(R.layout.cocktail_activity_cocktail_details)
 
@@ -60,7 +60,7 @@ class CocktailDetailsActivity : AppCompatActivity(), PresenterView {
     }
 
     override fun loadIngredientImage(imageUrl: String) {
-        BaseHolderPicasso.loadImage(imageUrl,
+        PicassoHolder.loadImage(imageUrl,
                 ingredientLayout.avatarImageView,
                 R.drawable.main_ic_cocktail_512)
 
@@ -79,13 +79,13 @@ class CocktailDetailsActivity : AppCompatActivity(), PresenterView {
     }
 
     override fun openSearchWithIngredient(shownIngredientName: String) {
-        SearchActivity.addIngredientAsChip(this, shownIngredientName)
+        SearchActivity.addIngredientToSelected(this, shownIngredientName)
     }
 
     companion object {
 
-        fun loadCocktailById(context: Context, drinkId: String) {
-            context.startActivity(Intent(context, CocktailDetailsActivity::class.java).apply {
+        fun loadDrinkById(context: Context, drinkId: String) {
+            context.startActivity(Intent(context, DrinkDetailsActivity::class.java).apply {
                 putExtra(BundleConst.DRINK_ID, drinkId)
             })
         }

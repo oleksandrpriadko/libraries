@@ -6,20 +6,20 @@ import android.view.ViewGroup
 import com.android.oleksandrpriadko.demo.R
 import com.android.oleksandrpriadko.demo.cocktails.model.DrinkDetails
 import com.android.oleksandrpriadko.recycler_adapter.BaseAdapterRecyclerView
-import com.android.oleksandrpriadko.recycler_adapter.BaseHolderPicasso
 import com.android.oleksandrpriadko.recycler_adapter.BaseItemListener
+import com.android.oleksandrpriadko.recycler_adapter.PicassoHolder
 import kotlinx.android.synthetic.main.cocktail_item_cocktail_search_screen.view.*
 
 class CarouselDrinksAdapter(itemListener: BaseItemListener<DrinkDetails>? = null)
-    : BaseAdapterRecyclerView<DrinkDetails, CocktailSearchScreenHolder, BaseItemListener<DrinkDetails>>(itemListener) {
+    : BaseAdapterRecyclerView<DrinkDetails, CarouselDrinkHolder, BaseItemListener<DrinkDetails>>(itemListener) {
 
     override fun isItemViewClickable(): Boolean = false
 
-    override fun onGetHolder(inflater: LayoutInflater, parent: ViewGroup, viewType: Int): CocktailSearchScreenHolder {
-        return CocktailSearchScreenHolder(inflater.inflate(R.layout.cocktail_item_cocktail_search_screen, parent, false))
+    override fun onGetHolder(inflater: LayoutInflater, parent: ViewGroup, viewType: Int): CarouselDrinkHolder {
+        return CarouselDrinkHolder(inflater.inflate(R.layout.cocktail_item_cocktail_search_screen, parent, false))
     }
 
-    override fun onBindHolder(holder: CocktailSearchScreenHolder, position: Int) {
+    override fun onBindHolder(holder: CarouselDrinkHolder, position: Int) {
         holder.onBind(items[position])
         holder.itemView.avatarCardView.setOnClickListener {
             itemListener?.itemClicked(position, items[position])
@@ -27,7 +27,7 @@ class CarouselDrinksAdapter(itemListener: BaseItemListener<DrinkDetails>? = null
     }
 }
 
-class CocktailSearchScreenHolder(iteView: View) : BaseHolderPicasso(iteView) {
+class CarouselDrinkHolder(iteView: View) : PicassoHolder(iteView) {
 
     fun onBind(drinkDetails: DrinkDetails) {
         loadImage(drinkDetails.strDrinkThumb, itemView.avatarImageView, R.drawable.main_ic_cocktail_512)

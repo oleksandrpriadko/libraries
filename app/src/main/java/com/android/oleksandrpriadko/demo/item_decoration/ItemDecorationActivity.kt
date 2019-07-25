@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.oleksandrpriadko.demo.R
-import com.android.oleksandrpriadko.demo.adapter.AdapterDemos
-import com.android.oleksandrpriadko.demo.adapter.Demo
+import com.android.oleksandrpriadko.demo.main.adapter.AdapterDemos
+import com.android.oleksandrpriadko.demo.main.adapter.Demo
 import com.android.oleksandrpriadko.recycler_adapter.BaseItemListener
 import com.android.oleksandrpriadko.recycler_decoration.ItemDecorationMargin
 import com.android.oleksandrpriadko.recycler_decoration.ItemDecorationVerticalGridMargin

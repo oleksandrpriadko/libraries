@@ -22,15 +22,15 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
                 onInputTextChanged(view?.getCurrentInputText())
             }
             SearchType.BY_NAME -> {
-                view?.requestRemoveAllChipsIngredients()
+                view?.requestRemoveAllSelectedIngredients()
             }
         }
         view?.updateSearchInputHint()
     }
 
     fun onSearchTriggered() {
-        view?.hideSoftKeyboard()
-        view?.clearSearResults()
+        view?.hideKeyboard()
+        view?.clearSearchResults()
         when (currentSearchType) {
             SearchType.BY_INGREDIENTS -> {
                 filterByIngredients(getSelectedIngredientsNames())
@@ -68,7 +68,7 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
 
     private fun searchDrink(text: CharSequence?) {
         if (text != null) {
-            repo.searchDrink(name = text.toString(), loadingListener = object : LoadingListener {
+            repo.searchDrinkByName(name = text.toString(), loadingListener = object : LoadingListener {
                 override fun onNoInternet() {
 
                 }
@@ -91,14 +91,14 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
 
                 override fun onDrinksFound(foundDrinkDetails: MutableList<DrinkDetails>) {
                     view?.populateSearchResults(foundDrinkDetails)
-                    view?.scrollSearchResultsToTop()
+                    view?.scrollToFirstSearchResult()
                 }
             })
         }
     }
 
     fun searchPopularDrinks() {
-        repo.popularDrinks(object : LoadingListener {
+        repo.loadPopularDrinks(object : LoadingListener {
             override fun onNoInternet() {
 
             }
@@ -120,15 +120,15 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
             }
 
             override fun onDrinksFound(foundDrinkDetails: MutableList<DrinkDetails>) {
-                view?.populateCarouselList(foundDrinkDetails)
-                view?.scrollCarouselToStart()
+                view?.populateCarousel(foundDrinkDetails)
+                view?.scrollToFirstCarouselResult()
             }
         })
     }
 
     private fun filterByIngredients(ingredientNames: List<IngredientName>) {
         if (ingredientNames.isNotEmpty()) {
-            repo.filterByIngredients(ingredientNamesListToString(ingredientNames), loadingListener = object : LoadingListener {
+            repo.filterDrinksByIngredients(ingredientNamesListToString(ingredientNames), loadingListener = object : LoadingListener {
                 override fun onNoInternet() {
 
                 }
@@ -145,9 +145,9 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
 
                 }
 
-                override fun onFilterByIngredient(foundDrinkDetails: MutableList<DrinkDetails>) {
+                override fun onFilterByIngredientDone(foundDrinkDetails: MutableList<DrinkDetails>) {
                     view?.populateSearchResults(foundDrinkDetails)
-                    view?.scrollSearchResultsToTop()
+                    view?.scrollToFirstSearchResult()
                 }
 
                 override fun noDrinksFound() {
@@ -164,7 +164,7 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
     }
 
     fun loadAllIngredients() {
-        repo.loadListOfIngredients(loadingListener = object : LoadingListener {
+        repo.loadListOfAllIngredients(loadingListener = object : LoadingListener {
             override fun onNoInternet() {
 
             }
@@ -199,23 +199,17 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
     }
 
     fun onIngredientMatchSelected(name: String) {
-        repo.findIngredient(name)?.let {
-            view?.addChipIngredient(it)
+        repo.findIngredientByName(name)?.let {
+            view?.addSelectedIngredient(it)
             view?.clearSearchInputText()
             view?.hideFoundIngredientMatches()
             view?.scrollSearchInputToEnd()
         }
     }
 
-    fun onIngredientMatchSelected(ingredientName: IngredientName) {
-        view?.addChipIngredient(ingredientName)
-        view?.clearSearchInputText()
-        view?.hideFoundIngredientMatches()
-    }
-
     fun onDrinkClicked(drinkDetails: DrinkDetails?) {
         drinkDetails?.let {
-            view?.openCocktailDetails(drinkDetails.idDrink)
+            view?.showDrinkDetails(drinkDetails.idDrink)
         }
     }
 
@@ -244,15 +238,15 @@ interface PresenterView : LifecycleOwner {
 
     fun populateSearchResults(foundDrinkDetails: MutableList<DrinkDetails>)
 
-    fun scrollSearchResultsToTop()
+    fun scrollToFirstSearchResult()
 
-    fun openCocktailDetails(drinkId: String)
+    fun showDrinkDetails(drinkId: String)
 
-    fun addChipIngredient(ingredientName: IngredientName)
+    fun addSelectedIngredient(ingredientName: IngredientName)
 
-    fun requestRemoveChipIngredient(ingredientName: IngredientName)
+    fun requestRemoveSelectedIngredient(ingredientName: IngredientName)
 
-    fun requestRemoveAllChipsIngredients()
+    fun requestRemoveAllSelectedIngredients()
 
     fun scrollSearchInputToEnd()
 
@@ -268,17 +262,17 @@ interface PresenterView : LifecycleOwner {
 
     fun updateSearchInputHint()
 
-    fun hideSoftKeyboard()
+    fun hideKeyboard()
 
-    fun populateCarouselList(foundDrinkDetails: MutableList<DrinkDetails>)
+    fun populateCarousel(foundDrinkDetails: MutableList<DrinkDetails>)
 
-    fun scrollCarouselToStart()
+    fun scrollToFirstCarouselResult()
 
     fun applyState(state: State)
 
     fun superOnBackPressed()
 
-    fun clearSearResults()
+    fun clearSearchResults()
 }
 
 enum class SearchType {

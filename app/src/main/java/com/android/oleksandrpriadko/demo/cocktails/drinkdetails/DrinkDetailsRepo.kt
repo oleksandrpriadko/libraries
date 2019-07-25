@@ -1,4 +1,4 @@
-package com.android.oleksandrpriadko.demo.cocktails.cocktaildetails
+package com.android.oleksandrpriadko.demo.cocktails.drinkdetails
 
 import androidx.lifecycle.LifecycleOwner
 import com.android.oleksandrpriadko.demo.cocktails.model.CocktailApi
@@ -11,8 +11,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.converter.gson.GsonConverterFactory
 
-class CocktailDetailsRepo(lifecycleOwner: LifecycleOwner,
-                          baseUrl: String) : ObservableRepo(lifecycleOwner) {
+class DrinkDetailsRepo(lifecycleOwner: LifecycleOwner,
+                       baseUrl: String) : ObservableRepo(lifecycleOwner) {
 
     private val retrofitRepoExtension: RetrofitRepoExtension = RetrofitRepoExtension(
             baseUrl,
@@ -21,13 +21,13 @@ class CocktailDetailsRepo(lifecycleOwner: LifecycleOwner,
 
     fun loadDrinkDetails(drinkId: String, loadingListener: LoadingListener) {
         retrofitRepoExtension.getApi(CocktailApi::class.java)
-                .lookupCocktail(drinkId)
+                .lookupCocktailById(drinkId)
                 .enqueue(object : Callback<LookupCocktailDetailsResponse> {
                     override fun onResponse(call: Call<LookupCocktailDetailsResponse>, response: Response<LookupCocktailDetailsResponse>) {
                         loadingListener.onLoadingDone()
                         if (response.isSuccessful) {
                             response.body()?.let {
-                                loadingListener.onDrinkDetails(it.drinkDetails[0])
+                                loadingListener.onDrinkDetailsLoaded(it.drinkDetails[0])
                             }
                         }
                     }

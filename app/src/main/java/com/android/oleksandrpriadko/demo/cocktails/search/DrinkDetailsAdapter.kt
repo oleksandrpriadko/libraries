@@ -7,12 +7,12 @@ import com.android.oleksandrpriadko.demo.R
 import com.android.oleksandrpriadko.demo.cocktails.model.DrinkDetails
 import com.android.oleksandrpriadko.extension.inflateOn
 import com.android.oleksandrpriadko.recycler_adapter.BaseAdapterRecyclerView
-import com.android.oleksandrpriadko.recycler_adapter.BaseHolderPicasso
+import com.android.oleksandrpriadko.recycler_adapter.PicassoHolder
 import com.android.oleksandrpriadko.recycler_adapter.BaseItemListener
 import kotlinx.android.synthetic.main.cocktail_item_search_result.view.*
 import kotlinx.android.synthetic.main.main_item_demo.view.avatarImageView
 
-class FoundDrinkDetailsAdapter : BaseAdapterRecyclerView<
+class DrinkDetailsAdapter : BaseAdapterRecyclerView<
         DrinkDetails,
         FoundDrinksHolder,
         BaseItemListener<DrinkDetails>>(itemListener = null) {
@@ -33,7 +33,7 @@ class FoundDrinkDetailsAdapter : BaseAdapterRecyclerView<
     }
 }
 
-class FoundDrinksHolder(itemView: View) : BaseHolderPicasso(itemView) {
+class FoundDrinksHolder(itemView: View) : PicassoHolder(itemView) {
 
     fun onBind(drinkDetails: DrinkDetails) {
         itemView.drinkNameTextView.text = drinkDetails.strDrink

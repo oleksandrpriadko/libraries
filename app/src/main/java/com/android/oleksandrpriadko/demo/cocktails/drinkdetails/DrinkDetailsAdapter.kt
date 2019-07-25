@@ -1,22 +1,22 @@
-package com.android.oleksandrpriadko.demo.cocktails.cocktaildetails
+package com.android.oleksandrpriadko.demo.cocktails.drinkdetails
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IntDef
 import com.android.oleksandrpriadko.demo.R
-import com.android.oleksandrpriadko.demo.cocktails.cocktaildetails.CocktailDetailsAdapter.Companion.IMAGE_INGREDIENTS
-import com.android.oleksandrpriadko.demo.cocktails.cocktaildetails.CocktailDetailsAdapter.Companion.INSTRUCTION
+import com.android.oleksandrpriadko.demo.cocktails.drinkdetails.DrinkDetailsAdapter.Companion.IMAGE_INGREDIENTS
+import com.android.oleksandrpriadko.demo.cocktails.drinkdetails.DrinkDetailsAdapter.Companion.INSTRUCTION
 import com.android.oleksandrpriadko.demo.cocktails.model.DrinkDetails
 import com.android.oleksandrpriadko.extension.inflateOn
 import com.android.oleksandrpriadko.recycler_adapter.BaseAdapterRecyclerView
-import com.android.oleksandrpriadko.recycler_adapter.BaseHolderPicasso
+import com.android.oleksandrpriadko.recycler_adapter.PicassoHolder
 import com.android.oleksandrpriadko.recycler_adapter.BaseItemListener
 import com.google.android.material.chip.Chip
 import kotlinx.android.synthetic.main.cocktail_item_cocktail_details_bottom.view.*
 import kotlinx.android.synthetic.main.cocktail_item_cocktail_details_top.view.*
 
-class CocktailDetailsAdapter(itemListener: ItemListener? = null) :
+class DrinkDetailsAdapter(itemListener: ItemListener? = null) :
         BaseAdapterRecyclerView<
                 SelectedPage,
                 Holder,
@@ -63,7 +63,7 @@ class CocktailDetailsAdapter(itemListener: ItemListener? = null) :
     }
 }
 
-abstract class Holder(itemView: View) : BaseHolderPicasso(itemView) {
+abstract class Holder(itemView: View) : PicassoHolder(itemView) {
 
     abstract fun onBind(drinkDetails: DrinkDetails)
 }

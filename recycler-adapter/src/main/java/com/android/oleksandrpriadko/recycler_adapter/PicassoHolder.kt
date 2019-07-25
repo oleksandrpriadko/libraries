@@ -7,7 +7,7 @@ import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 
-open class BaseHolderPicasso(itemView: View) : RecyclerView.ViewHolder(itemView) {
+open class PicassoHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     private val picasso: Picasso
         get() {

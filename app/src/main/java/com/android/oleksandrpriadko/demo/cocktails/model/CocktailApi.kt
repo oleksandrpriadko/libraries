@@ -7,22 +7,22 @@ import retrofit2.http.Query
 interface CocktailApi {
 
     @GET(ACTION_SEARCH)
-    fun searchDrink(@Query(SEARCH_COCKTAIL) name: String): Call<FoundDrinksResponse>
+    fun searchDrinkByName(@Query(SEARCH_COCKTAIL) name: String): Call<FoundDrinksResponse>
 
     @GET(ACTION_SEARCH)
-    fun searchIngredient(@Query(SEARCH_INGREDIENT) name: String): Call<Any>
+    fun searchIngredientByName(@Query(SEARCH_INGREDIENT) name: String): Call<Any>
 
     @GET(ACTION_LOOKUP)
-    fun lookupCocktail(@Query(LOOKUP_COCKTAIL) drinkId: String): Call<LookupCocktailDetailsResponse>
+    fun lookupCocktailById(@Query(LOOKUP_COCKTAIL) drinkId: String): Call<LookupCocktailDetailsResponse>
 
     @GET(ACTION_LOOKUP)
     fun lookupIngredient(@Query(LOOKUP_INGREDIENT) name: String): Call<Any>
 
     @GET(ACTION_FILTER)
-    fun filterByIngredients(@Query(FILTER_INGREDIENTS) name: String): Call<FoundDrinksResponse>
+    fun filterDrinksByIngredients(@Query(FILTER_INGREDIENTS) name: String): Call<FoundDrinksResponse>
 
     @GET(ACTION_LIST + LIST_INGREDIENTS)
-    fun listOfIngredients(): Call<ListOfIngredientsResponse>
+    fun loadListOfAllIngredients(): Call<ListOfIngredientsResponse>
 
     @GET(ACTION_POPULAR)
     fun loadPopularDrinks(): Call<FoundDrinksResponse>

@@ -1,11 +1,13 @@
-package com.android.oleksandrpriadko.demo
+package com.android.oleksandrpriadko.demo.main
 
 import android.app.Application
 import android.util.Log
 import androidx.room.Room
+import com.android.oleksandrpriadko.demo.BuildConfig
+import com.android.oleksandrpriadko.demo.R
 import com.android.oleksandrpriadko.demo.cocktails.managers.CocktailAppDatabase
 import com.android.oleksandrpriadko.demo.cocktails.managers.CocktailManagerFinder
-import com.android.oleksandrpriadko.demo.cocktails.managers.SharedPreferencesmanagerImpl
+import com.android.oleksandrpriadko.demo.cocktails.managers.SharedPreferencesManagerImpl
 import com.android.oleksandrpriadko.demo.logpublish.AppCenterConverter
 import com.android.oleksandrpriadko.demo.logpublish.DemoPublisher
 import com.android.oleksandrpriadko.demo.logpublish.FabricConverter
@@ -32,7 +34,7 @@ class App : Application() {
                 .databaseBuilder(applicationContext, CocktailAppDatabase::class.java, "ingredients")
                 .allowMainThreadQueries()
                 .build()
-        CocktailManagerFinder.sharedPreferencesManager = SharedPreferencesmanagerImpl(applicationContext)
+        CocktailManagerFinder.sharedPreferencesManager = SharedPreferencesManagerImpl(applicationContext)
     }
 
     private fun initPolicy(): DefaultPolicy {
