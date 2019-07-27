@@ -142,8 +142,8 @@
         android:layout_height="@dimen/constraint_match"
         android:background="@color/cocktail_background_clickable"
         app:layout_constraintBottom_toBottomOf="@id/inputScrollView"
-        app:layout_constraintEnd_toEndOf="@id/inputScrollView"
-        app:layout_constraintStart_toStartOf="@id/inputScrollView"
+        app:layout_constraintEnd_toEndOf="@id/searchWrapLayout"
+        app:layout_constraintStart_toStartOf="@id/searchWrapLayout"
         app:layout_constraintTop_toBottomOf="@id/inputScrollView" />
 
     <View

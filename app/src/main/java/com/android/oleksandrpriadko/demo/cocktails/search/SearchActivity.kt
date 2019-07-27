@@ -52,7 +52,6 @@ class SearchActivity : AppCompatActivity(), PresenterView {
         initConstraintSets()
         prepareSearch()
         initCarousel()
-        presenter?.loadAllIngredients()
         presenter?.searchPopularDrinks()
     }
 
@@ -287,6 +286,10 @@ class SearchActivity : AppCompatActivity(), PresenterView {
             context.startActivity(Intent(context, SearchActivity::class.java).apply {
                 putExtra(BundleConst.INGREDIENT_NAME, ingredientName)
             })
+        }
+
+        fun open(context: Context) {
+            context.startActivity(Intent(context, SearchActivity::class.java))
         }
 
     }

@@ -164,30 +164,6 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
         }
     }
 
-    fun loadAllIngredients() {
-        repo.loadListOfAllIngredients(loadingListener = object : LoadingListener {
-            override fun onNoInternet() {
-
-            }
-
-            override fun onLoadingStarted() {
-                saveAndApplyState(State.LOADING_CAROUSEL)
-            }
-
-            override fun onLoadingDone() {
-                saveAndApplyState(State.RESULTS_CAROUSEL)
-            }
-
-            override fun onLoadingError(throwable: Throwable) {
-
-            }
-
-            override fun onListOfIngredientsLoaded(ingredientNames: MutableList<IngredientName>) {
-
-            }
-        })
-    }
-
     private fun findIngredientMatches(name: String): Boolean {
         val listOfMatches = repo.findIngredientMatches(name)
         return if (listOfMatches != null && listOfMatches.isNotEmpty()) {
