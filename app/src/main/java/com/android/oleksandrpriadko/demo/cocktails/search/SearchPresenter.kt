@@ -31,6 +31,7 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
     fun onSearchTriggered() {
         view?.hideKeyboard()
         view?.clearSearchResults()
+        view?.hideFoundIngredientMatches()
         when (currentSearchType) {
             SearchType.BY_INGREDIENTS -> {
                 filterByIngredients(getSelectedIngredientsNames())
@@ -198,13 +199,49 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
         }
     }
 
-    fun onIngredientMatchSelected(name: String) {
-        repo.findIngredientByName(name)?.let {
-            view?.addSelectedIngredient(it)
+    fun onIngredientMatchSelected(name: String, addIfAbsentInDatabase: Boolean) {
+        val ingredientFromDatabase: IngredientName? = repo.findIngredientByName(name)
+
+        if (ingredientFromDatabase != null) {
+            if (!isIngredientAlreadyAdded(name)) {
+                view?.addSelectedIngredient(ingredientFromDatabase)
+                view?.scrollSearchInputToEnd()
+            }
             view?.clearSearchInputText()
             view?.hideFoundIngredientMatches()
-            view?.scrollSearchInputToEnd()
+        } else if (addIfAbsentInDatabase) {
+            if (!isIngredientAlreadyAdded(name)) {
+                view?.addSelectedIngredient(name)
+                view?.scrollSearchInputToEnd()
+            }
+            view?.clearSearchInputText()
+            view?.hideFoundIngredientMatches()
         }
+    }
+
+    fun onIngredientFromCarouselSelected(name: String, addIfAbsentInDatabase: Boolean) {
+        val ingredientFromDatabase: IngredientName? = repo.findIngredientByName(name)
+
+        if (ingredientFromDatabase != null) {
+            if (!isIngredientAlreadyAdded(name)) {
+                view?.addSelectedIngredient(ingredientFromDatabase)
+                view?.scrollSearchInputToEnd()
+            }
+        } else if (addIfAbsentInDatabase) {
+            if (!isIngredientAlreadyAdded(name)) {
+                view?.addSelectedIngredient(name)
+                view?.scrollSearchInputToEnd()
+            }
+        }
+    }
+
+    private fun isIngredientAlreadyAdded(name: String): Boolean {
+        view?.getSelectedIngredients()?.forEach { alreadySelected ->
+            if (alreadySelected == name) {
+                return true
+            }
+        }
+        return false
     }
 
     fun onDrinkClicked(drinkDetails: DrinkDetails?) {
@@ -243,6 +280,8 @@ interface PresenterView : LifecycleOwner {
     fun showDrinkDetails(drinkId: String)
 
     fun addSelectedIngredient(ingredientName: IngredientName)
+
+    fun addSelectedIngredient(ingredientName: String)
 
     fun requestRemoveSelectedIngredient(ingredientName: IngredientName)
 

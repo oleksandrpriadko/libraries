@@ -156,10 +156,4 @@
         android:rotation="100"
         android:src="@drawable/ic_loading_drink_30" />
 
-    <ImageView
-        android:layout_width="@dimen/cocktail_size_loading_drink"
-        android:layout_height="@dimen/cocktail_size_loading_drink"
-        android:rotation="2"
-        android:src="@drawable/ic_loading_drink_32" />
-
 </merge>

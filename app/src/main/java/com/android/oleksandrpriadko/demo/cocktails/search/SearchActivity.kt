@@ -71,7 +71,16 @@ class SearchActivity : AppCompatActivity(), PresenterView {
 
     private fun initCarousel() {
         val adapter = CarouselDrinksAdapter()
-        adapter.itemListener = object : BaseItemListenerAdapter<DrinkDetails>() {
+        adapter.itemListener = object : ItemListener {
+            override fun onIngredientClicked(ingredientName: String, drinkPosition: Int) {
+                searchTabs.selectItem(BY_INGREDIENTS)
+                presenter?.onIngredientFromCarouselSelected(ingredientName, true)
+            }
+
+            override fun isEmpty(isEmpty: Boolean) {
+
+            }
+
             override fun itemClicked(position: Int, item: DrinkDetails) {
                 presenter?.onDrinkClicked(item)
             }
@@ -84,8 +93,8 @@ class SearchActivity : AppCompatActivity(), PresenterView {
             override fun onItemSelected(selectedView: View, indexOfSelected: Int) {
                 val newSearchType =
                         when (indexOfSelected) {
-                            0 -> SearchType.BY_INGREDIENTS
-                            1 -> SearchType.BY_NAME
+                            BY_INGREDIENTS -> SearchType.BY_INGREDIENTS
+                            BY_NAME -> SearchType.BY_NAME
                             else -> SearchType.BY_NAME
                         }
                 presenter?.onSearchTypeChanged(newSearchType)
@@ -172,7 +181,9 @@ class SearchActivity : AppCompatActivity(), PresenterView {
                 it.inputMethodMode = INPUT_METHOD_NEEDED
                 it.setAdapter(ArrayAdapter(this, android.R.layout.simple_list_item_1, matches).apply { notifyDataSetChanged() })
                 it.setOnItemClickListener { adapterView, _, position, _ ->
-                    presenter?.onIngredientMatchSelected(adapterView.adapter.getItem(position) as String)
+                    presenter?.onIngredientMatchSelected(
+                            adapterView.adapter.getItem(position) as String,
+                            false)
                 }
                 it.promptPosition = POSITION_PROMPT_BELOW
                 it.show()
@@ -185,8 +196,12 @@ class SearchActivity : AppCompatActivity(), PresenterView {
     }
 
     override fun addSelectedIngredient(ingredientName: IngredientName) {
+        addSelectedIngredient(ingredientName.strIngredient1)
+    }
+
+    override fun addSelectedIngredient(ingredientName: String) {
         val chip = ingredientsChipGroup.inflateOn<Chip>(R.layout.cocktail_chip_search)
-        chip.text = ingredientName.strIngredient1
+        chip.text = ingredientName
         chip.setOnCloseIconClickListener {
             ingredientsChipGroup.removeView(chip)
             ingredientsChipGroup.show(ingredientsChipGroup.childCount > 0)
@@ -233,8 +248,10 @@ class SearchActivity : AppCompatActivity(), PresenterView {
         super.onNewIntent(intent)
         intent?.let {
             if (it.getStringExtra(BundleConst.INGREDIENT_NAME) != null) {
-                presenter?.onSearchTypeChanged(SearchType.BY_INGREDIENTS)
-                presenter?.onIngredientMatchSelected(it.getStringExtra(BundleConst.INGREDIENT_NAME))
+                searchTabs.selectItem(BY_INGREDIENTS)
+                presenter?.onIngredientMatchSelected(
+                        it.getStringExtra(BundleConst.INGREDIENT_NAME),
+                        true)
             }
         }
     }
@@ -262,6 +279,9 @@ class SearchActivity : AppCompatActivity(), PresenterView {
     }
 
     companion object {
+
+        private const val BY_INGREDIENTS = 0
+        private const val BY_NAME = 1
 
         fun addIngredientToSelected(context: Context, ingredientName: String) {
             context.startActivity(Intent(context, SearchActivity::class.java).apply {

@@ -72,8 +72,12 @@ abstract class ObservableRepo(lifecycleOwner: LifecycleOwner) {
 
     abstract fun cleanUp()
 
+    protected fun enableLog(): Boolean = false
+
     private fun logState(message: String) {
-        LogPublishService.logger().d(javaClass.simpleName, message)
+        if (enableLog()) {
+            LogPublishService.logger().d(javaClass.simpleName, message)
+        }
     }
 
     inner class LifecycleBoundObserver constructor(val lifecycleOwner: LifecycleOwner)

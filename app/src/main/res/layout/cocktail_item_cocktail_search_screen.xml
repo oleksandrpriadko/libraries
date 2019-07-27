@@ -31,18 +31,30 @@
                 android:src="@drawable/cocktail_drawable_test" />
 
             <TextView
+                android:id="@+id/nameTextView"
                 style="@style/TextCocktailLargeBoldShadow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/nameTextView"
+                android:layout_above="@id/ingredientsCarouselChipGroup"
+                android:layout_alignEnd="@id/avatarImageView"
+                android:layout_alignStart="@id/avatarImageView"
+                android:layout_marginBottom="10dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
+                android:ellipsize="end"
+                android:gravity="start"
+                tools:text="Good cocktail receipt" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/ingredientsCarouselChipGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_alignBottom="@id/avatarImageView"
                 android:layout_alignEnd="@id/avatarImageView"
                 android:layout_alignStart="@id/avatarImageView"
                 android:layout_marginBottom="20dp"
-                android:layout_marginStart="20dp"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:text="Good cocktail receipt" />
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp" />
 
         </RelativeLayout>
     </androidx.cardview.widget.CardView>

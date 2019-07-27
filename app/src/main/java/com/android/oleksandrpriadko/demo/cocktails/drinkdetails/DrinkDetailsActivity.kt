@@ -11,7 +11,7 @@ import com.android.oleksandrpriadko.demo.cocktails.model.DrinkDetails
 import com.android.oleksandrpriadko.demo.cocktails.search.SearchActivity
 import com.android.oleksandrpriadko.extension.hide
 import com.android.oleksandrpriadko.extension.show
-import com.android.oleksandrpriadko.recycler_adapter.PicassoHolder
+import com.android.oleksandrpriadko.recycler_adapter.PicassoHolderExtension
 import kotlinx.android.synthetic.main.cocktail_activity_cocktail_details.*
 import kotlinx.android.synthetic.main.cocktail_ingredient_popup_layout.view.*
 
@@ -60,7 +60,7 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView {
     }
 
     override fun loadIngredientImage(imageUrl: String) {
-        PicassoHolder.loadImage(imageUrl,
+        PicassoHolderExtension.loadImage(imageUrl,
                 ingredientLayout.avatarImageView,
                 R.drawable.main_ic_cocktail_512)
 

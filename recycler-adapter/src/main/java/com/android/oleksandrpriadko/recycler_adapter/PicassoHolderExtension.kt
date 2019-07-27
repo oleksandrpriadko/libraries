@@ -1,26 +1,19 @@
 package com.android.oleksandrpriadko.recycler_adapter
 
 import android.content.Context
-import android.view.View
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
-import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 
-open class PicassoHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class PicassoHolderExtension(context: Context) {
 
-    private val picasso: Picasso
-        get() {
-            val picasso = Picasso.with(itemView.context)
-            picasso.setIndicatorsEnabled(false)
-            picasso.isLoggingEnabled = false
-            return picasso
-        }
+    private val picasso: Picasso = getPicasso(context)
 
-    protected fun loadImage(url: String,
-                            imageView: ImageView,
-                            @DrawableRes placeHolderId: Int,
-                            @DrawableRes errorID: Int) {
+    fun loadImage(url: String,
+                  imageView: ImageView,
+                  @DrawableRes placeHolderId: Int,
+                  @DrawableRes errorID: Int) {
         picasso
                 .load(url)
                 .placeholder(placeHolderId)
@@ -28,14 +21,25 @@ open class PicassoHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 .into(imageView)
     }
 
-    protected fun loadImage(url: String?,
-                            imageView: ImageView,
-                            @DrawableRes placeHolderId: Int) {
+    fun loadImage(url: String?,
+                  imageView: ImageView,
+                  @DrawableRes placeHolderId: Int) {
         picasso
                 .load(url)
                 .placeholder(placeHolderId)
                 .error(R.drawable.ic_error_outline_black_24dp)
                 .into(imageView)
+    }
+
+    fun loadImage(url: String?,
+                  imageView: ImageView,
+                  @DrawableRes placeHolderId: Int,
+                  callback: Callback) {
+        picasso
+                .load(url)
+                .placeholder(placeHolderId)
+                .error(R.drawable.ic_error_outline_black_24dp)
+                .into(imageView, callback)
     }
 
     companion object {

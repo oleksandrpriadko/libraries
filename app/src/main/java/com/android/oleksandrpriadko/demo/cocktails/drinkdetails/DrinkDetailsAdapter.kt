@@ -4,17 +4,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IntDef
+import androidx.recyclerview.widget.RecyclerView
 import com.android.oleksandrpriadko.demo.R
 import com.android.oleksandrpriadko.demo.cocktails.drinkdetails.DrinkDetailsAdapter.Companion.IMAGE_INGREDIENTS
 import com.android.oleksandrpriadko.demo.cocktails.drinkdetails.DrinkDetailsAdapter.Companion.INSTRUCTION
 import com.android.oleksandrpriadko.demo.cocktails.model.DrinkDetails
 import com.android.oleksandrpriadko.extension.inflateOn
 import com.android.oleksandrpriadko.recycler_adapter.BaseAdapterRecyclerView
-import com.android.oleksandrpriadko.recycler_adapter.PicassoHolder
 import com.android.oleksandrpriadko.recycler_adapter.BaseItemListener
+import com.android.oleksandrpriadko.recycler_adapter.PicassoHolderExtension
 import com.google.android.material.chip.Chip
+import kotlinx.android.synthetic.main.cocktail_activity_search.view.*
+import kotlinx.android.synthetic.main.cocktail_ingredient_popup_layout.view.*
 import kotlinx.android.synthetic.main.cocktail_item_cocktail_details_bottom.view.*
-import kotlinx.android.synthetic.main.cocktail_item_cocktail_details_top.view.*
 
 class DrinkDetailsAdapter(itemListener: ItemListener? = null) :
         BaseAdapterRecyclerView<
@@ -63,12 +65,14 @@ class DrinkDetailsAdapter(itemListener: ItemListener? = null) :
     }
 }
 
-abstract class Holder(itemView: View) : PicassoHolder(itemView) {
+abstract class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     abstract fun onBind(drinkDetails: DrinkDetails)
 }
 
 class TopHolder(itemView: ViewGroup, private val itemListener: ItemListener?) : Holder(itemView) {
+    private val picassoHolderExtension = PicassoHolderExtension(itemView.context)
+
     override fun onBind(drinkDetails: DrinkDetails) {
         loadAvatar(drinkDetails.strDrinkThumb)
 
@@ -78,7 +82,7 @@ class TopHolder(itemView: ViewGroup, private val itemListener: ItemListener?) : 
     }
 
     private fun loadAvatar(imageUrl: String?) {
-        loadImage(imageUrl, itemView.avatarImageView, R.drawable.main_ic_cocktail_512)
+        picassoHolderExtension.loadImage(imageUrl, itemView.avatarImageView, R.drawable.main_ic_cocktail_512)
     }
 
     private fun displayIngredientsChips(drinkDetails: DrinkDetails) {

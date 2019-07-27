@@ -4,11 +4,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
-
+import androidx.recyclerview.widget.RecyclerView
 import com.android.oleksandrpriadko.demo.R
 import com.android.oleksandrpriadko.recycler_adapter.BaseAdapterRecyclerView
-import com.android.oleksandrpriadko.recycler_adapter.PicassoHolder
 import com.android.oleksandrpriadko.recycler_adapter.BaseItemListener
+import com.android.oleksandrpriadko.recycler_adapter.PicassoHolderExtension
 import kotlinx.android.synthetic.main.main_item_demo.view.*
 
 class AdapterDemos(itemListener: BaseItemListener<Demo>?)
@@ -34,11 +34,13 @@ class AdapterDemos(itemListener: BaseItemListener<Demo>?)
         holder.loadAvatar(demo.avatarUrl, demo.iconResId)
     }
 
-    inner class Holder(itemView: View) : PicassoHolder(itemView) {
+    inner class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        private val picassoHolderExtension = PicassoHolderExtension(itemView.context)
 
         fun loadAvatar(url: String?, @DrawableRes iconResId: Int) {
             if (iconResId == 0) {
-                loadImage(url, itemView.avatarImageView, R.drawable.main_ic_workflow_512)
+                picassoHolderExtension.loadImage(url, itemView.avatarImageView, R.drawable.main_ic_workflow_512)
             } else {
                 itemView.avatarImageView.setImageDrawable(itemView.context.getDrawable(iconResId))
             }
