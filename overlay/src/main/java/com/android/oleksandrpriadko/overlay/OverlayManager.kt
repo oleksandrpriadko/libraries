@@ -31,14 +31,14 @@ open class OverlayManager(containerViewGroup: ViewGroup) {
 
     private var isHostResumed = false
 
-    private var showParentBefore: Boolean = true
+    var showParentBefore: Boolean = true
         get
         /**
          * If true - parent's layout visibility will be changed to [View.VISIBLE] once
          * [Overlay] attached, false - no changes to parent's layout visibility
          */
         set
-    private var hideParentAfter = true
+    var hideParentAfter = true
         get
         /**
          * If true - parent's layout visibility will be changed to [View.GONE] once

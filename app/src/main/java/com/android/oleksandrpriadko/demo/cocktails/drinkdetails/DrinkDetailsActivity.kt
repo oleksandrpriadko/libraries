@@ -3,22 +3,32 @@ package com.android.oleksandrpriadko.demo.cocktails.drinkdetails
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearSnapHelper
 import com.android.oleksandrpriadko.demo.R
+import com.android.oleksandrpriadko.demo.cocktails.managers.CocktailManagerFinder
 import com.android.oleksandrpriadko.demo.cocktails.model.BundleConst
 import com.android.oleksandrpriadko.demo.cocktails.model.DrinkDetails
 import com.android.oleksandrpriadko.demo.cocktails.search.SearchActivity
-import com.android.oleksandrpriadko.extension.hide
+import com.android.oleksandrpriadko.extension.inflateOn
 import com.android.oleksandrpriadko.extension.show
+import com.android.oleksandrpriadko.overlay.HideMethod
+import com.android.oleksandrpriadko.overlay.Overlay
+import com.android.oleksandrpriadko.overlay.OverlayManager
+import com.android.oleksandrpriadko.overlay.OverlayState
 import com.android.oleksandrpriadko.recycler_adapter.PicassoHolderExtension
+import com.google.android.material.chip.Chip
 import kotlinx.android.synthetic.main.cocktail_activity_cocktail_details.*
-import kotlinx.android.synthetic.main.cocktail_ingredient_popup_layout.view.*
+import kotlinx.android.synthetic.main.cocktail_overlay_ingredient_details.view.*
 
 class DrinkDetailsActivity : AppCompatActivity(), PresenterView {
 
     private lateinit var presenter: DrinkDetailsPresenter
-    private val detailsAdapter = DrinkDetailsAdapter()
+
+    private var drinkDetails: DrinkDetails? = null
+
+    private lateinit var overlayManager: OverlayManager
+    private lateinit var ingredientOverlay: ViewGroup
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,43 +37,23 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView {
 
         setContentView(R.layout.cocktail_activity_cocktail_details)
 
-        initDetailsRecView()
+        initOverlay()
 
         requestLoadCocktail(intent)
+    }
+
+    private fun initOverlay() {
+        overlayManager = OverlayManager(overlayContainer)
+        overlayManager.hideParentAfter = false
+        ingredientOverlay = overlayContainer.inflateOn(R.layout.cocktail_overlay_ingredient_details)
+        ingredientOverlay.addToSearchTextView.setOnClickListener {
+            presenter.onAddIngredientToSearch()
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         requestLoadCocktail(intent)
-    }
-
-    private fun initDetailsRecView() {
-        ingredientLayout.setOnClickListener {
-            presenter.onIngredientLayoutClicked()
-        }
-
-        LinearSnapHelper().attachToRecyclerView(cocktailDetailsRecView)
-        cocktailDetailsRecView.adapter = detailsAdapter
-        detailsAdapter.itemListener = object : ItemListener {
-            override fun onIngredientClick(ingredientName: String?) {
-                presenter.onIngredientChipClicked(ingredientName)
-            }
-
-            override fun isEmpty(isEmpty: Boolean) {}
-
-            override fun itemClicked(position: Int, item: SelectedPage) {}
-        }
-    }
-
-    override fun showIngredientPopup(show: Boolean) {
-        if (show) ingredientLayout.show() else ingredientLayout.hide()
-    }
-
-    override fun loadIngredientImage(imageUrl: String) {
-        PicassoHolderExtension.loadImage(imageUrl,
-                ingredientLayout.avatarImageView,
-                R.drawable.main_ic_cocktail_512)
-
     }
 
     private fun requestLoadCocktail(intent: Intent?) {
@@ -74,12 +64,94 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView {
     }
 
     override fun populateDrinkDetails(drinkDetails: DrinkDetails) {
-        detailsAdapter.drinkDetails = drinkDetails
-        detailsAdapter.notifyDataSetChanged()
+        this.drinkDetails = drinkDetails
+
+        nameTextView.text = drinkDetails.strDrink
+
+        avatarImageView.setImageResource(CocktailManagerFinder.randomPlaceholderManager.pickPlaceHolder())
+
+        PicassoHolderExtension.loadImage(
+                drinkDetails.strDrinkThumb,
+                avatarImageView,
+                CocktailManagerFinder.randomPlaceholderManager.pickPlaceHolder())
+        instructionsTextView.text = drinkDetails.strInstructions
+
+        displayIngredientsChips(drinkDetails)
+    }
+
+    private fun displayIngredientsChips(drinkDetails: DrinkDetails) {
+        for (ingredient in drinkDetails.listOfIngredients) {
+            ingredientsChipGroup.inflateOn<Chip>(
+                    R.layout.cocktail_item_ingredient,
+                    false)
+                    .apply {
+                        text = ingredient
+                        ingredientsChipGroup.addView(this)
+                        setOnClickListener {
+                            presenter.onIngredientItemClicked(ingredient)
+                        }
+                    }
+        }
+    }
+
+    override fun showIngredientOverlay() {
+        val overlayBuilder: Overlay.Builder = Overlay.Builder(ingredientOverlay)
+                .contentView(R.id.contentLayout)
+                .animationShowContent(R.anim.overlay_module_slide_up)
+                .animationHideContent(R.anim.overlay_module_slide_down)
+                .backgroundView(R.id.backgroundLayout)
+                .animationShowBackground(R.anim.overlay_module_fade_in)
+                .animationHideBackground(R.anim.overlay_module_fade_out)
+                .overlayListener(object : Overlay.OverlayListener {
+                    override fun stateChanged(state: OverlayState) {
+                        when (state) {
+                            OverlayState.DISMISSED, OverlayState.DISMISSED_BACK_CLICK -> {
+                                presenter.onIngredientOverlayHidden()
+                            }
+                            else -> {
+                            }
+                        }
+                    }
+
+                })
+        overlayManager.add(overlayBuilder.build())
+    }
+
+    override fun setIngredientDescription(description: String) {
+
+    }
+
+    override fun hideIngredientOverlay() {
+        overlayManager.hideLast(HideMethod.DEFAULT)
+    }
+
+    override fun loadIngredientImage(imageUrl: String) {
+        PicassoHolderExtension.loadImage(imageUrl,
+                ingredientOverlay.ingredientImageView,
+                CocktailManagerFinder.randomPlaceholderManager.pickPlaceHolder())
+
+    }
+
+    override fun setIngredientName(name: String) {
+        ingredientOverlay.nameTextView.text = name
     }
 
     override fun openSearchWithIngredient(shownIngredientName: String) {
         SearchActivity.addIngredientToSelected(this, shownIngredientName)
+    }
+
+    override fun showLoadingLayout(show: Boolean) {
+        loadingLayout.show(show)
+    }
+
+    override fun clearImageInOverlay() {
+        ingredientOverlay.ingredientImageView.setImageResource(0)
+    }
+
+    override fun onBackPressed() {
+        if (!overlayManager.hideLast(HideMethod.DEFAULT)) {
+            super.onBackPressed()
+        }
     }
 
     companion object {

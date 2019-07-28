@@ -5,19 +5,13 @@ import com.google.gson.annotations.SerializedName;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 
-@Entity(tableName = "ingredients")
-public class IngredientName {
+public class IngredientDetails {
 
-    @PrimaryKey
-    @ColumnInfo(name = "name")
     @Expose
     @NonNull
-    @SerializedName("strIngredient1")
-    public String strIngredient1 = "";
+    @SerializedName("strIngredient")
+    public String strIngredient = "";
 
     @Expose
     private String idIngredient = "";

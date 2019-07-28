@@ -15,12 +15,12 @@ interface IngredientDao {
     fun findByName(text: String): IngredientName
 
     @Insert
-    fun insert(ingredientName: IngredientName)
+    fun insert(ingredient: IngredientName)
 
     @Delete
-    fun delete(ingredientName: IngredientName)
+    fun delete(ingredient: IngredientName)
 
-    @Query("DELETE FROM INGREDIENTS")
+    @Query("DELETE FROM ingredients")
     fun deleteAll()
 }
 

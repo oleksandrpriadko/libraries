@@ -4,7 +4,7 @@
     <!--    Main    -->
 
     <!--    backgrounds     -->
-    <color name="main_background_popup">#61000000</color>
+    <color name="main_background_popup">#9B000000</color>
     <color name="main_background_screen">#1F2850</color>
     <color name="main_background_secondary">#192042</color>
     <color name="main_background_primary">#2A3568</color>

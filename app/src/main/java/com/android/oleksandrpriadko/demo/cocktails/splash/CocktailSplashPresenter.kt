@@ -41,7 +41,7 @@ class CocktailSplashPresenter(presenterView: PresenterView,
                 view?.onFinishScreen()
             }
 
-            override fun onListOfIngredientsLoaded(ingredientNames: MutableList<IngredientName>) {}
+            override fun onListOfIngredientsLoaded(ingredients: MutableList<IngredientName>) {}
 
             override fun onLoadingError(throwable: Throwable) {}
 

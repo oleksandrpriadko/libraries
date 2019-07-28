@@ -13,10 +13,7 @@ public interface LoadingListener extends RetrofitRepoExtension.Listener {
     default void onDrinksFound(@NonNull final List<DrinkDetails> foundDrinkDetails) {
     }
 
-    default void onFilterByIngredientDone(@NonNull final List<DrinkDetails> foundDrinkDetails) {
-    }
-
-    default void onListOfIngredientsLoaded(@NonNull final List<IngredientName> ingredientNames) {
+    default void onListOfIngredientsLoaded(@NonNull final List<IngredientName> ingredients) {
     }
 
     default void noDrinksFound() {

@@ -60,6 +60,8 @@ ext {
     mockitoVersion = '1.10.19'
 
     roomVersion = '2.1.0'
+
+    coroutines = '1.2.0'
 }
 
 task clean(type: Delete) {

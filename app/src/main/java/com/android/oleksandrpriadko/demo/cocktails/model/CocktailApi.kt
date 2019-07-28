@@ -10,19 +10,19 @@ interface CocktailApi {
     fun searchDrinkByName(@Query(SEARCH_COCKTAIL) name: String): Call<FoundDrinksResponse>
 
     @GET(ACTION_SEARCH)
-    fun searchIngredientByName(@Query(SEARCH_INGREDIENT) name: String): Call<Any>
+    fun searchIngredientByName(@Query(SEARCH_INGREDIENT) name: String): Call<FoundIngredientsResponse>
 
     @GET(ACTION_LOOKUP)
-    fun lookupCocktailById(@Query(LOOKUP_COCKTAIL) drinkId: String): Call<LookupCocktailDetailsResponse>
+    fun lookupCocktailById(@Query(LOOKUP_COCKTAIL) drinkId: String): Call<FoundDrinksResponse>
 
     @GET(ACTION_LOOKUP)
-    fun lookupIngredient(@Query(LOOKUP_INGREDIENT) name: String): Call<Any>
+    fun lookupIngredient(@Query(LOOKUP_INGREDIENT) name: String): Call<FoundIngredientNamesResponse>
 
     @GET(ACTION_FILTER)
     fun filterDrinksByIngredients(@Query(FILTER_INGREDIENTS) name: String): Call<FoundDrinksResponse>
 
     @GET(ACTION_LIST + LIST_INGREDIENTS)
-    fun loadListOfAllIngredients(): Call<ListOfIngredientsResponse>
+    fun loadListOfAllIngredients(): Call<FoundIngredientNamesResponse>
 
     @GET(ACTION_POPULAR)
     fun loadPopularDrinks(): Call<FoundDrinksResponse>
@@ -44,28 +44,24 @@ interface CocktailApi {
 
         const val LIST_INGREDIENTS = "?i=list"
 
-        fun createIngredientImageUrl(ingredientName: String): String {
-            return "https://www.thecocktaildb.com/images/ingredients/$ingredientName.png"
+        fun createIngredientImageUrl(ingredientName: String, imageSize: ImageSize): String {
+            return when (imageSize) {
+                ImageSize.SMALL -> "https://www.thecocktaildb.com/images/ingredients/$ingredientName-Small.png"
+                ImageSize.MEDIUM -> "https://www.thecocktaildb.com/images/ingredients/$ingredientName-Medium.png"
+                ImageSize.NORMAL -> "https://www.thecocktaildb.com/images/ingredients/$ingredientName.png"
+            }
+        }
+
+        fun ingredientNamesToString(ingredients: List<IngredientName>): String {
+            return ingredients.joinToString(separator = ",") {
+                it.strIngredient1.replace("\\s".toRegex(), "_")
+            }
         }
     }
 }
 
-enum class ActionType(val description: String) {
-    ACTION_SEARCH(CocktailApi.ACTION_SEARCH),
-    ACTION_LOOKUP(CocktailApi.ACTION_LOOKUP),
-    ACTION_FILTER(CocktailApi.ACTION_FILTER)
-}
-
-enum class SearchType(val description: String) {
-    SEARCH_COCKTAIL(CocktailApi.SEARCH_COCKTAIL),
-    SEARCH_INGREDIENT(CocktailApi.SEARCH_INGREDIENT)
-}
-
-enum class LookupType(val description: String) {
-    LOOKUP_COCKTAIL(CocktailApi.LOOKUP_COCKTAIL),
-    LOOKUP_INGREDIENT(CocktailApi.LOOKUP_INGREDIENT)
-}
-
-enum class FilterType(val description: String) {
-    FILTER_INGREDIENT(CocktailApi.FILTER_INGREDIENTS)
+enum class ImageSize {
+    SMALL,
+    MEDIUM,
+    NORMAL
 }

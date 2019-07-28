@@ -23,6 +23,7 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
         getApi().searchDrinkByName(name).enqueue(object : Callback<FoundDrinksResponse> {
             override fun onResponse(call: Call<FoundDrinksResponse>, response: Response<FoundDrinksResponse>) {
                 loadingListener.onLoadingDone()
+
                 if (response.isSuccessful) {
                     onDrinksLoaded(response.body(), loadingListener)
                 } else {
@@ -43,12 +44,13 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
 
         getApi().loadPopularDrinks().enqueue(object : Callback<FoundDrinksResponse> {
             override fun onResponse(call: Call<FoundDrinksResponse>, response: Response<FoundDrinksResponse>) {
+                loadingListener.onLoadingDone()
+
                 if (response.isSuccessful) {
                     onDrinksLoaded(response.body(), loadingListener)
                 } else {
                     loadingListener.onLoadingError(Throwable("not successful response"))
                 }
-                loadingListener.onLoadingDone()
             }
 
             override fun onFailure(call: Call<FoundDrinksResponse>, t: Throwable) {
@@ -71,13 +73,17 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
 
     fun filterDrinksByIngredients(ingredientNamesCommaSeparated: String, loadingListener: LoadingListener) {
         loadingListener.onLoadingStarted()
+
         getApi().filterDrinksByIngredients(ingredientNamesCommaSeparated).enqueue(object : Callback<FoundDrinksResponse> {
             override fun onResponse(call: Call<FoundDrinksResponse>,
                                     response: Response<FoundDrinksResponse>) {
                 loadingListener.onLoadingDone()
+
                 if (response.isSuccessful) {
-                    loadingListener.onFilterByIngredientDone(
+                    loadingListener.onDrinksFound(
                             response.body()?.drinkDetails ?: mutableListOf<DrinkDetails>())
+                } else {
+                    loadingListener.onLoadingError(Throwable("not successful response"))
                 }
             }
 
@@ -86,19 +92,20 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
                 loadingListener.onLoadingError(t)
                 loadingListener.noDrinksFound()
             }
-
         })
     }
 
     fun loadListOfAllIngredients(loadingListener: LoadingListener) {
         loadingListener.onLoadingStarted()
-        getApi().loadListOfAllIngredients().enqueue(object : Callback<ListOfIngredientsResponse> {
-            override fun onResponse(call: Call<ListOfIngredientsResponse>, response: Response<ListOfIngredientsResponse>) {
+
+        getApi().loadListOfAllIngredients().enqueue(object : Callback<FoundIngredientNamesResponse> {
+            override fun onResponse(call: Call<FoundIngredientNamesResponse>, response: Response<FoundIngredientNamesResponse>) {
                 onAllIngredientsLoaded(loadingListener, response)
             }
 
-            override fun onFailure(call: Call<ListOfIngredientsResponse>, t: Throwable) {
+            override fun onFailure(call: Call<FoundIngredientNamesResponse>, t: Throwable) {
                 loadingListener.onLoadingDone()
+
                 val allIngredients = CocktailManagerFinder.databaseManager
                         .ingredientDao().getAll()
                 if (allIngredients.isNotEmpty()) {
@@ -111,11 +118,13 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
     }
 
     private fun onAllIngredientsLoaded(loadingListener: LoadingListener,
-                                       response: Response<ListOfIngredientsResponse>) {
+                                       response: Response<FoundIngredientNamesResponse>) {
         loadingListener.onLoadingDone()
+
         if (response.isSuccessful) {
             val loadedIngredients =
-                    response.body()?.ingredientNameList ?: mutableListOf<IngredientName>()
+                    response.body()?.ingredientList
+                            ?: mutableListOf<IngredientName>()
             if (loadedIngredients.isNotEmpty()) {
                 CocktailManagerFinder.databaseManager.ingredientDao().deleteAll()
                 for (ingredientName in loadedIngredients) {

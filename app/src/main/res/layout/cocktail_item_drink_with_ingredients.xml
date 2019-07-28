@@ -14,7 +14,6 @@
         android:layout_height="wrap_content"
         app:cardUseCompatPadding="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -25,14 +24,14 @@
 
             <ImageView
                 android:id="@+id/avatarImageView"
-                android:layout_width="@dimen/cocktail_width_avatar"
-                android:layout_height="440dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:scaleType="centerCrop"
-                android:src="@drawable/cocktail_drawable_test" />
+                android:src="@drawable/main_ic_cocktail_512" />
 
             <TextView
                 android:id="@+id/nameTextView"
-                style="@style/TextCocktailLargeBoldShadow"
+                style="@style/TextCocktailLargeLightBoldShadow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_above="@id/ingredientsCarouselChipGroup"

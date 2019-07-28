@@ -19,4 +19,5 @@ Est velit egestas dui id ornare arcu.
     <string name="cocktail_hint_by_ingredients">Ingredient name</string>
     <string name="cocktail_hint_by_name">Drink name</string>
     <string name="sorry_we_couldn_t_find_any_matches">Sorry we couldn\'t find any matches</string>
+    <string name="add_to_search">Add to search</string>
 </resources>

@@ -2,7 +2,8 @@ package com.android.oleksandrpriadko.demo.cocktails.drinkdetails
 
 import androidx.lifecycle.LifecycleOwner
 import com.android.oleksandrpriadko.demo.cocktails.model.CocktailApi
-import com.android.oleksandrpriadko.demo.cocktails.model.LookupCocktailDetailsResponse
+import com.android.oleksandrpriadko.demo.cocktails.model.FoundDrinksResponse
+import com.android.oleksandrpriadko.demo.cocktails.model.FoundIngredientsResponse
 import com.android.oleksandrpriadko.mvp.repo.ObservableRepo
 import com.android.oleksandrpriadko.mvp.repo_extension.RetrofitRepoExtension
 import okhttp3.logging.HttpLoggingInterceptor
@@ -22,23 +23,58 @@ class DrinkDetailsRepo(lifecycleOwner: LifecycleOwner,
     fun loadDrinkDetails(drinkId: String, loadingListener: LoadingListener) {
         retrofitRepoExtension.getApi(CocktailApi::class.java)
                 .lookupCocktailById(drinkId)
-                .enqueue(object : Callback<LookupCocktailDetailsResponse> {
-                    override fun onResponse(call: Call<LookupCocktailDetailsResponse>, response: Response<LookupCocktailDetailsResponse>) {
+                .enqueue(object : Callback<FoundDrinksResponse> {
+                    override fun onResponse(call: Call<FoundDrinksResponse>, response: Response<FoundDrinksResponse>) {
                         loadingListener.onLoadingDone()
                         if (response.isSuccessful) {
                             response.body()?.let {
-                                loadingListener.onDrinkDetailsLoaded(it.drinkDetails[0])
+                                val localDrinkDetails = it.drinkDetails
+                                if (localDrinkDetails != null) {
+                                    loadingListener.onDrinkDetailsLoaded(localDrinkDetails[0])
+                                }
                             }
                         }
                     }
 
-                    override fun onFailure(call: Call<LookupCocktailDetailsResponse>, t: Throwable) {
+                    override fun onFailure(call: Call<FoundDrinksResponse>, t: Throwable) {
                         loadingListener.onLoadingDone()
                         loadingListener.onLoadingError(t)
 
                     }
 
                 })
+    }
+
+    fun loadIngredientDetails(ingredientName: String, loadingListener: LoadingListener) {
+        retrofitRepoExtension.getApi(CocktailApi::class.java)
+                .searchIngredientByName(ingredientName)
+                .enqueue(object : Callback<FoundIngredientsResponse> {
+                    override fun onResponse(call: Call<FoundIngredientsResponse>,
+                                            response: Response<FoundIngredientsResponse>) {
+                        onIngredientDetailsLoaded(response, loadingListener)
+                    }
+
+                    override fun onFailure(call: Call<FoundIngredientsResponse>, t: Throwable) {
+                        loadingListener.onLoadingDone()
+                        loadingListener.onLoadingError(t)
+
+                    }
+
+                })
+    }
+
+    private fun onIngredientDetailsLoaded(response: Response<FoundIngredientsResponse>,
+                                          loadingListener: LoadingListener) {
+        loadingListener.onLoadingDone()
+        if (response.isSuccessful) {
+            response.body()?.let {
+                val localIngredients = it.ingredientList
+                if (localIngredients != null && localIngredients.isNotEmpty()) {
+                    val ingredient = localIngredients[0]
+                    loadingListener.onIngredientDetailsLoaded(ingredient)
+                }
+            }
+        }
     }
 
     override fun cleanUp() {

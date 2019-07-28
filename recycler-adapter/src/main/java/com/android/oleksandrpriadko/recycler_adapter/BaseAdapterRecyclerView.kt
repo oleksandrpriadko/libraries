@@ -31,20 +31,26 @@ abstract class BaseAdapterRecyclerView<
 
     fun clearData() {
         items.clear()
+        notifyDataSetChanged()
     }
 
-    protected fun removeDataItem(position: Int) {
+    fun addDataAnimate(newItems: List<D>) {
+        for (newItem in newItems) {
+            addItemAnimate(newItem)
+        }
+    }
+
+    fun addItemAnimate(item: D) {
+        val itemPosition = items.size
+        items.add(item)
+        this.itemListener?.isEmpty(items.isEmpty())
+        notifyItemInserted(itemPosition)
+    }
+
+    fun removeItemAnimate(position: Int) {
         items.removeAt(position)
         this.itemListener?.isEmpty(items.isEmpty())
-        this.notifyDataSetChanged()
-    }
-
-    protected fun addDataItem(item: D?) {
-        if (item != null) {
-            items.add(item)
-            this.itemListener?.isEmpty(items.isEmpty())
-            this.notifyDataSetChanged()
-        }
+        notifyItemRemoved(position)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): H {

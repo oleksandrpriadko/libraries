@@ -11,14 +11,15 @@
         android:layout_width="@dimen/constraint_match"
         android:layout_height="@dimen/constraint_match"
         android:orientation="vertical"
-        android:visibility="visible"
+        android:visibility="gone"
         app:flingMode="normal"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/searchWrapLayout"
         app:spanCount="2"
+        tools:itemCount="15"
         tools:listitem="@layout/cocktail_item_drink" />
 
     <androidx.constraintlayout.widget.Guideline
@@ -40,7 +41,6 @@
         android:layout_width="@dimen/constraint_match"
         android:layout_height="@dimen/constraint_match"
         android:src="@drawable/ic_no_drinks_200"
-        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/emptyResultsTextView"
         app:layout_constraintEnd_toEndOf="@id/endInfoImageGuideline"
         app:layout_constraintStart_toStartOf="@id/startInfoImageGuideline"
@@ -56,17 +56,16 @@
         android:gravity="center|top"
         android:text="@string/sorry_we_couldn_t_find_any_matches"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/emptyResultsImageView"
         app:layout_constraintStart_toStartOf="@id/emptyResultsImageView"
         app:layout_constraintTop_toBottomOf="@id/emptyResultsImageView" />
 
-    <com.android.oleksandrpriadko.demo.cocktails.DrinkLoadingViewOne
+    <com.android.oleksandrpriadko.demo.cocktails.DrinksLoadingView
         android:id="@+id/loadingLayout"
         android:layout_width="@dimen/constraint_match"
         android:layout_height="@dimen/constraint_match"
-        android:background="@color/cocktail_background_screen"
+        android:background="@color/cocktail_background_secondary"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

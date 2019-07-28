@@ -57,6 +57,15 @@
         <item name="android:windowBackground">@color/cocktail_background_secondary</item>
     </style>
 
+    <style name="CocktailThemeDetails" parent="CocktailTheme">
+        <item name="colorPrimary">@color/cocktail_background_secondary</item>
+        <item name="colorPrimaryDark">@color/cocktail_background_secondary</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="colorAccent">@color/cocktail_background_secondary</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowBackground">@color/cocktail_background_secondary</item>
+    </style>
+
     <style name="TextCocktail" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:textColor">@color/cocktail_text_color</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
@@ -72,9 +81,11 @@
 
     <style name="ClickableCocktailSearchResult" parent="TextCocktail">
         <item name="android:background">@drawable/cocktail_background_clickable</item>
-        <item name="android:paddingBottom">@dimen/cocktail_padding_top_bottom_search_result_text</item>
+        <item name="android:paddingBottom">@dimen/cocktail_padding_top_bottom_search_result_text
+        </item>
         <item name="android:paddingEnd">@dimen/cocktail_padding_left_right_search_result_text</item>
-        <item name="android:paddingStart">@dimen/cocktail_padding_left_right_search_result_text</item>
+        <item name="android:paddingStart">@dimen/cocktail_padding_left_right_search_result_text
+        </item>
         <item name="android:paddingTop">@dimen/cocktail_padding_top_bottom_search_result_text</item>
     </style>
 
@@ -85,9 +96,15 @@
         <item name="android:shadowColor">@color/cocktail_text_color</item>
     </style>
 
-    <style name="TextCocktailLargeBoldShadow" parent="TextCocktailShadow">
+    <style name="TextCocktailLargeLightBoldShadow" parent="TextCocktailShadow">
         <item name="android:textColor">@color/cocktail_background_screen</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Display2</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextCocktailLightBoldShadow" parent="TextCocktailShadow">
+        <item name="android:textColor">@color/cocktail_background_screen</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Large</item>
         <item name="android:textStyle">bold</item>
     </style>
 
@@ -117,9 +134,11 @@
     <style name="ChipActionCocktail" parent="@style/Widget.MaterialComponents.Chip.Action">
         <item name="android:textColor">@color/cocktail_text_color</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
-        <item name="android:paddingBottom">@dimen/cocktail_padding_top_bottom_search_result_text</item>
+        <item name="android:paddingBottom">@dimen/cocktail_padding_top_bottom_search_result_text
+        </item>
         <item name="android:paddingEnd">@dimen/cocktail_padding_left_right_search_result_text</item>
-        <item name="android:paddingStart">@dimen/cocktail_padding_left_right_search_result_text</item>
+        <item name="android:paddingStart">@dimen/cocktail_padding_left_right_search_result_text
+        </item>
         <item name="android:paddingTop">@dimen/cocktail_padding_top_bottom_search_result_text</item>
     </style>
 

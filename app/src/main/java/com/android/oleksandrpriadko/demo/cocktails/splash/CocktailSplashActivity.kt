@@ -6,7 +6,7 @@ import com.android.oleksandrpriadko.demo.R
 import com.android.oleksandrpriadko.demo.cocktails.managers.CocktailManagerFinder
 import com.android.oleksandrpriadko.demo.cocktails.managers.Key
 import com.android.oleksandrpriadko.demo.cocktails.search.SearchActivity
-import kotlinx.android.synthetic.main.activity_splash.*
+import kotlinx.android.synthetic.main.cocktail_activity_splash.*
 
 class CocktailSplashActivity : AppCompatActivity(), PresenterView {
 
@@ -15,7 +15,7 @@ class CocktailSplashActivity : AppCompatActivity(), PresenterView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_splash)
+        setContentView(R.layout.cocktail_activity_splash)
 
         presenter = CocktailSplashPresenter(this, getString(R.string.cocktail_base_url))
 

@@ -2,26 +2,73 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/overlayContainer"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/cocktail_background_secondary"
+    tools:ignore="RtlSymmetry,ContentDescription">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/cocktailDetailsRecView"
+    <ImageView
+        android:id="@+id/avatarImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        tools:src="@drawable/main_ic_cocktail_512" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/ingredientsChipGroup"
+        android:layout_width="@dimen/constraint_match"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/nameTextView"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@id/nameTextView"
+        app:layout_constraintEnd_toEndOf="@id/instructionsTextView"
+        app:layout_constraintStart_toStartOf="@id/nameTextView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/nameTextView"
+        style="@style/TextCocktailLargeLightBoldShadow"
+        android:layout_width="@dimen/constraint_match"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:ellipsize="end"
+        android:gravity="start"
+        app:layout_constraintBottom_toTopOf="@id/instructionsTextView"
+        app:layout_constraintEnd_toEndOf="@id/instructionsTextView"
+        app:layout_constraintStart_toStartOf="@id/instructionsTextView"
+        app:layout_constraintTop_toBottomOf="@id/ingredientsChipGroup"
+        tools:text="Good cocktail receipt" />
+
+    <TextView
+        android:id="@+id/instructionsTextView"
+        style="@style/TextCocktail"
+        android:layout_width="@dimen/constraint_match"
+        android:layout_height="wrap_content"
+        android:background="@color/cocktail_background_secondary"
+        android:paddingBottom="20dp"
+        android:paddingEnd="20dp"
+        android:paddingStart="20dp"
+        android:paddingTop="20dp"
+        android:textColor="@color/cocktail_background_clickable"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nameTextView"
+        tools:text="Instructions" />
+
+    <com.android.oleksandrpriadko.demo.cocktails.DrinkLoadingViewOne
+        android:id="@+id/loadingLayout"
         android:layout_width="@dimen/constraint_match"
         android:layout_height="@dimen/constraint_match"
-        android:orientation="vertical"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:background="@color/cocktail_background_secondary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:itemCount="2"
-        tools:listitem="@layout/cocktail_item_cocktail_details_top" />
-
-    <include
-        android:id="@+id/ingredientLayout"
-        layout="@layout/cocktail_ingredient_popup_layout"
-        android:visibility="gone"
-        tools:visibility="visible" />
-
+        tools:alpha="0.6" />
 </androidx.constraintlayout.widget.ConstraintLayout>

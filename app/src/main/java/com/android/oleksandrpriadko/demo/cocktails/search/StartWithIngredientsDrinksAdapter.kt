@@ -11,20 +11,23 @@ import com.android.oleksandrpriadko.recycler_adapter.BaseAdapterRecyclerView
 import com.android.oleksandrpriadko.recycler_adapter.BaseItemListener
 import com.android.oleksandrpriadko.recycler_adapter.PicassoHolderExtension
 import com.google.android.material.chip.Chip
-import kotlinx.android.synthetic.main.cocktail_item_cocktail_search_screen.view.*
+import kotlinx.android.synthetic.main.cocktail_item_drink.view.avatarCardView
+import kotlinx.android.synthetic.main.cocktail_item_drink.view.avatarImageView
+import kotlinx.android.synthetic.main.cocktail_item_drink.view.nameTextView
+import kotlinx.android.synthetic.main.cocktail_item_drink_with_ingredients.view.*
 
-class CarouselDrinksAdapter(itemListener: ItemListener? = null)
-    : BaseAdapterRecyclerView<DrinkDetails, CarouselDrinkHolder, ItemListener>(itemListener) {
+class StartWithIngredientsDrinksAdapter(itemListener: StartsWithIngredientsItemListener? = null)
+    : BaseAdapterRecyclerView<DrinkDetails, StartWithIngredientsDrinkHolder, StartsWithIngredientsItemListener>(itemListener) {
 
     override fun isItemViewClickable(): Boolean = false
 
-    override fun onGetHolder(inflater: LayoutInflater, parent: ViewGroup, viewType: Int): CarouselDrinkHolder {
-        return CarouselDrinkHolder(
-                inflater.inflate(R.layout.cocktail_item_cocktail_search_screen, parent, false),
+    override fun onGetHolder(inflater: LayoutInflater, parent: ViewGroup, viewType: Int): StartWithIngredientsDrinkHolder {
+        return StartWithIngredientsDrinkHolder(
+                inflater.inflate(R.layout.cocktail_item_drink_with_ingredients, parent, false),
                 itemListener)
     }
 
-    override fun onBindHolder(holder: CarouselDrinkHolder, position: Int) {
+    override fun onBindHolder(holder: StartWithIngredientsDrinkHolder, position: Int) {
         holder.onBind(items[position])
         holder.itemView.avatarCardView.setOnClickListener {
             itemListener?.itemClicked(position, items[position])
@@ -32,7 +35,7 @@ class CarouselDrinksAdapter(itemListener: ItemListener? = null)
     }
 }
 
-class CarouselDrinkHolder(iteView: View, private val itemListener: ItemListener?)
+class StartWithIngredientsDrinkHolder(iteView: View, private val itemListener: StartsWithIngredientsItemListener?)
     : RecyclerView.ViewHolder(iteView) {
 
     private val picassoHolderExtension = PicassoHolderExtension(itemView.context)
@@ -58,7 +61,7 @@ class CarouselDrinkHolder(iteView: View, private val itemListener: ItemListener?
     }
 }
 
-interface ItemListener : BaseItemListener<DrinkDetails> {
+interface StartsWithIngredientsItemListener : BaseItemListener<DrinkDetails> {
 
     fun onIngredientClicked(ingredientName: String, drinkPosition: Int)
 

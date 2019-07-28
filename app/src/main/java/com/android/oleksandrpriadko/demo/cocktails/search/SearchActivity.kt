@@ -14,6 +14,7 @@ import androidx.appcompat.widget.ListPopupWindow
 import androidx.appcompat.widget.ListPopupWindow.INPUT_METHOD_NEEDED
 import androidx.appcompat.widget.ListPopupWindow.POSITION_PROMPT_BELOW
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
 import com.android.oleksandrpriadko.demo.R
@@ -24,8 +25,6 @@ import com.android.oleksandrpriadko.demo.cocktails.model.IngredientName
 import com.android.oleksandrpriadko.extension.hide
 import com.android.oleksandrpriadko.extension.inflateOn
 import com.android.oleksandrpriadko.extension.show
-import com.android.oleksandrpriadko.recycler_adapter.BaseAdapterRecyclerView
-import com.android.oleksandrpriadko.recycler_adapter.BaseItemListenerAdapter
 import com.android.oleksandrpriadko.ui.attachedtabs.OnItemSelectedListener
 import com.google.android.material.chip.Chip
 import kotlinx.android.synthetic.main.cocktail_activity_search.*
@@ -37,11 +36,11 @@ class SearchActivity : AppCompatActivity(), PresenterView {
 
     private var popupListIngredientMatches: ListPopupWindow? = null
 
-    private val constraintSetLoadingCarousel: ConstraintSet = ConstraintSet()
-    private val constraintSetResultsCarousel: ConstraintSet = ConstraintSet()
-    private val constraintSetLoadingSearch: ConstraintSet = ConstraintSet()
-    private val constraintSetResultsSearch: ConstraintSet = ConstraintSet()
-    private val constraintSetEmptySearch: ConstraintSet = ConstraintSet()
+    private val constraintSetLoading: ConstraintSet = ConstraintSet()
+    private val constraintSetResults: ConstraintSet = ConstraintSet()
+    private val constraintSetEmpty: ConstraintSet = ConstraintSet()
+
+    private val adapterItems = StartDrinksAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,40 +50,29 @@ class SearchActivity : AppCompatActivity(), PresenterView {
 
         initConstraintSets()
         prepareSearch()
-        initCarousel()
+        initItemsRecView()
         presenter?.searchPopularDrinks()
     }
 
     private fun initConstraintSets() {
-        constraintSetLoadingCarousel.clone(
-                this, R.layout.cocktail_activity_search_carousel_loading_revealed)
-        constraintSetResultsCarousel.clone(
-                this, R.layout.cocktail_activity_search_carousel_results_revealed)
-        constraintSetLoadingSearch.clone(
-                this, R.layout.cocktail_activity_search_search_loading_revealed)
-        constraintSetResultsSearch.clone(
-                this, R.layout.cocktail_activity_search_search_results_revealed)
-        constraintSetEmptySearch.clone(
-                this, R.layout.cocktail_activity_search_search_empty_revealed)
+        constraintSetLoading.clone(
+                this, R.layout.cocktail_activity_loading_state)
+        constraintSetResults.clone(
+                this, R.layout.cocktail_activity_results_state)
+        constraintSetEmpty.clone(
+                this, R.layout.cocktail_activity_empty_state)
     }
 
-    private fun initCarousel() {
-        val adapter = CarouselDrinksAdapter()
-        adapter.itemListener = object : ItemListener {
-            override fun onIngredientClicked(ingredientName: String, drinkPosition: Int) {
-                searchTabs.selectItem(BY_INGREDIENTS)
-                presenter?.onIngredientFromCarouselSelected(ingredientName, true)
-            }
-
-            override fun isEmpty(isEmpty: Boolean) {
-
-            }
+    private fun initItemsRecView() {
+        adapterItems.itemListener = object : StartItemListener {
+            override fun isEmpty(isEmpty: Boolean) {}
 
             override fun itemClicked(position: Int, item: DrinkDetails) {
                 presenter?.onDrinkClicked(item)
             }
         }
-        itemsCarouselRecyclerView.adapter = adapter
+        itemsRecyclerView.adapter = adapterItems
+        itemsRecyclerView.itemAnimator = DefaultItemAnimator().apply { addDuration = 1000 }
     }
 
     private fun prepareSearch() {
@@ -118,6 +106,11 @@ class SearchActivity : AppCompatActivity(), PresenterView {
         })
 
         updateSearchInputHint()
+
+        inputLayout.setOnClickListener {
+            searchInput.requestFocus()
+            showKeyboard(searchInput)
+        }
     }
 
     override fun getCurrentInputText(): CharSequence? = searchInput.text
@@ -143,26 +136,15 @@ class SearchActivity : AppCompatActivity(), PresenterView {
     }
 
     override fun populateSearchResults(foundDrinkDetails: MutableList<DrinkDetails>) {
-        val drinkDetailsAdapter = DrinkDetailsAdapter()
-        drinkDetailsAdapter.setData(foundDrinkDetails)
-        drinkDetailsAdapter.itemListener = object : BaseItemListenerAdapter<DrinkDetails>() {
-            override fun itemClicked(position: Int, item: DrinkDetails) {
-                presenter?.onDrinkClicked(item)
-            }
-        }
-        searchResultsRecView.adapter = drinkDetailsAdapter
+        adapterItems.addDataAnimate(foundDrinkDetails)
     }
 
     override fun clearSearchResults() {
-        searchResultsRecView.adapter?.let {
-            if (it is BaseAdapterRecyclerView<*, *, *>) {
-                it.clearData()
-            }
-        }
+        adapterItems.clearData()
     }
 
     override fun scrollToFirstSearchResult() {
-        searchResultsRecView.layoutManager?.scrollToPosition(0)
+        itemsRecyclerView.layoutManager?.scrollToPosition(0)
     }
 
     override fun showDrinkDetails(drinkId: String) {
@@ -176,7 +158,7 @@ class SearchActivity : AppCompatActivity(), PresenterView {
             }
 
             popupListIngredientMatches?.let {
-                it.anchorView = inputScrollView
+                it.anchorView = inputLayout
                 it.inputMethodMode = INPUT_METHOD_NEEDED
                 it.setAdapter(ArrayAdapter(this, android.R.layout.simple_list_item_1, matches).apply { notifyDataSetChanged() })
                 it.setOnItemClickListener { adapterView, _, position, _ ->
@@ -194,8 +176,8 @@ class SearchActivity : AppCompatActivity(), PresenterView {
         popupListIngredientMatches?.dismiss()
     }
 
-    override fun addSelectedIngredient(ingredientName: IngredientName) {
-        addSelectedIngredient(ingredientName.strIngredient1)
+    override fun addSelectedIngredient(ingredient: IngredientName) {
+        addSelectedIngredient(ingredient.strIngredient1)
     }
 
     override fun addSelectedIngredient(ingredientName: String) {
@@ -209,10 +191,10 @@ class SearchActivity : AppCompatActivity(), PresenterView {
         ingredientsChipGroup.show()
     }
 
-    override fun requestRemoveSelectedIngredient(ingredientName: IngredientName) {
+    override fun requestRemoveSelectedIngredient(ingredient: IngredientName) {
         for (i in 0 until ingredientsChipGroup.childCount) {
             val chip: Chip = ingredientsChipGroup.getChildAt(i) as Chip
-            if (chip.text == ingredientName.strIngredient1) {
+            if (chip.text == ingredient.strIngredient1) {
                 ingredientsChipGroup.removeView(chip)
             }
         }
@@ -228,6 +210,11 @@ class SearchActivity : AppCompatActivity(), PresenterView {
 
     override fun updateSearchInputHint() {
         searchInput.hint = presenter?.getSearchInputHint(resources)
+    }
+
+    private fun showKeyboard(view: View) {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(view, 0)
     }
 
     override fun hideKeyboard() {
@@ -247,33 +234,34 @@ class SearchActivity : AppCompatActivity(), PresenterView {
         super.onNewIntent(intent)
         intent?.let {
             if (it.getStringExtra(BundleConst.INGREDIENT_NAME) != null) {
-                searchTabs.selectItem(BY_INGREDIENTS)
                 presenter?.onIngredientMatchSelected(
-                        it.getStringExtra(BundleConst.INGREDIENT_NAME),
-                        true)
+                        it.getStringExtra(BundleConst.INGREDIENT_NAME), true)
+                presenter?.triggerSearchAfterSelection(true)
+
+                when (searchTabs.getIndexOfSelectedItem()) {
+                    BY_INGREDIENTS -> presenter?.onSearchTypeChanged(SearchType.BY_INGREDIENTS)
+                    BY_NAME -> searchTabs.selectItem(BY_INGREDIENTS)
+                }
+
             }
         }
     }
 
-    override fun populateCarousel(foundDrinkDetails: MutableList<DrinkDetails>) {
-        (itemsCarouselRecyclerView.adapter as CarouselDrinksAdapter).setData(foundDrinkDetails)
-    }
-
-    override fun scrollToFirstCarouselResult() {
-
-    }
-
     override fun applyState(state: State) {
         val transition = AutoTransition().apply {
-            duration = 100
+            duration = 10
         }
         TransitionManager.beginDelayedTransition(motionParent, transition)
         when (state) {
-            State.LOADING_CAROUSEL -> constraintSetLoadingCarousel.applyTo(motionParent)
-            State.RESULTS_CAROUSEL -> constraintSetResultsCarousel.applyTo(motionParent)
-            State.LOADING_SEARCH -> constraintSetLoadingSearch.applyTo(motionParent)
-            State.RESULTS_SEARCH -> constraintSetResultsSearch.applyTo(motionParent)
-            State.EMPTY_SEARCH -> constraintSetEmptySearch.applyTo(motionParent)
+            State.LOADING -> {
+                constraintSetLoading.applyTo(motionParent)
+            }
+            State.RESULTS -> {
+                constraintSetResults.applyTo(motionParent)
+            }
+            State.EMPTY -> {
+                constraintSetEmpty.applyTo(motionParent)
+            }
         }
     }
 
