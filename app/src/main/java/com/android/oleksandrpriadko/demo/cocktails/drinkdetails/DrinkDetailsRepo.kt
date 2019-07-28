@@ -6,7 +6,6 @@ import com.android.oleksandrpriadko.demo.cocktails.model.FoundDrinksResponse
 import com.android.oleksandrpriadko.demo.cocktails.model.FoundIngredientsResponse
 import com.android.oleksandrpriadko.mvp.repo.ObservableRepo
 import com.android.oleksandrpriadko.mvp.repo_extension.RetrofitRepoExtension
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -17,7 +16,6 @@ class DrinkDetailsRepo(lifecycleOwner: LifecycleOwner,
 
     private val retrofitRepoExtension: RetrofitRepoExtension = RetrofitRepoExtension(
             baseUrl,
-            loggingLevel = HttpLoggingInterceptor.Level.BODY,
             converterFactory = GsonConverterFactory.create())
 
     fun loadDrinkDetails(drinkId: String, loadingListener: LoadingListener) {
