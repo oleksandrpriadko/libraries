@@ -10,6 +10,7 @@ import com.android.oleksandrpriadko.demo.cocktails.managers.CocktailManagerFinde
 import com.android.oleksandrpriadko.demo.cocktails.model.BundleConst
 import com.android.oleksandrpriadko.demo.cocktails.model.DrinkDetails
 import com.android.oleksandrpriadko.demo.cocktails.search.SearchActivity
+import com.android.oleksandrpriadko.demo.main.App
 import com.android.oleksandrpriadko.extension.inflateOn
 import com.android.oleksandrpriadko.extension.show
 import com.android.oleksandrpriadko.overlay.HideMethod
@@ -17,11 +18,12 @@ import com.android.oleksandrpriadko.overlay.Overlay
 import com.android.oleksandrpriadko.overlay.OverlayManager
 import com.android.oleksandrpriadko.overlay.OverlayState
 import com.android.oleksandrpriadko.recycler_adapter.PicassoHolderExtension
+import com.android.oleksandrpriadko.retrofit.ConnectionStatusSubscriber
 import com.google.android.material.chip.Chip
-import kotlinx.android.synthetic.main.cocktail_activity_cocktail_details.*
+import kotlinx.android.synthetic.main.cocktail_activity_drink_details.*
 import kotlinx.android.synthetic.main.cocktail_overlay_ingredient_details.view.*
 
-class DrinkDetailsActivity : AppCompatActivity(), PresenterView {
+class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubscriber {
 
     private lateinit var presenter: DrinkDetailsPresenter
 
@@ -35,7 +37,9 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView {
 
         presenter = DrinkDetailsPresenter(this, getString(R.string.cocktail_base_url))
 
-        setContentView(R.layout.cocktail_activity_cocktail_details)
+        setContentView(R.layout.cocktail_activity_drink_details)
+
+        App.connectionStatusReceiver.subscribe(this)
 
         initOverlay()
 
@@ -142,6 +146,14 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView {
 
     override fun showLoadingLayout(show: Boolean) {
         loadingLayout.show(show)
+    }
+
+    override fun onConnectionStatusChanged(isConnectedToInternet: Boolean) {
+        presenter.onConnectionStatusChanged(isConnectedToInternet)
+    }
+
+    override fun showOfflineLayout(show: Boolean) {
+        offlineLayout.show(show)
     }
 
     override fun clearImageInOverlay() {

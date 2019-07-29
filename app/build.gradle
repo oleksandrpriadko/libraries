@@ -55,6 +55,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:' + constraintLayout
     implementation 'com.google.android.material:material:' + materialVersion
     implementation 'com.squareup.retrofit2:converter-gson:' + retrofit
+    implementation 'android.arch.lifecycle:extensions:' + lifecycleJava
     implementation 'androidx.lifecycle:lifecycle-common-java8:' + lifecycleJava
     implementation 'com.squareup.okhttp3:logging-interceptor:' + okhttp
 

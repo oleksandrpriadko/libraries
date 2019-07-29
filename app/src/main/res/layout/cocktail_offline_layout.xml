@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/offlineLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/cocktail_background_screen"
+    android:padding="5dp"
+    tools:ignore="ContentDescription">
+
+    <ImageView
+        android:id="@+id/iconOfflineImageView"
+        android:layout_width="@dimen/constraint_match"
+        android:layout_height="@dimen/constraint_match"
+        android:layout_marginStart="10dp"
+        android:src="@drawable/ic_cloud_off_black_24dp"
+        android:tint="@color/cocktail_background_secondary"
+        app:layout_constraintBottom_toBottomOf="@id/textOfflineTextView"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toStartOf="@id/textOfflineTextView"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/textOfflineTextView" />
+
+    <TextView
+        android:id="@+id/textOfflineTextView"
+        style="@style/TextCocktail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:padding="10dp"
+        android:text="@string/you_re_offline"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/cocktail_background_secondary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iconOfflineImageView"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

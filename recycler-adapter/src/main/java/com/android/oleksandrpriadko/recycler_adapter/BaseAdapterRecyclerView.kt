@@ -15,23 +15,27 @@ abstract class BaseAdapterRecyclerView<
 
     protected abstract fun isItemViewClickable(): Boolean
 
-    fun setData(data: MutableList<D>) {
+    fun setData(data: MutableList<D>, notify: Boolean = true) {
         items = data
         if (items.isEmpty()) {
             this.itemListener?.isEmpty(true)
             return
         }
         this.itemListener?.isEmpty(items.isEmpty())
-        this.notifyDataSetChanged()
+        if (notify) {
+            this.notifyDataSetChanged()
+        }
     }
 
     fun getData(): List<D> {
         return items
     }
 
-    fun clearData() {
+    fun clearData(notify: Boolean = true) {
         items.clear()
-        notifyDataSetChanged()
+        if (notify) {
+            this.notifyDataSetChanged()
+        }
     }
 
     fun addDataAnimate(newItems: List<D>) {

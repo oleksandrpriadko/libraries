@@ -1,11 +1,11 @@
 package com.android.oleksandrpriadko.mvp.repo_extension
 
+import com.android.oleksandrpriadko.core.CoreServiceManager
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
-import java.io.IOException
 
 class RetrofitRepoExtension(
         private val baseUrl: String,
@@ -42,23 +42,15 @@ class RetrofitRepoExtension(
                 .build()
     }
 
-    fun <T> getApi(apiClass: Class<T>): T {
-        return retrofit!!.create(apiClass)
-    }
-
-    fun isOnline(): Boolean {
-        val runtime = Runtime.getRuntime()
-        try {
-            val ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8")
-            val exitValue = ipProcess.waitFor()
-            return exitValue == 0
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
+    /**
+     * return null if there is no internet connection
+     */
+    fun <T> getApi(apiClass: Class<T>): T? {
+        return if (CoreServiceManager.isOnline()) {
+            retrofit!!.create(apiClass)
+        } else {
+            null
         }
-
-        return false
     }
 
     override fun cleanUp() {

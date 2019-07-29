@@ -6,6 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <include
+        android:id="@+id/offlineLayout"
+        layout="@layout/cocktail_offline_layout"
+        android:layout_width="@dimen/constraint_match"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchWrapLayout"
+        tools:visibility="visible" />
+
     <com.android.oleksandrpriadko.recycler_view.FlingRecyclerView
         android:id="@+id/itemsRecyclerView"
         android:layout_width="@dimen/constraint_match"
@@ -17,7 +28,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchWrapLayout"
+        app:layout_constraintTop_toBottomOf="@id/offlineLayout"
         app:spanCount="2"
         tools:listitem="@layout/cocktail_item_drink" />
 
@@ -71,7 +82,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchWrapLayout" />
+        app:layout_constraintTop_toBottomOf="@id/offlineLayout" />
 
     <com.android.oleksandrpriadko.ui.attachedtabs.AttachedTabsView
         android:id="@+id/searchTabs"

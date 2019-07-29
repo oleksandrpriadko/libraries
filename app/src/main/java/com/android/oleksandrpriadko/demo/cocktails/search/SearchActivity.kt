@@ -22,15 +22,17 @@ import com.android.oleksandrpriadko.demo.cocktails.drinkdetails.DrinkDetailsActi
 import com.android.oleksandrpriadko.demo.cocktails.model.BundleConst
 import com.android.oleksandrpriadko.demo.cocktails.model.DrinkDetails
 import com.android.oleksandrpriadko.demo.cocktails.model.IngredientName
+import com.android.oleksandrpriadko.demo.main.App
 import com.android.oleksandrpriadko.extension.hide
 import com.android.oleksandrpriadko.extension.inflateOn
 import com.android.oleksandrpriadko.extension.show
+import com.android.oleksandrpriadko.retrofit.ConnectionStatusSubscriber
 import com.android.oleksandrpriadko.ui.attachedtabs.OnItemSelectedListener
 import com.google.android.material.chip.Chip
 import kotlinx.android.synthetic.main.cocktail_activity_search.*
 
 
-class SearchActivity : AppCompatActivity(), PresenterView {
+class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubscriber {
 
     private var presenter: SearchPresenter? = null
 
@@ -51,6 +53,9 @@ class SearchActivity : AppCompatActivity(), PresenterView {
         initConstraintSets()
         prepareSearch()
         initItemsRecView()
+
+        App.connectionStatusReceiver.subscribe(this)
+
         presenter?.searchPopularDrinks()
     }
 
@@ -139,8 +144,10 @@ class SearchActivity : AppCompatActivity(), PresenterView {
         adapterItems.addDataAnimate(foundDrinkDetails)
     }
 
-    override fun clearSearchResults() {
-        adapterItems.clearData()
+    override fun areSearchResultsEmpty(): Boolean = adapterItems.getData().isEmpty()
+
+    override fun clearSearchResults(redrawItems: Boolean) {
+        adapterItems.clearData(redrawItems)
     }
 
     override fun scrollToFirstSearchResult() {
@@ -222,6 +229,10 @@ class SearchActivity : AppCompatActivity(), PresenterView {
         imm.hideSoftInputFromWindow(searchInput.windowToken, 0)
     }
 
+    override fun onConnectionStatusChanged(isConnectedToInternet: Boolean) {
+        presenter?.connectionStatusChanged(isConnectedToInternet = isConnectedToInternet)
+    }
+
     override fun onBackPressed() {
         presenter?.onBackPressed()
     }
@@ -262,6 +273,8 @@ class SearchActivity : AppCompatActivity(), PresenterView {
             State.EMPTY -> {
                 constraintSetEmpty.applyTo(motionParent)
             }
+            State.OFFLINE -> offlineLayout.show()
+            State.ONLINE -> offlineLayout.hide()
         }
     }
 

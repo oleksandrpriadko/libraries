@@ -6,6 +6,7 @@ import com.android.oleksandrpriadko.demo.cocktails.model.DrinkDetails
 import com.android.oleksandrpriadko.demo.cocktails.model.ImageSize
 import com.android.oleksandrpriadko.demo.cocktails.model.IngredientDetails
 import com.android.oleksandrpriadko.mvp.presenter.BasePresenter
+import com.android.oleksandrpriadko.retrofit.ConnectionStatusReceiver
 
 class DrinkDetailsPresenter(presenterView: PresenterView,
                             baseUrl: String) : BasePresenter<PresenterView>(presenterView) {
@@ -18,7 +19,7 @@ class DrinkDetailsPresenter(presenterView: PresenterView,
     fun loadDrinkDetails(drinkId: String) {
         repo.loadDrinkDetails(drinkId, object : LoadingListener {
             override fun onNoInternet() {
-                view?.showLoadingLayout(show = false)
+                view?.showOfflineLayout(show = true)
             }
 
             override fun onLoadingStarted() {
@@ -42,6 +43,10 @@ class DrinkDetailsPresenter(presenterView: PresenterView,
     private fun requestLoadIngredientDetails() {
         shownIngredientName?.let {
             repo.loadIngredientDetails(it, object : LoadingListener {
+                override fun onNoInternet() {
+                    view?.showOfflineLayout(show = true)
+                }
+
                 override fun onLoadingStarted() {
 
                 }
@@ -51,10 +56,6 @@ class DrinkDetailsPresenter(presenterView: PresenterView,
                 }
 
                 override fun onLoadingError(throwable: Throwable) {
-
-                }
-
-                override fun onNoInternet() {
 
                 }
 
@@ -69,11 +70,13 @@ class DrinkDetailsPresenter(presenterView: PresenterView,
     }
 
     fun onIngredientItemClicked(ingredientName: String?) {
-        shownIngredientName = ingredientName
-        shownIngredientName?.let {
-            view?.showIngredientOverlay()
-            view?.clearImageInOverlay()
-            requestLoadIngredientDetails()
+        if (ConnectionStatusReceiver.isOnline) {
+            shownIngredientName = ingredientName
+            shownIngredientName?.let {
+                view?.showIngredientOverlay()
+                view?.clearImageInOverlay()
+                requestLoadIngredientDetails()
+            }
         }
     }
 
@@ -90,6 +93,10 @@ class DrinkDetailsPresenter(presenterView: PresenterView,
             addIngredientToSearch = true
             view?.hideIngredientOverlay()
         }
+    }
+
+    fun onConnectionStatusChanged(connectedToInternet: Boolean) {
+        view?.showOfflineLayout(!connectedToInternet)
     }
 }
 
@@ -112,5 +119,7 @@ interface PresenterView : LifecycleOwner {
     fun showLoadingLayout(show: Boolean)
 
     fun clearImageInOverlay()
+
+    fun showOfflineLayout(show: Boolean)
 
 }

@@ -10,10 +10,14 @@
 
     <ImageView
         android:id="@+id/avatarImageView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="@dimen/constraint_match"
+        android:layout_height="@dimen/constraint_match"
         android:scaleType="centerCrop"
-        tools:src="@drawable/main_ic_cocktail_512" />
+        android:src="@drawable/main_ic_cocktail_512"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/ingredientsChipGroup"
@@ -55,7 +59,7 @@
         android:paddingStart="20dp"
         android:paddingTop="20dp"
         android:textColor="@color/cocktail_background_clickable"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/offlineLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/nameTextView"
@@ -71,4 +75,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:alpha="0.6" />
+
+    <include
+        android:id="@+id/offlineLayout"
+        layout="@layout/cocktail_offline_layout"
+        android:layout_width="@dimen/constraint_match"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/instructionsTextView"
+        tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>

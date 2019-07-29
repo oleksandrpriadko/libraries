@@ -33,7 +33,9 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':core')
 
+    implementation 'androidx.lifecycle:lifecycle-common-java8:' + lifecycleJava
     implementation 'androidx.appcompat:appcompat:' + androidX
     implementation 'com.squareup.okhttp3:logging-interceptor:' + rootProject.okhttp
     implementation 'androidx.core:core-ktx:' + androidX

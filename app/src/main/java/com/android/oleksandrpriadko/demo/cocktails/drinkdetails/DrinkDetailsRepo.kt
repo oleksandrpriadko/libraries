@@ -19,46 +19,55 @@ class DrinkDetailsRepo(lifecycleOwner: LifecycleOwner,
             converterFactory = GsonConverterFactory.create())
 
     fun loadDrinkDetails(drinkId: String, loadingListener: LoadingListener) {
-        retrofitRepoExtension.getApi(CocktailApi::class.java)
-                .lookupCocktailById(drinkId)
-                .enqueue(object : Callback<FoundDrinksResponse> {
-                    override fun onResponse(call: Call<FoundDrinksResponse>, response: Response<FoundDrinksResponse>) {
-                        loadingListener.onLoadingDone()
-                        if (response.isSuccessful) {
-                            response.body()?.let {
-                                val localDrinkDetails = it.drinkDetails
-                                if (localDrinkDetails != null) {
-                                    loadingListener.onDrinkDetailsLoaded(localDrinkDetails[0])
-                                }
+        val api = getApi()
+        if (api != null) {
+            api.lookupCocktailById(drinkId).enqueue(object : Callback<FoundDrinksResponse> {
+                override fun onResponse(call: Call<FoundDrinksResponse>, response: Response<FoundDrinksResponse>) {
+                    loadingListener.onLoadingDone()
+                    if (response.isSuccessful) {
+                        response.body()?.let {
+                            val localDrinkDetails = it.drinkDetails
+                            if (localDrinkDetails != null) {
+                                loadingListener.onDrinkDetailsLoaded(localDrinkDetails[0])
                             }
                         }
                     }
+                }
 
-                    override fun onFailure(call: Call<FoundDrinksResponse>, t: Throwable) {
-                        loadingListener.onLoadingDone()
-                        loadingListener.onLoadingError(t)
+                override fun onFailure(call: Call<FoundDrinksResponse>, t: Throwable) {
+                    loadingListener.onLoadingDone()
+                    loadingListener.onLoadingError(t)
 
-                    }
+                }
 
-                })
+            })
+        } else {
+            loadingListener.onLoadingDone()
+            loadingListener.onNoInternet()
+        }
+
     }
 
     fun loadIngredientDetails(ingredientName: String, loadingListener: LoadingListener) {
-        retrofitRepoExtension.getApi(CocktailApi::class.java)
-                .searchIngredientByName(ingredientName)
-                .enqueue(object : Callback<FoundIngredientsResponse> {
-                    override fun onResponse(call: Call<FoundIngredientsResponse>,
-                                            response: Response<FoundIngredientsResponse>) {
-                        onIngredientDetailsLoaded(response, loadingListener)
-                    }
+        val api = getApi()
+        if (api != null) {
+            api.searchIngredientByName(ingredientName).enqueue(object : Callback<FoundIngredientsResponse> {
+                override fun onResponse(call: Call<FoundIngredientsResponse>,
+                                        response: Response<FoundIngredientsResponse>) {
+                    onIngredientDetailsLoaded(response, loadingListener)
+                }
 
-                    override fun onFailure(call: Call<FoundIngredientsResponse>, t: Throwable) {
-                        loadingListener.onLoadingDone()
-                        loadingListener.onLoadingError(t)
+                override fun onFailure(call: Call<FoundIngredientsResponse>, t: Throwable) {
+                    loadingListener.onLoadingDone()
+                    loadingListener.onLoadingError(t)
 
-                    }
+                }
 
-                })
+            })
+        } else {
+            loadingListener.onLoadingDone()
+            loadingListener.onNoInternet()
+        }
     }
 
     private fun onIngredientDetailsLoaded(response: Response<FoundIngredientsResponse>,
@@ -74,6 +83,8 @@ class DrinkDetailsRepo(lifecycleOwner: LifecycleOwner,
             }
         }
     }
+
+    private fun getApi() = retrofitRepoExtension.getApi(CocktailApi::class.java)
 
     override fun cleanUp() {
 

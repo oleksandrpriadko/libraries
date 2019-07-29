@@ -165,6 +165,17 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
         }
     }
 
+    fun connectionStatusChanged(isConnectedToInternet: Boolean) {
+        if (isConnectedToInternet) {
+            saveAndApplyState(State.ONLINE)
+            if (view?.areSearchResultsEmpty() == true) {
+                searchPopularDrinks()
+            }
+        } else {
+            saveAndApplyState(State.OFFLINE)
+        }
+    }
+
     fun onBackPressed() {
         view?.superOnBackPressed()
     }
@@ -177,7 +188,7 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
     private val loadingListener: LoadingListener = object : LoadingListener {
 
         override fun onDrinksFound(foundDrinkDetails: MutableList<DrinkDetails>) {
-            view?.clearSearchResults()
+            view?.clearSearchResults(redrawItems = true)
             view?.populateSearchResults(foundDrinkDetails)
             view?.scrollToFirstSearchResult()
         }
@@ -203,7 +214,7 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
         }
 
         override fun onNoInternet() {
-
+            saveAndApplyState(State.OFFLINE)
         }
 
     }
@@ -214,6 +225,8 @@ interface PresenterView : LifecycleOwner {
     fun populateSearchResults(foundDrinkDetails: MutableList<DrinkDetails>)
 
     fun scrollToFirstSearchResult()
+
+    fun areSearchResultsEmpty(): Boolean
 
     fun showDrinkDetails(drinkId: String)
 
@@ -245,7 +258,7 @@ interface PresenterView : LifecycleOwner {
 
     fun superOnBackPressed()
 
-    fun clearSearchResults()
+    fun clearSearchResults(redrawItems: Boolean)
 }
 
 enum class SearchType {
@@ -256,5 +269,7 @@ enum class SearchType {
 enum class State {
     LOADING,
     RESULTS,
-    EMPTY
+    EMPTY,
+    OFFLINE,
+    ONLINE
 }

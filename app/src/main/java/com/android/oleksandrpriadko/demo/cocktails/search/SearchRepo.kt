@@ -19,46 +19,55 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
 
     fun searchDrinkByName(name: String, loadingListener: LoadingListener) {
         loadingListener.onLoadingStarted()
+        val api = getApi()
+        if (api != null) {
+            api.searchDrinkByName(name).enqueue(object : Callback<FoundDrinksResponse> {
+                override fun onResponse(call: Call<FoundDrinksResponse>, response: Response<FoundDrinksResponse>) {
+                    loadingListener.onLoadingDone()
 
-        getApi().searchDrinkByName(name).enqueue(object : Callback<FoundDrinksResponse> {
-            override fun onResponse(call: Call<FoundDrinksResponse>, response: Response<FoundDrinksResponse>) {
-                loadingListener.onLoadingDone()
-
-                if (response.isSuccessful) {
-                    onDrinksLoaded(response.body(), loadingListener)
-                } else {
-                    loadingListener.onLoadingError(Throwable("not successful response"))
+                    if (response.isSuccessful) {
+                        onDrinksLoaded(response.body(), loadingListener)
+                    } else {
+                        loadingListener.onLoadingError(Throwable("not successful response"))
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<FoundDrinksResponse>, t: Throwable) {
-                loadingListener.onLoadingDone()
-                loadingListener.onLoadingError(t)
-                loadingListener.noDrinksFound()
-            }
-        })
+                override fun onFailure(call: Call<FoundDrinksResponse>, t: Throwable) {
+                    loadingListener.onLoadingDone()
+                    loadingListener.onLoadingError(t)
+                    loadingListener.noDrinksFound()
+                }
+            })
+        } else {
+            loadingListener.onLoadingDone()
+            loadingListener.onNoInternet()
+        }
     }
 
     fun loadPopularDrinks(loadingListener: LoadingListener) {
         loadingListener.onLoadingStarted()
+        val api = getApi()
+        if (api != null) {
+            api.loadPopularDrinks().enqueue(object : Callback<FoundDrinksResponse> {
+                override fun onResponse(call: Call<FoundDrinksResponse>, response: Response<FoundDrinksResponse>) {
+                    loadingListener.onLoadingDone()
 
-        getApi().loadPopularDrinks().enqueue(object : Callback<FoundDrinksResponse> {
-            override fun onResponse(call: Call<FoundDrinksResponse>, response: Response<FoundDrinksResponse>) {
-                loadingListener.onLoadingDone()
-
-                if (response.isSuccessful) {
-                    onDrinksLoaded(response.body(), loadingListener)
-                } else {
-                    loadingListener.onLoadingError(Throwable("not successful response"))
+                    if (response.isSuccessful) {
+                        onDrinksLoaded(response.body(), loadingListener)
+                    } else {
+                        loadingListener.onLoadingError(Throwable("not successful response"))
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<FoundDrinksResponse>, t: Throwable) {
-                loadingListener.onLoadingError(t)
-                loadingListener.onLoadingDone()
-            }
-
-        })
+                override fun onFailure(call: Call<FoundDrinksResponse>, t: Throwable) {
+                    loadingListener.onLoadingError(t)
+                    loadingListener.onLoadingDone()
+                }
+            })
+        } else {
+            loadingListener.onLoadingDone()
+            loadingListener.onNoInternet()
+        }
     }
 
     private fun onDrinksLoaded(response: FoundDrinksResponse?, loadingListener: LoadingListener) {
@@ -73,48 +82,60 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
 
     fun filterDrinksByIngredients(ingredientNamesCommaSeparated: String, loadingListener: LoadingListener) {
         loadingListener.onLoadingStarted()
+        val api = getApi()
+        if (api != null) {
+            api.filterDrinksByIngredients(ingredientNamesCommaSeparated).enqueue(object : Callback<FoundDrinksResponse> {
+                override fun onResponse(call: Call<FoundDrinksResponse>,
+                                        response: Response<FoundDrinksResponse>) {
+                    loadingListener.onLoadingDone()
 
-        getApi().filterDrinksByIngredients(ingredientNamesCommaSeparated).enqueue(object : Callback<FoundDrinksResponse> {
-            override fun onResponse(call: Call<FoundDrinksResponse>,
-                                    response: Response<FoundDrinksResponse>) {
-                loadingListener.onLoadingDone()
-
-                if (response.isSuccessful) {
-                    loadingListener.onDrinksFound(
-                            response.body()?.drinkDetails ?: mutableListOf<DrinkDetails>())
-                } else {
-                    loadingListener.onLoadingError(Throwable("not successful response"))
+                    if (response.isSuccessful) {
+                        loadingListener.onDrinksFound(
+                                response.body()?.drinkDetails ?: mutableListOf<DrinkDetails>())
+                    } else {
+                        loadingListener.onLoadingError(Throwable("not successful response"))
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<FoundDrinksResponse>, t: Throwable) {
-                loadingListener.onLoadingDone()
-                loadingListener.onLoadingError(t)
-                loadingListener.noDrinksFound()
-            }
-        })
+                override fun onFailure(call: Call<FoundDrinksResponse>, t: Throwable) {
+                    loadingListener.onLoadingDone()
+                    loadingListener.onLoadingError(t)
+                    loadingListener.noDrinksFound()
+                }
+            })
+        } else {
+            loadingListener.onLoadingDone()
+            loadingListener.onNoInternet()
+        }
     }
 
     fun loadListOfAllIngredients(loadingListener: LoadingListener) {
         loadingListener.onLoadingStarted()
 
-        getApi().loadListOfAllIngredients().enqueue(object : Callback<FoundIngredientNamesResponse> {
-            override fun onResponse(call: Call<FoundIngredientNamesResponse>, response: Response<FoundIngredientNamesResponse>) {
-                onAllIngredientsLoaded(loadingListener, response)
-            }
+        val api = getApi()
 
-            override fun onFailure(call: Call<FoundIngredientNamesResponse>, t: Throwable) {
-                loadingListener.onLoadingDone()
-
-                val allIngredients = CocktailManagerFinder.databaseManager
-                        .ingredientDao().getAll()
-                if (allIngredients.isNotEmpty()) {
-                    loadingListener.onListOfIngredientsLoaded(allIngredients)
-                } else {
-                    loadingListener.onLoadingError(t)
+        if (api != null) {
+            api.loadListOfAllIngredients().enqueue(object : Callback<FoundIngredientNamesResponse> {
+                override fun onResponse(call: Call<FoundIngredientNamesResponse>, response: Response<FoundIngredientNamesResponse>) {
+                    onAllIngredientsLoaded(loadingListener, response)
                 }
-            }
-        })
+
+                override fun onFailure(call: Call<FoundIngredientNamesResponse>, t: Throwable) {
+                    loadingListener.onLoadingDone()
+
+                    val allIngredients = CocktailManagerFinder.databaseManager
+                            .ingredientDao().getAll()
+                    if (allIngredients.isNotEmpty()) {
+                        loadingListener.onListOfIngredientsLoaded(allIngredients)
+                    } else {
+                        loadingListener.onLoadingError(t)
+                    }
+                }
+            })
+        } else {
+            loadingListener.onLoadingDone()
+            loadingListener.onNoInternet()
+        }
     }
 
     private fun onAllIngredientsLoaded(loadingListener: LoadingListener,
