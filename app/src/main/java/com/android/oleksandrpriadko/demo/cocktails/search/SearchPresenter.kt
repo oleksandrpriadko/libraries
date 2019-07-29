@@ -105,6 +105,14 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
         }
     }
 
+    fun onSelectedIngredientRemoved(selectedAmountAfter: Int) {
+        if (selectedAmountAfter > 0) {
+            onSearchTriggered()
+        } else {
+            searchPopularDrinks()
+        }
+    }
+
     fun onIngredientMatchSelected(name: String,
                                   addIfAbsentInDatabase: Boolean) {
         this.triggerSearchAfterSelection = triggerSearchAfterSelection
@@ -188,7 +196,7 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
     private val loadingListener: LoadingListener = object : LoadingListener {
 
         override fun onDrinksFound(foundDrinkDetails: MutableList<DrinkDetails>) {
-            view?.clearSearchResults(redrawItems = true)
+            view?.clearSearchResults(redrawItems = false)
             view?.populateSearchResults(foundDrinkDetails)
             view?.scrollToFirstSearchResult()
         }

@@ -84,7 +84,7 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
     }
 
     private fun displayIngredientsChips(drinkDetails: DrinkDetails) {
-        for (ingredient in drinkDetails.listOfIngredients) {
+        for ((index, ingredient) in drinkDetails.getListOfIngredientsNamesAndMeasureUnits(MeasureUnit.ML).withIndex()) {
             ingredientsChipGroup.inflateOn<Chip>(
                     R.layout.cocktail_item_ingredient,
                     false)
@@ -92,7 +92,7 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
                         text = ingredient
                         ingredientsChipGroup.addView(this)
                         setOnClickListener {
-                            presenter.onIngredientItemClicked(ingredient)
+                            presenter.onIngredientItemClicked(drinkDetails.listOfIngredientsNames[index])
                         }
                     }
         }
@@ -158,6 +158,10 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
 
     override fun clearImageInOverlay() {
         ingredientOverlay.ingredientImageView.setImageResource(0)
+    }
+
+    override fun clearNameInOverlay() {
+        ingredientOverlay.nameTextView.text = ""
     }
 
     override fun onBackPressed() {

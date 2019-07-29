@@ -14,7 +14,6 @@ import androidx.appcompat.widget.ListPopupWindow
 import androidx.appcompat.widget.ListPopupWindow.INPUT_METHOD_NEEDED
 import androidx.appcompat.widget.ListPopupWindow.POSITION_PROMPT_BELOW
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
 import com.android.oleksandrpriadko.demo.R
@@ -77,7 +76,6 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
             }
         }
         itemsRecyclerView.adapter = adapterItems
-        itemsRecyclerView.itemAnimator = DefaultItemAnimator().apply { addDuration = 1000 }
     }
 
     private fun prepareSearch() {
@@ -141,7 +139,7 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
     }
 
     override fun populateSearchResults(foundDrinkDetails: MutableList<DrinkDetails>) {
-        adapterItems.addDataAnimate(foundDrinkDetails)
+        adapterItems.setData(foundDrinkDetails)
     }
 
     override fun areSearchResultsEmpty(): Boolean = adapterItems.getData().isEmpty()
@@ -193,6 +191,7 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
         chip.setOnCloseIconClickListener {
             ingredientsChipGroup.removeView(chip)
             ingredientsChipGroup.show(ingredientsChipGroup.childCount > 0)
+            presenter?.onSelectedIngredientRemoved(ingredientsChipGroup.childCount)
         }
         ingredientsChipGroup.addView(chip)
         ingredientsChipGroup.show()
@@ -260,7 +259,7 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
 
     override fun applyState(state: State) {
         val transition = AutoTransition().apply {
-            duration = 10
+            duration = 0
         }
         TransitionManager.beginDelayedTransition(motionParent, transition)
         when (state) {

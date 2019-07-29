@@ -54,7 +54,7 @@ interface CocktailApi {
 
         fun ingredientNamesToString(ingredients: List<IngredientName>): String {
             return ingredients.joinToString(separator = ",") {
-                it.strIngredient1.replace("\\s".toRegex(), "_")
+                it.strIngredient1.replace("\\s".toRegex(), "_").replace("'", "")
             }
         }
     }

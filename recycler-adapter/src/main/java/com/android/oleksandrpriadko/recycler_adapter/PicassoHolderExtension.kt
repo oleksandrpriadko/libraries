@@ -8,7 +8,10 @@ import com.squareup.picasso.Picasso
 
 class PicassoHolderExtension(context: Context) {
 
-    private val picasso: Picasso = getPicasso(context)
+    private val picasso: Picasso = getPicasso(context).apply {
+        setIndicatorsEnabled(BuildConfig.DEBUG)
+        isLoggingEnabled = BuildConfig.DEBUG
+    }
 
     fun loadImage(url: String,
                   imageView: ImageView,

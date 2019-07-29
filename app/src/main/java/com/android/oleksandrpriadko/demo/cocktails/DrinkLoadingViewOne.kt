@@ -74,6 +74,9 @@ class DrinkLoadingViewOne : FrameLayout {
                     1f + scale * progress,
                     drawable.bounds.centerX().toFloat(),
                     drawable.bounds.centerY().toFloat())
+            it.rotate(- 45f + 90f * progress,
+                    drawable.bounds.centerX().toFloat(),
+                    drawable.bounds.centerY().toFloat())
             drawable.draw(it)
             it.restore()
         }

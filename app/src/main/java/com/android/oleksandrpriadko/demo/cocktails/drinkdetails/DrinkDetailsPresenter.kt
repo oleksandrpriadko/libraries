@@ -42,7 +42,8 @@ class DrinkDetailsPresenter(presenterView: PresenterView,
 
     private fun requestLoadIngredientDetails() {
         shownIngredientName?.let {
-            repo.loadIngredientDetails(it, object : LoadingListener {
+            val formattedName = it.replace("'", "")
+            repo.loadIngredientDetails(formattedName, object : LoadingListener {
                 override fun onNoInternet() {
                     view?.showOfflineLayout(show = true)
                 }
@@ -75,6 +76,7 @@ class DrinkDetailsPresenter(presenterView: PresenterView,
             shownIngredientName?.let {
                 view?.showIngredientOverlay()
                 view?.clearImageInOverlay()
+                view?.clearNameInOverlay()
                 requestLoadIngredientDetails()
             }
         }
@@ -119,6 +121,8 @@ interface PresenterView : LifecycleOwner {
     fun showLoadingLayout(show: Boolean)
 
     fun clearImageInOverlay()
+
+    fun clearNameInOverlay()
 
     fun showOfflineLayout(show: Boolean)
 

@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.android.oleksandrpriadko.demo.R
+import com.android.oleksandrpriadko.demo.cocktails.drinkdetails.MeasureUnit
 import com.android.oleksandrpriadko.demo.cocktails.model.DrinkDetails
 import com.android.oleksandrpriadko.extension.inflateOn
 import com.android.oleksandrpriadko.recycler_adapter.BaseAdapterRecyclerView
@@ -45,7 +46,7 @@ class StartWithIngredientsDrinkHolder(iteView: View, private val itemListener: S
 
         itemView.nameTextView.text = drinkDetails.strDrink
 
-        for (ingredient in drinkDetails.listOfIngredients) {
+        for (ingredient in drinkDetails.getListOfIngredientsNamesAndMeasureUnits(MeasureUnit.ML)) {
             val chip = itemView.ingredientsCarouselChipGroup.inflateOn<Chip>(R.layout.cocktail_chip_carousel)
             chip.text = ingredient
             chip.setOnClickListener {
