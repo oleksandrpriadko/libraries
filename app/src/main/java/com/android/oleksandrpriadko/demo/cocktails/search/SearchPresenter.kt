@@ -4,8 +4,8 @@ import android.content.res.Resources
 import androidx.lifecycle.LifecycleOwner
 import com.android.oleksandrpriadko.demo.R
 import com.android.oleksandrpriadko.demo.cocktails.model.CocktailApi
-import com.android.oleksandrpriadko.demo.cocktails.model.DrinkDetails
-import com.android.oleksandrpriadko.demo.cocktails.model.IngredientName
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Drink
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Ingredient
 import com.android.oleksandrpriadko.mvp.presenter.BasePresenter
 
 class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePresenter<PresenterView>(presenterView) {
@@ -43,11 +43,11 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
     fun onSearchTriggered() {
         view?.hideKeyboard()
         view?.hideFoundIngredientMatches()
-        if (getSelectedIngredientsNames().isNotEmpty()
+        if (getSelectedIngredients().isNotEmpty()
                 || view?.getCurrentInputText()?.isNotEmpty() == true) {
             when (currentSearchType) {
                 SearchType.BY_INGREDIENTS -> {
-                    filterByIngredients(getSelectedIngredientsNames())
+                    filterByIngredients(getSelectedIngredients())
                 }
                 SearchType.BY_NAME -> {
                     searchDrink(view?.getCurrentInputText())
@@ -56,11 +56,8 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
         }
     }
 
-    private fun getSelectedIngredientsNames(): List<IngredientName> {
-        return when (val selectedIngredients = view?.getSelectedIngredients()) {
-            null -> listOf()
-            else -> selectedIngredients.map { IngredientName().apply { strIngredient1 = it } }
-        }
+    private fun getSelectedIngredients(): List<Ingredient> {
+        return view?.getSelectedIngredients() ?: listOf()
     }
 
     fun onInputTextChanged(charSequence: CharSequence?) {
@@ -79,25 +76,23 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
 
     private fun searchDrink(text: CharSequence?) {
         if (text != null) {
-            repo.searchDrinkByName(name = text.toString(), loadingListener = loadingListener)
+            repo.searchDrinkByName(name = text.toString(), listener = searchRepoListener)
         }
     }
 
     fun searchPopularDrinks() {
-        repo.loadPopularDrinks(loadingListener)
+        repo.loadPopularDrinks(searchRepoListener)
     }
 
-    private fun filterByIngredients(ingredients: List<IngredientName>) {
-        if (ingredients.isNotEmpty()) {
-            repo.filterDrinksByIngredients(
-                    CocktailApi.ingredientNamesToString(ingredients), loadingListener = loadingListener)
-        }
+    private fun filterByIngredients(ingredients: List<Ingredient>) {
+        val searchQueryList: List<Pair<String, Int>> = CocktailApi.ingredientToSearchQuery(ingredients)
+        repo.filterDrinksByIngredients(searchQueryList, listener = searchRepoListener)
     }
 
-    private fun findIngredientMatches(name: String): Boolean {
-        val listOfMatches = repo.findIngredientMatches(name)
+    private fun findIngredientMatches(ingredientName: String): Boolean {
+        val listOfMatches = repo.findIngredientMatches(ingredientName)
         return if (listOfMatches != null && listOfMatches.isNotEmpty()) {
-            view?.showFoundIngredientMatches(listOfMatches.map { it.strIngredient1 })
+            view?.showFoundIngredientMatches(listOfMatches)
             true
         } else {
             view?.hideFoundIngredientMatches()
@@ -113,21 +108,20 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
         }
     }
 
-    fun onIngredientMatchSelected(name: String,
+    fun onIngredientMatchSelected(ingredient: Ingredient,
                                   addIfAbsentInDatabase: Boolean) {
-        this.triggerSearchAfterSelection = triggerSearchAfterSelection
-        val ingredientFromDatabase: IngredientName? = repo.findIngredientByName(name)
+        val ingredientFromDatabase: Ingredient? = repo.findIngredientByName(ingredient.name)
 
         if (ingredientFromDatabase != null) {
-            if (!isIngredientAlreadyAdded(name)) {
+            if (!isIngredientAlreadyAdded(ingredient)) {
                 view?.addSelectedIngredient(ingredientFromDatabase)
                 view?.scrollSearchInputToEnd()
             }
             view?.clearSearchInputText()
             view?.hideFoundIngredientMatches()
         } else if (addIfAbsentInDatabase) {
-            if (!isIngredientAlreadyAdded(name)) {
-                view?.addSelectedIngredient(name)
+            if (!isIngredientAlreadyAdded(ingredient)) {
+                view?.addSelectedIngredient(ingredient)
                 view?.scrollSearchInputToEnd()
             }
             view?.clearSearchInputText()
@@ -135,34 +129,19 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
         }
     }
 
-//    fun onIngredientFromCarouselSelected(name: String, addIfAbsentInDatabase: Boolean) {
-//        val ingredientFromDatabase: IngredientName? = repo.findIngredientByName(name)
-//
-//        if (ingredientFromDatabase != null) {
-//            if (!isIngredientAlreadyAdded(name)) {
-//                view?.addSelectedIngredient(ingredientFromDatabase)
-//                view?.scrollSearchInputToEnd()
-//            }
-//        } else if (addIfAbsentInDatabase) {
-//            if (!isIngredientAlreadyAdded(name)) {
-//                view?.addSelectedIngredient(name)
-//                view?.scrollSearchInputToEnd()
-//            }
-//        }
-//    }
-
-    private fun isIngredientAlreadyAdded(name: String): Boolean {
+    private fun isIngredientAlreadyAdded(ingredient: Ingredient): Boolean {
         view?.getSelectedIngredients()?.forEach { alreadySelected ->
-            if (alreadySelected == name) {
+            if (alreadySelected.name.equals(ingredient.name, true)) {
                 return true
             }
         }
         return false
     }
 
-    fun onDrinkClicked(drinkDetails: DrinkDetails?) {
-        drinkDetails?.let {
-            view?.showDrinkDetails(drinkDetails.idDrink)
+    fun onDrinkClicked(drink: Drink?) {
+        drink?.let { drinkNotNull ->
+            val ingredientNamesFromSearch = getSelectedIngredients().map { it.name }
+            view?.showDrinkDetails(drinkNotNull, ingredientNamesFromSearch as ArrayList<String>)
         }
     }
 
@@ -193,16 +172,12 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
         view?.applyState(newState)
     }
 
-    private val loadingListener: LoadingListener = object : LoadingListener {
+    private val searchRepoListener: SearchRepoListener = object : SearchRepoListener {
 
-        override fun onDrinksFound(foundDrinkDetails: MutableList<DrinkDetails>) {
+        override fun onDrinksFound(drinkList: MutableList<Drink>) {
             view?.clearSearchResults(redrawItems = false)
-            view?.populateSearchResults(foundDrinkDetails)
+            view?.populateSearchResults(drinkList)
             view?.scrollToFirstSearchResult()
-        }
-
-        override fun onListOfIngredientsLoaded(ingredients: MutableList<IngredientName>) {
-
         }
 
         override fun noDrinksFound() {
@@ -217,32 +192,29 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
             saveAndApplyState(State.RESULTS)
         }
 
-        override fun onLoadingError(throwable: Throwable) {
+        override fun onLoadingError() {
             saveAndApplyState(State.EMPTY)
         }
 
         override fun onNoInternet() {
             saveAndApplyState(State.OFFLINE)
         }
-
     }
 }
 
 interface PresenterView : LifecycleOwner {
 
-    fun populateSearchResults(foundDrinkDetails: MutableList<DrinkDetails>)
+    fun populateSearchResults(drinks: MutableList<Drink>)
 
     fun scrollToFirstSearchResult()
 
     fun areSearchResultsEmpty(): Boolean
 
-    fun showDrinkDetails(drinkId: String)
+    fun showDrinkDetails(drink: Drink, ingredientNamesFromSearch: ArrayList<String>)
 
-    fun addSelectedIngredient(ingredient: IngredientName)
+    fun addSelectedIngredient(ingredient: Ingredient)
 
-    fun addSelectedIngredient(ingredientName: String)
-
-    fun requestRemoveSelectedIngredient(ingredient: IngredientName)
+    fun requestRemoveSelectedIngredient(ingredient: Ingredient)
 
     fun requestRemoveAllSelectedIngredients()
 
@@ -250,11 +222,11 @@ interface PresenterView : LifecycleOwner {
 
     fun getCurrentInputText(): CharSequence?
 
-    fun getSelectedIngredients(): List<String>
+    fun getSelectedIngredients(): List<Ingredient>
 
     fun clearSearchInputText()
 
-    fun showFoundIngredientMatches(matches: List<String>)
+    fun showFoundIngredientMatches(matches: List<Ingredient>)
 
     fun hideFoundIngredientMatches()
 

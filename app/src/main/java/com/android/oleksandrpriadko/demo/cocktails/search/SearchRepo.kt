@@ -2,237 +2,273 @@ package com.android.oleksandrpriadko.demo.cocktails.search
 
 import android.os.AsyncTask
 import androidx.lifecycle.LifecycleOwner
-import com.android.oleksandrpriadko.demo.cocktails.managers.CocktailManagerFinder
 import com.android.oleksandrpriadko.demo.cocktails.model.*
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.CocktailMapper
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Drink
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Ingredient
 import com.android.oleksandrpriadko.loggalitic.LogPublishService
 import com.android.oleksandrpriadko.mvp.repo.ObservableRepo
 import com.android.oleksandrpriadko.mvp.repo_extension.RetrofitRepoExtension
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 
 class SearchRepo(lifecycleOwner: LifecycleOwner,
-                 private val baseUrl: String) : ObservableRepo(lifecycleOwner) {
+                 baseUrl: String) : ObservableRepo(lifecycleOwner) {
 
     private val retrofitRepoExtension: RetrofitRepoExtension = RetrofitRepoExtension(
             baseUrl,
             converterFactory = GsonConverterFactory.create())
 
-    fun searchDrinkByName(name: String, loadingListener: LoadingListener) {
-        loadingListener.onLoadingStarted()
+    private var multiIngredientRequestExecutor: RequestExecutorMultiIngredients? = null
+
+    fun searchDrinkByName(name: String, listener: SearchRepoListener) {
+        listener.onLoadingStarted()
+
         val api = getApi()
         if (api != null) {
             api.searchDrinkByName(name).enqueue(object : Callback<FoundDrinksResponse> {
-                override fun onResponse(call: Call<FoundDrinksResponse>, response: Response<FoundDrinksResponse>) {
-                    loadingListener.onLoadingDone()
-
-                    if (response.isSuccessful) {
-                        onDrinksLoaded(response.body(), loadingListener)
-                    } else {
-                        loadingListener.onLoadingError(Throwable("not successful response"))
-                    }
+                override fun onResponse(call: Call<FoundDrinksResponse>,
+                                        response: Response<FoundDrinksResponse>) {
+                    onDrinksLoaded(response, listener, doMerge = false, doSort = false)
                 }
 
                 override fun onFailure(call: Call<FoundDrinksResponse>, t: Throwable) {
-                    loadingListener.onLoadingDone()
-                    loadingListener.onLoadingError(t)
-                    loadingListener.noDrinksFound()
+                    onNoDrinksFound(listener)
                 }
             })
         } else {
-            loadingListener.onLoadingDone()
-            loadingListener.onNoInternet()
+            onNoInternet(listener)
         }
     }
 
-    fun loadPopularDrinks(loadingListener: LoadingListener) {
-        loadingListener.onLoadingStarted()
+    fun loadPopularDrinks(listener: SearchRepoListener) {
+        listener.onLoadingStarted()
         val api = getApi()
         if (api != null) {
             api.loadPopularDrinks().enqueue(object : Callback<FoundDrinksResponse> {
-                override fun onResponse(call: Call<FoundDrinksResponse>, response: Response<FoundDrinksResponse>) {
-                    loadingListener.onLoadingDone()
-
-                    if (response.isSuccessful) {
-                        onDrinksLoaded(response.body(), loadingListener)
-                    } else {
-                        loadingListener.onLoadingError(Throwable("not successful response"))
-                    }
-                }
-
-                override fun onFailure(call: Call<FoundDrinksResponse>, t: Throwable) {
-                    loadingListener.onLoadingError(t)
-                    loadingListener.onLoadingDone()
-                }
-            })
-        } else {
-            loadingListener.onLoadingDone()
-            loadingListener.onNoInternet()
-        }
-    }
-
-    private fun onDrinksLoaded(response: FoundDrinksResponse?, loadingListener: LoadingListener) {
-        response?.let {
-            val foundDrinks = it.drinkDetails
-            when {
-                foundDrinks != null && foundDrinks.isNotEmpty() -> loadingListener.onDrinksFound(foundDrinks)
-                else -> loadingListener.noDrinksFound()
-            }
-        }
-    }
-
-    fun filterDrinksByIngredients(ingredientNamesCommaSeparated: String, loadingListener: LoadingListener) {
-        loadingListener.onLoadingStarted()
-        val api = getApi()
-        if (api != null) {
-            api.filterDrinksByIngredients(ingredientNamesCommaSeparated).enqueue(object : Callback<FoundDrinksResponse> {
                 override fun onResponse(call: Call<FoundDrinksResponse>,
                                         response: Response<FoundDrinksResponse>) {
-                    loadingListener.onLoadingDone()
-
-                    if (response.isSuccessful) {
-                        loadingListener.onDrinksFound(
-                                response.body()?.drinkDetails ?: mutableListOf<DrinkDetails>())
-                    } else {
-                        loadingListener.onLoadingError(Throwable("not successful response"))
-                    }
+                    onDrinksLoaded(response, listener, doMerge = false, doSort = false)
                 }
 
                 override fun onFailure(call: Call<FoundDrinksResponse>, t: Throwable) {
-                    loadingListener.onLoadingDone()
-                    loadingListener.onLoadingError(t)
-                    loadingListener.noDrinksFound()
+                    onNoDrinksFound(listener)
                 }
             })
-            val executor = ExecutorHandlerFindDrinksDetails(baseUrl,
-                    listOf(ingredientNamesCommaSeparated, ingredientNamesCommaSeparated),
-                    object : ExecutorHandlerFindDrinksDetails.ExecutorLoadListener {
-                        override fun onLoadingStarted() {
-
-                        }
-
-                        override fun onLoaded(foundDrinksDetails: List<DrinkDetails>) {
-
-                        }
-
-                    })
-            executor.execute()
         } else {
-            loadingListener.onLoadingDone()
-            loadingListener.onNoInternet()
+            onNoInternet(listener)
         }
     }
 
-    fun loadListOfAllIngredients(loadingListener: LoadingListener) {
-        loadingListener.onLoadingStarted()
+    private fun onDrinksLoaded(response: Response<FoundDrinksResponse>,
+                               listener: SearchRepoListener,
+                               doMerge: Boolean,
+                               doSort: Boolean,
+                               searchQueries: List<String> = listOf()) {
+        listener.onLoadingDone()
+
+        if (response.isSuccessful) {
+            val body = response.body()
+            if (body != null) {
+                val foundDrinkDetailsDetailsList: MutableList<DrinkDetails> = body.drinkDetails
+                        ?: mutableListOf()
+                if (foundDrinkDetailsDetailsList.isNotEmpty()) {
+                    val distinctList: List<DrinkDetails>
+                    if (doMerge) {
+                        distinctList = foundDrinkDetailsDetailsList.distinctBy { it.idDrink }
+                    } else {
+                        distinctList = foundDrinkDetailsDetailsList
+                    }
+                    val drinksListMapped: List<Drink> = distinctList.map {
+                        CocktailMapper.mapToDrink(it)
+                    }
+                    if (doSort && searchQueries.isNotEmpty()) {
+                        Collections.sort(drinksListMapped, object : Comparator<Drink> {
+                            override fun compare(o1: Drink?, o2: Drink?): Int {
+                                if (o1 === o2) return 0
+
+                                return if (o1 != null) {
+                                    if (o2 == null) {
+                                        -1
+                                    } else {
+                                        o1.calculateIngredientMatches(searchQueries)
+                                                .compareTo(o2.calculateIngredientMatches(searchQueries))
+                                    }
+                                } else if (o2 != null) {
+                                    1
+                                } else {
+                                    0
+                                }
+                            }
+                        })
+                    }
+                    listener.onDrinksFound(drinksListMapped)
+                } else {
+                    onNoDrinksFound(listener)
+                }
+            } else {
+                onNoDrinksFound(listener)
+            }
+        } else {
+            onNoDrinksFound(listener)
+        }
+
+    }
+
+    /**
+     * @param searchQueries List<Pair<String, Int>> int - number of ingredients in query, higher number -
+     * earlier position in response list
+     */
+    fun filterDrinksByIngredients(searchQueries: List<Pair<String, Int>>, listener: SearchRepoListener) {
+        listener.onLoadingStarted()
+        val api = getApi()
+        if (api != null) {
+            if (multiIngredientRequestExecutor != null) {
+                multiIngredientRequestExecutor?.cancel(true)
+            }
+
+            multiIngredientRequestExecutor = RequestExecutorMultiIngredients(
+                    api,
+                    searchQueries,
+                    object : RequestExecutorMultiIngredients.RequestExecutorListener {
+
+                        override fun onLoaded(response: Response<FoundDrinksResponse>) {
+                            onDrinksLoaded(response,
+                                    listener,
+                                    doMerge = true,
+                                    doSort = true,
+                                    searchQueries = searchQueries.map {
+                                        it.first
+                                    })
+                        }
+
+                        override fun onNoDrinksFound() {
+                            onNoDrinksFound(listener)
+                        }
+                    })
+            multiIngredientRequestExecutor?.execute()
+        } else {
+            onNoInternet(listener)
+        }
+    }
+
+    fun loadAllIngredients(listener: SearchRepoListener) {
+        listener.onLoadingStarted()
 
         val api = getApi()
 
         if (api != null) {
-            api.loadListOfAllIngredients().enqueue(object : Callback<FoundIngredientNamesResponse> {
-                override fun onResponse(call: Call<FoundIngredientNamesResponse>, response: Response<FoundIngredientNamesResponse>) {
-                    onAllIngredientsLoaded(loadingListener, response)
+            api.loadAllIngredients().enqueue(object : Callback<FoundIngredientNamesResponse> {
+                override fun onResponse(call: Call<FoundIngredientNamesResponse>,
+                                        response: Response<FoundIngredientNamesResponse>) {
+                    onIngredientsLoaded(listener, response)
                 }
 
                 override fun onFailure(call: Call<FoundIngredientNamesResponse>, t: Throwable) {
-                    loadingListener.onLoadingDone()
-
-                    val allIngredients = CocktailManagerFinder.databaseManager
-                            .ingredientDao().getAll()
-                    if (allIngredients.isNotEmpty()) {
-                        loadingListener.onListOfIngredientsLoaded(allIngredients)
-                    } else {
-                        loadingListener.onLoadingError(t)
-                    }
+                    onNoIngredientsFound(listener)
                 }
             })
         } else {
-            loadingListener.onLoadingDone()
-            loadingListener.onNoInternet()
+            onNoInternet(listener)
         }
     }
 
-    private fun onAllIngredientsLoaded(loadingListener: LoadingListener,
-                                       response: Response<FoundIngredientNamesResponse>) {
-        loadingListener.onLoadingDone()
+    private fun onIngredientsLoaded(listener: SearchRepoListener,
+                                    response: Response<FoundIngredientNamesResponse>) {
+        listener.onLoadingDone()
 
         if (response.isSuccessful) {
-            val loadedIngredients =
-                    response.body()?.ingredientList
-                            ?: mutableListOf<IngredientName>()
-            if (loadedIngredients.isNotEmpty()) {
-                CocktailManagerFinder.databaseManager.ingredientDao().deleteAll()
-                for (ingredientName in loadedIngredients) {
-                    CocktailManagerFinder.databaseManager.ingredientDao().insert(ingredientName)
+            val body = response.body()
+            if (body != null) {
+                val loadedIngredientNamesList: MutableList<IngredientName> = body.ingredientList
+                        ?: mutableListOf()
+                if (loadedIngredientNamesList.isNotEmpty()) {
+                    val ingredientsMappedList: List<Ingredient> = loadedIngredientNamesList.map {
+                        CocktailMapper.mapToIngredient(it)
+                    }
+                    listener.onIngredientsLoaded(ingredientsMappedList)
+                } else {
+                    onNoIngredientsFound(listener)
                 }
+            } else {
+                onNoIngredientsFound(listener)
             }
-            loadingListener.onListOfIngredientsLoaded(
-                    CocktailManagerFinder.databaseManager.ingredientDao().getAll())
+        } else {
+            onNoIngredientsFound(listener)
         }
     }
 
     private fun getApi() = retrofitRepoExtension.getApi(CocktailApi::class.java)
 
-    fun findIngredientMatches(name: String): List<IngredientName>? {
-        return CocktailManagerFinder.databaseManager.ingredientDao().findMatchesByName("%$name%")
+    fun findIngredientMatches(name: String): List<Ingredient>? {
+        return listOf("dummy", "items", "waiting", "for", "database", name).map {
+            Ingredient(it)
+        }
     }
 
-    fun findIngredientByName(name: String): IngredientName? {
-        return CocktailManagerFinder.databaseManager.ingredientDao().findByName(name)
+    fun findIngredientByName(name: String): Ingredient? {
+        return Ingredient(name)
+    }
+
+    private fun onNoDrinksFound(listener: SearchRepoListener) {
+        listener.onLoadingDone()
+        listener.onLoadingError()
+        listener.noDrinksFound()
+    }
+
+    private fun onNoIngredientsFound(listener: SearchRepoListener) {
+        listener.onLoadingDone()
+        listener.onLoadingError()
+        listener.noIngredientsFound()
+    }
+
+    private fun onNoInternet(listener: SearchRepoListener) {
+        listener.onLoadingDone()
+        listener.onNoInternet()
     }
 
     override fun cleanUp() {}
 }
 
-class ExecutorHandlerFindDrinksDetails(private val baseUrl: String,
-                                       private val ingredientList: List<String>,
-                                       private var listener: ExecutorLoadListener) : AsyncTask<Void, Void, List<DrinkDetails>>() {
+/**
+ * @param searchQueries List<Pair<String, Int>> int - number of ingredients in query, higher number -
+ * earlier position in response list
+ */
+class RequestExecutorMultiIngredients(private val api: CocktailApi,
+                                      private val searchQueries: List<Pair<String, Int>>,
+                                      private var listener: RequestExecutorListener)
+    : AsyncTask<Void, Void, Response<FoundDrinksResponse>?>() {
 
     private lateinit var pool: ExecutorService
-    private lateinit var apiService: CocktailApi
 
-    init {
-        intiRetrofit()
-    }
+    override fun doInBackground(vararg voids: Void): Response<FoundDrinksResponse>? {
+        var parentResponse: Response<FoundDrinksResponse>? = null
+        val pairsOfResponsesAndQueries: MutableList<Pair<Response<FoundDrinksResponse>, Int>> = mutableListOf()
 
-    private fun intiRetrofit() {
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.level = HttpLoggingInterceptor.Level.BASIC
-        val client = OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .build()
-        val retrofit = Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-        apiService = retrofit.create(CocktailApi::class.java)
-    }
+        pool = Executors.newFixedThreadPool(searchQueries.size)
 
-    override fun onPreExecute() {
-        super.onPreExecute()
-        listener.onLoadingStarted()
-    }
-
-    override fun doInBackground(vararg voids: Void): List<DrinkDetails> {
-        // if we are here - it is means that cache is expired or empty
-        val foundDrinksDetails = mutableListOf<DrinkDetails>()
-        pool = Executors.newFixedThreadPool(ingredientList.size)
-        //execute runnable in ExecutorService
-        for (i in 0 until ingredientList.size) {
-            pool.execute(SingleRequest(foundDrinksDetails, ingredientList[i], apiService))
+        val listener = object : SingleRequestListener {
+            override fun onLoaded(response: Response<FoundDrinksResponse>,
+                                  numberOfIngredients: Int) {
+                pairsOfResponsesAndQueries.add(Pair(response, numberOfIngredients))
+            }
         }
+
+        for (searchQuery in searchQueries) {
+            pool.execute(SingleRequest(searchQuery, api, listener))
+        }
+
         LogPublishService.logger().i(TAG, "started")
+
         pool.shutdown()
-        //check if all runnable is finished
+
         while (!pool.isTerminated) {
             try {
                 if (!pool.awaitTermination(TERMINATION_PERIOD_MS, TimeUnit.MILLISECONDS)) {
@@ -241,70 +277,115 @@ class ExecutorHandlerFindDrinksDetails(private val baseUrl: String,
             } catch (ignore: InterruptedException) {
                 Thread.currentThread().interrupt()
             }
-
         }
-        //return filled array to onPostExecute
-        return foundDrinksDetails
+
+        pairsOfResponsesAndQueries.sortWith(Comparator { o1, o2 ->
+            if (o1 != null && o2 != null) {
+                o1.second.compareTo(o2.second)
+            } else if (o1 != null) {
+                -1
+            } else if (o2 != null) {
+                1
+            } else {
+                0
+            }
+        })
+        pairsOfResponsesAndQueries.reverse()
+
+
+        for (i in 0 until pairsOfResponsesAndQueries.size) {
+            val pair = pairsOfResponsesAndQueries[i]
+            if (parentResponse == null) {
+                parentResponse = pair.first
+            } else {
+                val parentBody = parentResponse.body()
+                val localBody = pair.first.body()
+                if (parentBody != null) {
+                    val localFoundDrinks: MutableList<DrinkDetails>? = localBody?.drinkDetails
+                    val alreadyFoundDrinks: MutableList<DrinkDetails>? = parentBody.drinkDetails
+                    if (alreadyFoundDrinks != null) {
+                        if (localFoundDrinks != null) {
+                            alreadyFoundDrinks.addAll(localFoundDrinks)
+                        }
+                    } else {
+                        parentBody.drinkDetails = localFoundDrinks
+                    }
+                }
+            }
+        }
+
+        return parentResponse
     }
 
-    override fun onPostExecute(foundDrinksDetails: List<DrinkDetails>) {
-        super.onPostExecute(foundDrinksDetails)
-        if (foundDrinksDetails.isNotEmpty()) {
-            LogPublishService.logger().i("ExecutorAsync", "not empty list")
+    override fun onPostExecute(response: Response<FoundDrinksResponse>?) {
+        super.onPostExecute(response)
+
+        if (response != null) {
+            listener.onLoaded(response)
+        } else {
+            listener.onNoDrinksFound()
         }
+
         LogPublishService.logger().i(TAG, "done")
     }
 
-    override fun onCancelled(foundDrinksDetails: List<DrinkDetails>) {
+    override fun onCancelled(response: Response<FoundDrinksResponse>?) {
         //if canceled - shutdown immediately
         pool.shutdownNow()
-        listener = object : ExecutorLoadListener {
-            override fun onLoadingStarted() {}
+        listener = object : RequestExecutorListener {
+            override fun onLoaded(response: Response<FoundDrinksResponse>) {}
 
-            override fun onLoaded(foundDrinksDetails: List<DrinkDetails>) {
-
-            }
+            override fun onNoDrinksFound() {}
         }
-        super.onCancelled(foundDrinksDetails)
+        super.onCancelled(response)
         LogPublishService.logger().i(TAG, "canceled")
         LogPublishService.logger().i(TAG, "${pool.isShutdown} isShutDown")
         LogPublishService.logger().i(TAG, "${pool.isTerminated} isTerminated")
     }
 
-    private inner class SingleRequest internal constructor(var foundDrinksDetails: MutableList<DrinkDetails>,
-                                                           private val ingredientString: String,
-                                                           private val api: CocktailApi) : Runnable {
+    private inner class SingleRequest internal constructor(private val searchPair: Pair<String, Int>,
+                                                           private val api: CocktailApi,
+                                                           private val listener: SingleRequestListener) : Runnable {
 
         override fun run() {
-
-            val call: Call<FoundDrinksResponse> = api.filterDrinksByIngredients(ingredientString)
+            LogPublishService.logger().e(TAG, "runnable run")
+            val call: Call<FoundDrinksResponse> = api.filterDrinksByIngredients(searchPair.first)
             try {
-                val response = call.execute()
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    body?.let {
-                        foundDrinksDetails.addAll(it.drinkDetails ?: mutableListOf())
-                    }
-                }
+                val localResponse: Response<FoundDrinksResponse> = call.execute()
+                reportSuccessfulResponse(localResponse, listener)
             } catch (e: Exception) {
                 e.printStackTrace()
-                LogPublishService.logger().i(TAG, "data $ingredientString failed")
+                LogPublishService.logger().i(TAG, "$searchPair failed")
             }
 
         }
+
+        private fun reportSuccessfulResponse(localResponse: Response<FoundDrinksResponse>,
+                                             listener: SingleRequestListener) {
+            val localBody = localResponse.body()
+            if (localResponse.isSuccessful && localBody != null) {
+                listener.onLoaded(localResponse, searchPair.second)
+            }
+        }
     }
 
-    interface ExecutorLoadListener {
+    interface SingleRequestListener {
 
-        fun onLoadingStarted()
+        fun onLoaded(response: Response<FoundDrinksResponse>, numberOfIngredients: Int)
 
-        fun onLoaded(foundDrinksDetails: List<DrinkDetails>)
+    }
+
+    interface RequestExecutorListener {
+
+        fun onLoaded(response: Response<FoundDrinksResponse>)
+
+        fun onNoDrinksFound()
 
     }
 
     companion object {
 
-        private val TAG = ExecutorHandlerFindDrinksDetails::class.java.simpleName
+        private val TAG = RequestExecutorMultiIngredients::class.java.simpleName
         private const val TERMINATION_PERIOD_MS = 500L
     }
 }

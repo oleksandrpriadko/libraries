@@ -30,13 +30,13 @@ class MeasureUnitsConverter {
             return amountAndUnitString
         }
 
-        private fun findValidUnit(amountAndUnitString: String): MeasureUnit? {
+        fun findValidUnit(amountAndUnitString: String): MeasureUnit {
             MeasureUnit.values().forEach {
                 if (amountAndUnitString.toLowerCase().contains(it.unitName, true)) {
                     return it
                 }
             }
-            return null
+            return MeasureUnit.AS_IS
         }
 
         private fun parseToFloat(ratio: String): Float {
@@ -58,10 +58,11 @@ class MeasureUnitsConverter {
 }
 
 enum class MeasureUnit(val unitName: String, val mlInUnit: Float) {
-    ML(" ml ", 1f),
-    OZ(" oz ", 29.57f),
-    CL(" cl ", 10f),
-    SHOT(" shot ", 44f),
-    SHOOT(" shoot ", 44f),
-    TSP(" tsp ", 4.92f)
+    AS_IS("", 1f),
+    ML("ml", 1f),
+    OZ("oz", 29.57f),
+    CL("cl", 10f),
+    SHOT("shot", 44f),
+    SHOOT("shoot", 44f),
+    TSP("tsp", 4.92f)
 }

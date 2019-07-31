@@ -57,13 +57,19 @@ class RetrofitRepoExtension(
         retrofit = null
     }
 
+    companion object {
+        const val RESPONSE_NOT_SUCCESSFUL = "Response is not successful"
+        const val RESPONSE_NULL = "Response content is null"
+        const val RESPONSE_EMPTY = "Response content is empty"
+    }
+
     interface Listener {
 
         fun onLoadingStarted()
 
         fun onLoadingDone()
 
-        fun onLoadingError(throwable: Throwable)
+        fun onLoadingError()
 
         fun onNoInternet()
 

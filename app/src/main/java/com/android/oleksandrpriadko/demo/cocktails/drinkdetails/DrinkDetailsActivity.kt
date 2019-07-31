@@ -4,11 +4,13 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
+import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import com.android.oleksandrpriadko.demo.R
 import com.android.oleksandrpriadko.demo.cocktails.managers.CocktailManagerFinder
 import com.android.oleksandrpriadko.demo.cocktails.model.BundleConst
-import com.android.oleksandrpriadko.demo.cocktails.model.DrinkDetails
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Drink
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Ingredient
 import com.android.oleksandrpriadko.demo.cocktails.search.SearchActivity
 import com.android.oleksandrpriadko.demo.main.App
 import com.android.oleksandrpriadko.extension.inflateOn
@@ -20,14 +22,18 @@ import com.android.oleksandrpriadko.overlay.OverlayState
 import com.android.oleksandrpriadko.recycler_adapter.PicassoHolderExtension
 import com.android.oleksandrpriadko.retrofit.ConnectionStatusSubscriber
 import com.google.android.material.chip.Chip
+import com.squareup.picasso.Callback
 import kotlinx.android.synthetic.main.cocktail_activity_drink_details.*
+import kotlinx.android.synthetic.main.cocktail_activity_drink_details.nameTextView
+import kotlinx.android.synthetic.main.cocktail_overlay_ingredient_details.*
 import kotlinx.android.synthetic.main.cocktail_overlay_ingredient_details.view.*
+import kotlinx.android.synthetic.main.cocktail_overlay_ingredient_details.view.ingredientLoadingLayout
 
 class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubscriber {
 
     private lateinit var presenter: DrinkDetailsPresenter
 
-    private var drinkDetails: DrinkDetails? = null
+    private var drink: Drink? = null
 
     private lateinit var overlayManager: OverlayManager
     private lateinit var ingredientOverlay: ViewGroup
@@ -62,43 +68,62 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
 
     private fun requestLoadCocktail(intent: Intent?) {
         intent?.let {
-            val drinkId = intent.getStringExtra(BundleConst.DRINK_ID)
-            presenter.loadDrinkDetails(drinkId)
+            val drinkId = it.getStringExtra(BundleConst.DRINK_ID)
+            val ingredientsFromSearch: ArrayList<String> = it.getStringArrayListExtra(
+                    BundleConst.INGREDIENTS_FROM_SEARCH)
+            presenter.loadDrinkDetails(drinkId, ingredientsFromSearch)
         }
     }
 
-    override fun populateDrinkDetails(drinkDetails: DrinkDetails) {
-        this.drinkDetails = drinkDetails
+    override fun showOverlayLoadingIngredient(show: Boolean) {
+        ingredientLoadingLayout.show(show)
+    }
 
-        nameTextView.text = drinkDetails.strDrink
+    override fun populateDrinkDetails(drink: Drink, ingredientsFromSearch: List<String>) {
+        this.drink = drink
+        val thisDrink: Drink = this.drink ?: drink
+
+        nameTextView.text = thisDrink.name
 
         avatarImageView.setImageResource(CocktailManagerFinder.randomPlaceholderManager.pickPlaceHolder())
 
         PicassoHolderExtension.loadImage(
-                drinkDetails.strDrinkThumb,
+                thisDrink.imageUrl,
                 avatarImageView,
                 CocktailManagerFinder.randomPlaceholderManager.pickPlaceHolder())
-        instructionsTextView.text = drinkDetails.strInstructions
+        instructionsTextView.text = thisDrink.instructions
 
-        displayIngredientsChips(drinkDetails)
+        displayIngredientsChips(thisDrink, ingredientsFromSearch)
     }
 
-    private fun displayIngredientsChips(drinkDetails: DrinkDetails) {
-        for ((index, ingredient) in drinkDetails.getListOfIngredientsNamesAndMeasureUnits(MeasureUnit.ML).withIndex()) {
-            ingredientsChipGroup.inflateOn<Chip>(
-                    R.layout.cocktail_item_ingredient,
-                    false)
-                    .apply {
-                        text = ingredient
-                        ingredientsChipGroup.addView(this)
-                        setOnClickListener {
-                            presenter.onIngredientItemClicked(drinkDetails.listOfIngredientsNames[index])
-                        }
-                    }
+    private fun displayIngredientsChips(drink: Drink, ingredientNamesFromSearch: List<String>) {
+        for (ingredient in drink.ingredientList) {
+            createAddChip(drink, ingredient, ingredientNamesFromSearch)
         }
     }
 
-    override fun showIngredientOverlay() {
+    private fun createAddChip(drink: Drink,
+                              ingredient: Ingredient,
+                              ingredientsFromSearch: List<String>): Chip {
+        val isIngredientMatchSearch: String? = ingredientsFromSearch.find {
+            it.equals(ingredient.name, true)
+        }
+        @LayoutRes val chipLayoutRes = if (isIngredientMatchSearch != null) {
+            R.layout.cocktail_item_ingredient_match
+        } else {
+            R.layout.cocktail_item_ingredient
+        }
+        return ingredientsChipGroup.inflateOn<Chip>(chipLayoutRes, false)
+                .apply {
+                    text = ingredient.createSpannableWithParentheses()
+                    ingredientsChipGroup.addView(this)
+                    setOnClickListener {
+                        presenter.onIngredientItemClicked(drink, ingredient)
+                    }
+                }
+    }
+
+    override fun showIngredientOverlay(selectedIngredient: Ingredient) {
         val overlayBuilder: Overlay.Builder = Overlay.Builder(ingredientOverlay)
                 .contentView(R.id.contentLayout)
                 .animationShowContent(R.anim.overlay_module_slide_up)
@@ -110,7 +135,7 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
                     override fun stateChanged(state: OverlayState) {
                         when (state) {
                             OverlayState.DISMISSED, OverlayState.DISMISSED_BACK_CLICK -> {
-                                presenter.onIngredientOverlayHidden()
+                                presenter.onIngredientOverlayHidden(selectedIngredient)
                             }
                             else -> {
                             }
@@ -121,7 +146,7 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
         overlayManager.add(overlayBuilder.build())
     }
 
-    override fun setIngredientDescription(description: String) {
+    override fun populateIngredientDescription(description: String) {
 
     }
 
@@ -132,16 +157,25 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
     override fun loadIngredientImage(imageUrl: String) {
         PicassoHolderExtension.loadImage(imageUrl,
                 ingredientOverlay.ingredientImageView,
-                CocktailManagerFinder.randomPlaceholderManager.pickPlaceHolder())
+                CocktailManagerFinder.randomPlaceholderManager.pickPlaceHolder(),
+                object: Callback {
+                    override fun onSuccess() {
+                        presenter.ingredientImageLoaded()
+                    }
 
+                    override fun onError() {
+
+                    }
+
+                })
     }
 
-    override fun setIngredientName(name: String) {
+    override fun populateIngredientName(name: String) {
         ingredientOverlay.nameTextView.text = name
     }
 
-    override fun openSearchWithIngredient(shownIngredientName: String) {
-        SearchActivity.addIngredientToSelected(this, shownIngredientName)
+    override fun openSearchWithIngredient(ingredient: Ingredient) {
+        SearchActivity.addIngredientToSelected(this, ingredient)
     }
 
     override fun showLoadingLayout(show: Boolean) {
@@ -172,9 +206,12 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
 
     companion object {
 
-        fun loadDrinkById(context: Context, drinkId: String) {
+        fun loadDrinkById(context: Context,
+                          drink: Drink,
+                          ingredientsFromSearch: ArrayList<String>) {
             context.startActivity(Intent(context, DrinkDetailsActivity::class.java).apply {
-                putExtra(BundleConst.DRINK_ID, drinkId)
+                putExtra(BundleConst.DRINK_ID, drink.id)
+                putStringArrayListExtra(BundleConst.INGREDIENTS_FROM_SEARCH, ingredientsFromSearch)
             })
         }
     }

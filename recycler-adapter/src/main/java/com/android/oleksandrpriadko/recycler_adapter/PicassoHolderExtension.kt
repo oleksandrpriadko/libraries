@@ -10,7 +10,6 @@ class PicassoHolderExtension(context: Context) {
 
     private val picasso: Picasso = getPicasso(context).apply {
         setIndicatorsEnabled(BuildConfig.DEBUG)
-        isLoggingEnabled = BuildConfig.DEBUG
     }
 
     fun loadImage(url: String,
@@ -62,6 +61,17 @@ class PicassoHolderExtension(context: Context) {
                     .placeholder(placeHolderId)
                     .error(R.drawable.ic_error_outline_black_24dp)
                     .into(imageView)
+        }
+
+        fun loadImage(url: String?,
+                      imageView: ImageView,
+                      @DrawableRes placeHolderId: Int,
+                      callback: Callback) {
+            getPicasso(imageView.context)
+                    .load(url)
+                    .placeholder(placeHolderId)
+                    .error(R.drawable.ic_error_outline_black_24dp)
+                    .into(imageView, callback)
         }
     }
 }

@@ -102,6 +102,13 @@
                 android:layout_centerHorizontal="true"
                 tools:src="@drawable/main_ic_cocktail_512" />
 
+            <com.android.oleksandrpriadko.demo.cocktails.DrinkLoadingView
+                android:id="@+id/ingredientLoadingLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/cocktail_background_clickable"
+                app:drawableSize="@dimen/cocktail_size_overlay_loading_ingredient" />
+
         </androidx.cardview.widget.CardView>
 
         <androidx.constraintlayout.widget.Guideline

@@ -6,14 +6,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.android.oleksandrpriadko.demo.R
 import com.android.oleksandrpriadko.demo.cocktails.managers.CocktailManagerFinder
-import com.android.oleksandrpriadko.demo.cocktails.model.DrinkDetails
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Drink
 import com.android.oleksandrpriadko.recycler_adapter.BaseAdapterRecyclerView
 import com.android.oleksandrpriadko.recycler_adapter.BaseItemListener
 import com.android.oleksandrpriadko.recycler_adapter.PicassoHolderExtension
 import kotlinx.android.synthetic.main.cocktail_item_drink.view.*
 
 class StartDrinksAdapter(itemListener: StartItemListener? = null)
-    : BaseAdapterRecyclerView<DrinkDetails, StartDrinkHolder, StartItemListener>(itemListener) {
+    : BaseAdapterRecyclerView<Drink, StartDrinkHolder, StartItemListener>(itemListener) {
 
     override fun isItemViewClickable(): Boolean = false
 
@@ -35,14 +35,14 @@ class StartDrinkHolder(iteView: View)
 
     private val picassoHolderExtension = PicassoHolderExtension(itemView.context)
 
-    fun onBind(drinkDetails: DrinkDetails) {
+    fun onBind(drink: Drink) {
         picassoHolderExtension.loadImage(
-                drinkDetails.strDrinkThumb,
+                drink.imageUrl,
                 itemView.avatarImageView,
                 CocktailManagerFinder.randomPlaceholderManager.pickPlaceHolder())
 
-        itemView.nameTextView.text = drinkDetails.strDrink
+        itemView.nameTextView.text = drink.name
     }
 }
 
-interface StartItemListener : BaseItemListener<DrinkDetails>
+interface StartItemListener : BaseItemListener<Drink>

@@ -6,10 +6,8 @@ import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
-import androidx.room.Room
 import com.android.oleksandrpriadko.demo.BuildConfig
 import com.android.oleksandrpriadko.demo.R
-import com.android.oleksandrpriadko.demo.cocktails.managers.CocktailAppDatabase
 import com.android.oleksandrpriadko.demo.cocktails.managers.CocktailManagerFinder
 import com.android.oleksandrpriadko.demo.cocktails.managers.SharedPreferencesManagerImpl
 import com.android.oleksandrpriadko.demo.logpublish.AppCenterConverter
@@ -37,10 +35,6 @@ class App : Application() {
         val policy = initPolicy()
 
         LogPublishService.init(initLogger(policy), initPublisher(policy))
-        CocktailManagerFinder.databaseManager = Room
-                .databaseBuilder(applicationContext, CocktailAppDatabase::class.java, "ingredients")
-                .allowMainThreadQueries()
-                .build()
         CocktailManagerFinder.sharedPreferencesManager = SharedPreferencesManagerImpl(applicationContext)
     }
 

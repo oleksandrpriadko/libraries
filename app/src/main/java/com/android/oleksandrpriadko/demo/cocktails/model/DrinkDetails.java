@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class DrinkDetails {
 
@@ -127,6 +128,7 @@ public class DrinkDetails {
     private List<String> ingredientsNameList = new ArrayList<>();
     private List<String> ingredientsMeasureList = new ArrayList<>();
 
+    @Nullable
     public String getDateModified() {
         return dateModified;
     }
@@ -135,6 +137,7 @@ public class DrinkDetails {
         this.dateModified = dateModified;
     }
 
+    @Nullable
     public String getIdDrink() {
         return idDrink;
     }
@@ -143,6 +146,7 @@ public class DrinkDetails {
         this.idDrink = idDrink;
     }
 
+    @Nullable
     public String getStrAlcoholic() {
         return strAlcoholic;
     }
@@ -151,6 +155,7 @@ public class DrinkDetails {
         this.strAlcoholic = strAlcoholic;
     }
 
+    @Nullable
     public String getStrCategory() {
         return strCategory;
     }
@@ -167,6 +172,7 @@ public class DrinkDetails {
         this.strCreativeCommonsConfirmed = strCreativeCommonsConfirmed;
     }
 
+    @Nullable
     public String getStrDrink() {
         return strDrink;
     }
@@ -207,6 +213,7 @@ public class DrinkDetails {
         this.strDrinkFR = strDrinkFR;
     }
 
+    @Nullable
     public String getStrDrinkThumb() {
         return strDrinkThumb;
     }
@@ -231,6 +238,7 @@ public class DrinkDetails {
         this.strDrinkZHHANT = strDrinkZHHANT;
     }
 
+    @Nullable
     public String getStrGlass() {
         return strGlass;
     }
@@ -367,6 +375,7 @@ public class DrinkDetails {
         this.strIngredient9 = strIngredient9;
     }
 
+    @Nullable
     public String getStrInstructions() {
         return strInstructions;
     }

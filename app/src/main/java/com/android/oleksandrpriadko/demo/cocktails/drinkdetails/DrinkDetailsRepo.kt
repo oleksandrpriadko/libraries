@@ -1,9 +1,10 @@
 package com.android.oleksandrpriadko.demo.cocktails.drinkdetails
 
 import androidx.lifecycle.LifecycleOwner
-import com.android.oleksandrpriadko.demo.cocktails.model.CocktailApi
-import com.android.oleksandrpriadko.demo.cocktails.model.FoundDrinksResponse
-import com.android.oleksandrpriadko.demo.cocktails.model.FoundIngredientsResponse
+import com.android.oleksandrpriadko.demo.cocktails.model.*
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.CocktailMapper
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Drink
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Ingredient
 import com.android.oleksandrpriadko.mvp.repo.ObservableRepo
 import com.android.oleksandrpriadko.mvp.repo_extension.RetrofitRepoExtension
 import retrofit2.Call
@@ -18,77 +19,113 @@ class DrinkDetailsRepo(lifecycleOwner: LifecycleOwner,
             baseUrl,
             converterFactory = GsonConverterFactory.create())
 
-    fun loadDrinkDetails(drinkId: String, loadingListener: LoadingListener) {
+    fun loadDrink(drinkId: String, listener: DrinkDetailsRepoListener) {
         val api = getApi()
         if (api != null) {
             api.lookupCocktailById(drinkId).enqueue(object : Callback<FoundDrinksResponse> {
-                override fun onResponse(call: Call<FoundDrinksResponse>, response: Response<FoundDrinksResponse>) {
-                    loadingListener.onLoadingDone()
-                    if (response.isSuccessful) {
-                        response.body()?.let {
-                            val localDrinkDetails = it.drinkDetails
-                            if (localDrinkDetails != null) {
-                                loadingListener.onDrinkDetailsLoaded(localDrinkDetails[0])
-                            }
-                        }
-                    }
+                override fun onResponse(call: Call<FoundDrinksResponse>,
+                                        response: Response<FoundDrinksResponse>) {
+                    onDrinksLoaded(listener, response)
                 }
 
                 override fun onFailure(call: Call<FoundDrinksResponse>, t: Throwable) {
-                    loadingListener.onLoadingDone()
-                    loadingListener.onLoadingError(t)
-
+                    onLoadingError(listener)
                 }
-
             })
         } else {
-            loadingListener.onLoadingDone()
-            loadingListener.onNoInternet()
-        }
-
-    }
-
-    fun loadIngredientDetails(ingredientName: String, loadingListener: LoadingListener) {
-        val api = getApi()
-        if (api != null) {
-            api.searchIngredientByName(ingredientName).enqueue(object : Callback<FoundIngredientsResponse> {
-                override fun onResponse(call: Call<FoundIngredientsResponse>,
-                                        response: Response<FoundIngredientsResponse>) {
-                    onIngredientDetailsLoaded(response, loadingListener)
-                }
-
-                override fun onFailure(call: Call<FoundIngredientsResponse>, t: Throwable) {
-                    loadingListener.onLoadingDone()
-                    loadingListener.onLoadingError(t)
-
-                }
-
-            })
-        } else {
-            loadingListener.onLoadingDone()
-            loadingListener.onNoInternet()
+            onNoInternet(listener)
         }
     }
 
-    private fun onIngredientDetailsLoaded(response: Response<FoundIngredientsResponse>,
-                                          loadingListener: LoadingListener) {
-        loadingListener.onLoadingDone()
+    private fun onDrinksLoaded(listener: DrinkDetailsRepoListener,
+                               response: Response<FoundDrinksResponse>) {
+
+        listener.onLoadingDone()
+
         if (response.isSuccessful) {
-            response.body()?.let {
-                val localIngredients = it.ingredientList
-                if (localIngredients != null && localIngredients.isNotEmpty()) {
-                    val ingredient = localIngredients[0]
-                    loadingListener.onIngredientDetailsLoaded(ingredient)
+            val body = response.body()
+            if (body != null) {
+                val localDrinkDetailsList: MutableList<DrinkDetails> = body.drinkDetails
+                        ?: mutableListOf()
+
+                if (localDrinkDetailsList.isNotEmpty()) {
+                    val drinkMapped: Drink = CocktailMapper.mapToDrink(localDrinkDetailsList[0])
+                    listener.onDrinkLoaded(drinkMapped)
+                } else {
+                    onLoadingError(listener)
+                }
+            } else {
+                onLoadingError(listener)
+            }
+        } else {
+            onLoadingError(listener)
+        }
+    }
+
+    fun loadIngredient(drink: Drink, ingredient: Ingredient, listener: DrinkDetailsRepoListener) {
+        if (ingredient.hasEmptyFields()) {
+            val match = drink.ingredientList.find { it.name.equals(ingredient.name, true) }
+            if (match != null && !match.hasEmptyFields()) {
+                listener.onIngredientLoaded(match)
+            } else {
+                listener.onLoadingStarted()
+                val api = getApi()
+                if (api != null) {
+                    api.searchIngredientByName(ingredient.name).enqueue(object : Callback<FoundIngredientsResponse> {
+                        override fun onResponse(call: Call<FoundIngredientsResponse>,
+                                                response: Response<FoundIngredientsResponse>) {
+                            onIngredientLoaded(drink, response, listener)
+                        }
+
+                        override fun onFailure(call: Call<FoundIngredientsResponse>, t: Throwable) {
+                            onLoadingError(listener)
+                        }
+                    })
+                } else {
+                    onNoInternet(listener)
                 }
             }
         }
     }
 
-    private fun getApi() = retrofitRepoExtension.getApi(CocktailApi::class.java)
+    private fun onIngredientLoaded(drink: Drink,
+                                   response: Response<FoundIngredientsResponse>,
+                                   listener: DrinkDetailsRepoListener) {
+        listener.onLoadingDone()
 
-    override fun cleanUp() {
-
+        if (response.isSuccessful) {
+            val body = response.body()
+            if (body != null) {
+                val loadedIngredientDetailsList: MutableList<IngredientDetails> = body.ingredientList
+                        ?: mutableListOf()
+                if (loadedIngredientDetailsList.isNotEmpty()) {
+                    //fill if not
+                    val ingredient = CocktailMapper.mapToIngredient(loadedIngredientDetailsList[0])
+                    drink.requestFillIngredient(ingredient)
+                    //notify loaded
+                    listener.onIngredientLoaded(ingredient)
+                } else {
+                    onLoadingError(listener)
+                }
+            } else {
+                onLoadingError(listener)
+            }
+        } else {
+            onLoadingError(listener)
+        }
     }
 
+    private fun onLoadingError(listener: DrinkDetailsRepoListener) {
+        listener.onLoadingDone()
+        listener.onLoadingError()
+    }
 
+    private fun onNoInternet(listener: DrinkDetailsRepoListener) {
+        listener.onLoadingDone()
+        listener.onNoInternet()
+    }
+
+    private fun getApi() = retrofitRepoExtension.getApi(CocktailApi::class.java)
+
+    override fun cleanUp() {}
 }

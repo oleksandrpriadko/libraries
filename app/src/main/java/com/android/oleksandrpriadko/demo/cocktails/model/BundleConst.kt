@@ -5,5 +5,6 @@ class BundleConst {
     companion object {
         const val DRINK_ID = "DRINK_ID"
         const val INGREDIENT_NAME = "INGREDIENT_NAME"
+        const val INGREDIENTS_FROM_SEARCH = "INGREDIENTS_FROM_SEARCH"
     }
 }

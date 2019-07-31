@@ -1,23 +1,18 @@
 package com.android.oleksandrpriadko.demo.cocktails.drinkdetails
 
 import androidx.lifecycle.LifecycleOwner
-import com.android.oleksandrpriadko.demo.cocktails.model.CocktailApi
-import com.android.oleksandrpriadko.demo.cocktails.model.DrinkDetails
-import com.android.oleksandrpriadko.demo.cocktails.model.ImageSize
-import com.android.oleksandrpriadko.demo.cocktails.model.IngredientDetails
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Drink
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Ingredient
 import com.android.oleksandrpriadko.mvp.presenter.BasePresenter
-import com.android.oleksandrpriadko.retrofit.ConnectionStatusReceiver
 
 class DrinkDetailsPresenter(presenterView: PresenterView,
                             baseUrl: String) : BasePresenter<PresenterView>(presenterView) {
 
+    private var addIngredientToSearch: Boolean = false
     private val repo = DrinkDetailsRepo(presenterView, baseUrl)
 
-    private var shownIngredientName: String? = null
-    private var addIngredientToSearch: Boolean = false
-
-    fun loadDrinkDetails(drinkId: String) {
-        repo.loadDrinkDetails(drinkId, object : LoadingListener {
+    fun loadDrinkDetails(drinkId: String, ingredientsFromSearch: List<String>) {
+        repo.loadDrink(drinkId, object : DrinkDetailsRepoListener {
             override fun onNoInternet() {
                 view?.showOfflineLayout(show = true)
             }
@@ -30,71 +25,60 @@ class DrinkDetailsPresenter(presenterView: PresenterView,
                 view?.showLoadingLayout(show = false)
             }
 
-            override fun onLoadingError(throwable: Throwable) {
+            override fun onLoadingError() {
                 view?.showLoadingLayout(show = false)
             }
 
-            override fun onDrinkDetailsLoaded(drinkDetails: DrinkDetails) {
-                view?.populateDrinkDetails(drinkDetails)
+            override fun onDrinkLoaded(drink: Drink) {
+                view?.populateDrinkDetails(drink, ingredientsFromSearch)
             }
         })
     }
 
-    private fun requestLoadIngredientDetails() {
-        shownIngredientName?.let {
-            val formattedName = it.replace("'", "")
-            repo.loadIngredientDetails(formattedName, object : LoadingListener {
-                override fun onNoInternet() {
-                    view?.showOfflineLayout(show = true)
-                }
-
-                override fun onLoadingStarted() {
-
-                }
-
-                override fun onLoadingDone() {
-
-                }
-
-                override fun onLoadingError(throwable: Throwable) {
-
-                }
-
-                override fun onIngredientDetailsLoaded(ingredient: IngredientDetails) {
-                    view?.setIngredientName(ingredient.strIngredient)
-                    view?.setIngredientDescription(ingredient.strDescription ?: "")
-                    view?.loadIngredientImage(CocktailApi.createIngredientImageUrl(
-                            ingredient.strIngredient, ImageSize.NORMAL))
-                }
-            })
-        }
+    fun onIngredientItemClicked(drink: Drink, ingredient: Ingredient) {
+        view?.showIngredientOverlay(ingredient)
+        view?.clearImageInOverlay()
+        view?.clearNameInOverlay()
+        requestLoadIngredientDetails(drink, ingredient)
     }
 
-    fun onIngredientItemClicked(ingredientName: String?) {
-        if (ConnectionStatusReceiver.isOnline) {
-            shownIngredientName = ingredientName
-            shownIngredientName?.let {
-                view?.showIngredientOverlay()
-                view?.clearImageInOverlay()
-                view?.clearNameInOverlay()
-                requestLoadIngredientDetails()
+    private fun requestLoadIngredientDetails(drink: Drink, ingredient: Ingredient) {
+        repo.loadIngredient(drink, ingredient, object : DrinkDetailsRepoListener {
+            override fun onNoInternet() {
+                view?.showOfflineLayout(show = true)
             }
-        }
+
+            override fun onLoadingStarted() {
+                view?.showOverlayLoadingIngredient(true)
+            }
+
+            override fun onLoadingDone() {
+            }
+
+            override fun onLoadingError() {
+            }
+
+            override fun onIngredientLoaded(ingredient: Ingredient) {
+                view?.populateIngredientName(ingredient.name)
+                view?.populateIngredientDescription(ingredient.description)
+                view?.loadIngredientImage(ingredient.imageUrl)
+            }
+        })
     }
 
-    fun onIngredientOverlayHidden() {
-        shownIngredientName?.let {
-            if (addIngredientToSearch) {
-                view?.openSearchWithIngredient(it)
-            }
+    fun ingredientImageLoaded() {
+        view?.showOverlayLoadingIngredient(false)
+    }
+
+    fun onIngredientOverlayHidden(ingredientAttachedToOverlay: Ingredient) {
+        if (addIngredientToSearch) {
+            view?.openSearchWithIngredient(ingredientAttachedToOverlay)
         }
     }
 
     fun onAddIngredientToSearch() {
-        shownIngredientName?.let {
-            addIngredientToSearch = true
-            view?.hideIngredientOverlay()
-        }
+        addIngredientToSearch = true
+        view?.hideIngredientOverlay()
     }
 
     fun onConnectionStatusChanged(connectedToInternet: Boolean) {
@@ -104,19 +88,21 @@ class DrinkDetailsPresenter(presenterView: PresenterView,
 
 interface PresenterView : LifecycleOwner {
 
-    fun populateDrinkDetails(drinkDetails: DrinkDetails)
+    fun populateDrinkDetails(drink: Drink, ingredientsFromSearch: List<String>)
+
+    fun showOverlayLoadingIngredient(show: Boolean)
 
     fun loadIngredientImage(imageUrl: String)
 
-    fun setIngredientName(name: String)
+    fun populateIngredientName(name: String)
 
-    fun setIngredientDescription(description: String)
+    fun populateIngredientDescription(description: String)
 
-    fun showIngredientOverlay()
+    fun showIngredientOverlay(selectedIngredient: Ingredient)
 
     fun hideIngredientOverlay()
 
-    fun openSearchWithIngredient(shownIngredientName: String)
+    fun openSearchWithIngredient(ingredient: Ingredient)
 
     fun showLoadingLayout(show: Boolean)
 

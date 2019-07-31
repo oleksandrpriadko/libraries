@@ -2,9 +2,8 @@ package com.android.oleksandrpriadko.demo.cocktails.splash
 
 import android.os.Handler
 import androidx.lifecycle.LifecycleOwner
-import com.android.oleksandrpriadko.demo.cocktails.model.IngredientName
-import com.android.oleksandrpriadko.demo.cocktails.search.LoadingListener
 import com.android.oleksandrpriadko.demo.cocktails.search.SearchRepo
+import com.android.oleksandrpriadko.demo.cocktails.search.SearchRepoListener
 import com.android.oleksandrpriadko.mvp.presenter.BasePresenter
 
 class CocktailSplashPresenter(presenterView: PresenterView,
@@ -31,7 +30,7 @@ class CocktailSplashPresenter(presenterView: PresenterView,
     }
 
     private val runnableRequest: Runnable = Runnable {
-        repo.loadListOfAllIngredients(object : LoadingListener {
+        repo.loadAllIngredients(object : SearchRepoListener {
             override fun onLoadingStarted() {}
 
             override fun onLoadingDone() {
@@ -41,16 +40,14 @@ class CocktailSplashPresenter(presenterView: PresenterView,
                 view?.onFinishScreen()
             }
 
-            override fun onListOfIngredientsLoaded(ingredients: MutableList<IngredientName>) {}
-
-            override fun onLoadingError(throwable: Throwable) {}
+            override fun onLoadingError() {}
 
             override fun onNoInternet() {}
         })
     }
 
     companion object {
-        private const val delayBeforeRequest = 500L
+        private const val delayBeforeRequest = 0L
     }
 
 }

@@ -19,8 +19,8 @@ import androidx.transition.TransitionManager
 import com.android.oleksandrpriadko.demo.R
 import com.android.oleksandrpriadko.demo.cocktails.drinkdetails.DrinkDetailsActivity
 import com.android.oleksandrpriadko.demo.cocktails.model.BundleConst
-import com.android.oleksandrpriadko.demo.cocktails.model.DrinkDetails
-import com.android.oleksandrpriadko.demo.cocktails.model.IngredientName
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Drink
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Ingredient
 import com.android.oleksandrpriadko.demo.main.App
 import com.android.oleksandrpriadko.extension.hide
 import com.android.oleksandrpriadko.extension.inflateOn
@@ -29,7 +29,6 @@ import com.android.oleksandrpriadko.retrofit.ConnectionStatusSubscriber
 import com.android.oleksandrpriadko.ui.attachedtabs.OnItemSelectedListener
 import com.google.android.material.chip.Chip
 import kotlinx.android.synthetic.main.cocktail_activity_search.*
-
 
 class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubscriber {
 
@@ -71,7 +70,7 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
         adapterItems.itemListener = object : StartItemListener {
             override fun isEmpty(isEmpty: Boolean) {}
 
-            override fun itemClicked(position: Int, item: DrinkDetails) {
+            override fun itemClicked(position: Int, item: Drink) {
                 presenter?.onDrinkClicked(item)
             }
         }
@@ -122,24 +121,27 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
         searchInput.setText("")
     }
 
-    override fun getSelectedIngredients(): List<String> {
-        val selectedIngredients = mutableListOf<String>()
-        // add all selected ingredients in chips
+    override fun getSelectedIngredients(): List<Ingredient> {
+        val selectedIngredients: MutableList<Ingredient> = mutableListOf()
+        // collect ingredients from all chips
         for (i in 0 until ingredientsChipGroup.childCount) {
             val chip: Chip = ingredientsChipGroup.getChildAt(i) as Chip
-            selectedIngredients.add(chip.text.toString())
+            val chipTag: Ingredient? = chip.tag as? Ingredient
+            if (chipTag != null) {
+                selectedIngredients.add(chipTag)
+            }
         }
-        // request add current input text
+        // request add current input text as
         getCurrentInputText()?.let {
             if (it.isNotEmpty()) {
-                selectedIngredients.add(it.toString())
+                selectedIngredients.add(Ingredient(it.toString()))
             }
         }
         return selectedIngredients
     }
 
-    override fun populateSearchResults(foundDrinkDetails: MutableList<DrinkDetails>) {
-        adapterItems.setData(foundDrinkDetails)
+    override fun populateSearchResults(drinks: MutableList<Drink>) {
+        adapterItems.setData(drinks)
     }
 
     override fun areSearchResultsEmpty(): Boolean = adapterItems.getData().isEmpty()
@@ -152,27 +154,32 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
         itemsRecyclerView.layoutManager?.scrollToPosition(0)
     }
 
-    override fun showDrinkDetails(drinkId: String) {
-        DrinkDetailsActivity.loadDrinkById(this, drinkId)
+    override fun showDrinkDetails(drink: Drink, ingredientNamesFromSearch: ArrayList<String>) {
+        DrinkDetailsActivity.loadDrinkById(this, drink, ingredientNamesFromSearch)
     }
 
-    override fun showFoundIngredientMatches(matches: List<String>) {
+    override fun showFoundIngredientMatches(matches: List<Ingredient>) {
         if (matches.isNotEmpty()) {
             if (popupListIngredientMatches == null) {
                 popupListIngredientMatches = ListPopupWindow(this)
             }
 
-            popupListIngredientMatches?.let {
-                it.anchorView = inputLayout
-                it.inputMethodMode = INPUT_METHOD_NEEDED
-                it.setAdapter(ArrayAdapter(this, android.R.layout.simple_list_item_1, matches).apply { notifyDataSetChanged() })
-                it.setOnItemClickListener { adapterView, _, position, _ ->
+            popupListIngredientMatches?.let { window ->
+                window.anchorView = inputLayout
+                window.inputMethodMode = INPUT_METHOD_NEEDED
+                val names = matches.map {
+                    it.name
+                }
+                val adapter: ArrayAdapter<String> = ArrayAdapter(this, android.R.layout.simple_list_item_1, names)
+                        .apply { notifyDataSetChanged() }
+                window.setAdapter(adapter)
+                window.setOnItemClickListener { _, _, position, _ ->
                     presenter?.onIngredientMatchSelected(
-                            adapterView.adapter.getItem(position) as String,
+                            matches[position],
                             false)
                 }
-                it.promptPosition = POSITION_PROMPT_BELOW
-                it.show()
+                window.promptPosition = POSITION_PROMPT_BELOW
+                window.show()
             }
         }
     }
@@ -181,13 +188,10 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
         popupListIngredientMatches?.dismiss()
     }
 
-    override fun addSelectedIngredient(ingredient: IngredientName) {
-        addSelectedIngredient(ingredient.strIngredient1)
-    }
-
-    override fun addSelectedIngredient(ingredientName: String) {
+    override fun addSelectedIngredient(ingredient: Ingredient) {
         val chip = ingredientsChipGroup.inflateOn<Chip>(R.layout.cocktail_chip_search)
-        chip.text = ingredientName
+        chip.text = ingredient.name
+        chip.tag = ingredient
         chip.setOnCloseIconClickListener {
             ingredientsChipGroup.removeView(chip)
             ingredientsChipGroup.show(ingredientsChipGroup.childCount > 0)
@@ -197,10 +201,10 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
         ingredientsChipGroup.show()
     }
 
-    override fun requestRemoveSelectedIngredient(ingredient: IngredientName) {
+    override fun requestRemoveSelectedIngredient(ingredient: Ingredient) {
         for (i in 0 until ingredientsChipGroup.childCount) {
             val chip: Chip = ingredientsChipGroup.getChildAt(i) as Chip
-            if (chip.text == ingredient.strIngredient1) {
+            if (chip.tag === ingredient) {
                 ingredientsChipGroup.removeView(chip)
             }
         }
@@ -245,7 +249,7 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
         intent?.let {
             if (it.getStringExtra(BundleConst.INGREDIENT_NAME) != null) {
                 presenter?.onIngredientMatchSelected(
-                        it.getStringExtra(BundleConst.INGREDIENT_NAME), true)
+                        Ingredient(it.getStringExtra(BundleConst.INGREDIENT_NAME)), true)
                 presenter?.triggerSearchAfterSelection(true)
 
                 when (searchTabs.getIndexOfSelectedItem()) {
@@ -282,9 +286,9 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
         private const val BY_INGREDIENTS = 0
         private const val BY_NAME = 1
 
-        fun addIngredientToSelected(context: Context, ingredientName: String) {
+        fun addIngredientToSelected(context: Context, ingredient: Ingredient) {
             context.startActivity(Intent(context, SearchActivity::class.java).apply {
-                putExtra(BundleConst.INGREDIENT_NAME, ingredientName)
+                putExtra(BundleConst.INGREDIENT_NAME, ingredient.name)
             })
         }
 

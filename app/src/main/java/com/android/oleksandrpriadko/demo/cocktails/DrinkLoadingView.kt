@@ -13,9 +13,8 @@ import android.widget.FrameLayout
 import com.android.oleksandrpriadko.demo.R
 import com.android.oleksandrpriadko.demo.cocktails.managers.CocktailManagerFinder
 import com.android.oleksandrpriadko.extension.dimenPixelSize
-import com.android.oleksandrpriadko.loggalitic.LogPublishService
 
-class DrinkLoadingViewOne : FrameLayout {
+class DrinkLoadingView : FrameLayout {
 
     private var drawable: VectorDrawable = context.getDrawable(
             CocktailManagerFinder.randomPlaceholderManager.pickPlaceHolder()) as VectorDrawable
@@ -25,21 +24,42 @@ class DrinkLoadingViewOne : FrameLayout {
     private var progress: Float = 0f
 
     private val scale = 0.3f
-    private val drawableSize: Int = context.dimenPixelSize(R.dimen.cocktail_size_loading_drink)
+    private var drawableSize: Int = context.dimenPixelSize(R.dimen.cocktail_size_loading_drink)
     private var drawableRect: Rect = Rect()
 
     private var widthF = -1
     private var heightF = -1
 
-    constructor(context: Context) : super(context)
+    constructor(context: Context) : super(context) {
+        init(null)
+    }
+
     constructor(context: Context, attrs: AttributeSet?)
-            : super(context, attrs)
+            : super(context, attrs) {
+        init(attrs)
+    }
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int)
-            : super(context, attrs, defStyleAttr)
+            : super(context, attrs, defStyleAttr) {
+        init(attrs)
+    }
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int)
-            : super(context, attrs, defStyleAttr, defStyleRes)
+            : super(context, attrs, defStyleAttr, defStyleRes) {
+        init(attrs)
+    }
+
+    private fun init(attrs: AttributeSet?) {
+        attrs?.let {
+            context.theme.obtainStyledAttributes(attrs,
+                    R.styleable.DrinkLoadingView,
+                    0,
+                    0).apply {
+                drawableSize = getDimensionPixelSize(R.styleable.DrinkLoadingView_drawableSize, drawableSize)
+                recycle()
+            }
+        }
+    }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -74,7 +94,7 @@ class DrinkLoadingViewOne : FrameLayout {
                     1f + scale * progress,
                     drawable.bounds.centerX().toFloat(),
                     drawable.bounds.centerY().toFloat())
-            it.rotate(- 45f + 90f * progress,
+            it.rotate(-45f + 90f * progress,
                     drawable.bounds.centerX().toFloat(),
                     drawable.bounds.centerY().toFloat())
             drawable.draw(it)

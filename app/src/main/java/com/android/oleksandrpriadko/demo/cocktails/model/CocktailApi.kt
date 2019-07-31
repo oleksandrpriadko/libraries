@@ -1,5 +1,7 @@
 package com.android.oleksandrpriadko.demo.cocktails.model
 
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.CocktailMapper
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Ingredient
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -22,7 +24,7 @@ interface CocktailApi {
     fun filterDrinksByIngredients(@Query(FILTER_INGREDIENTS) name: String): Call<FoundDrinksResponse>
 
     @GET(ACTION_LIST + LIST_INGREDIENTS)
-    fun loadListOfAllIngredients(): Call<FoundIngredientNamesResponse>
+    fun loadAllIngredients(): Call<FoundIngredientNamesResponse>
 
     @GET(ACTION_POPULAR)
     fun loadPopularDrinks(): Call<FoundDrinksResponse>
@@ -44,7 +46,10 @@ interface CocktailApi {
 
         const val LIST_INGREDIENTS = "?i=list"
 
-        fun createIngredientImageUrl(ingredientName: String, imageSize: ImageSize): String {
+        fun createIngredientImageUrl(ingredientName: String?, imageSize: ImageSize): String {
+            if (ingredientName == null || ingredientName.isEmpty()) {
+                return ""
+            }
             return when (imageSize) {
                 ImageSize.SMALL -> "https://www.thecocktaildb.com/images/ingredients/$ingredientName-Small.png"
                 ImageSize.MEDIUM -> "https://www.thecocktaildb.com/images/ingredients/$ingredientName-Medium.png"
@@ -52,10 +57,29 @@ interface CocktailApi {
             }
         }
 
-        fun ingredientNamesToString(ingredients: List<IngredientName>): String {
-            return ingredients.joinToString(separator = ",") {
-                it.strIngredient1.replace("\\s".toRegex(), "_").replace("'", "")
+        fun ingredientToSearchQuery(ingredients: List<Ingredient>): List<Pair<String, Int>> {
+            val pairsQueryCount: MutableList<Pair<String, Int>> = mutableListOf()
+
+            if (ingredients.size > 1) {
+                var multiIngredientQuery = ingredients.joinToString(separator = ",") {
+                    CocktailMapper.cleanIngredientName(it.name.replace("\\s".toRegex(), "_"))
+                }
+                pairsQueryCount.add(Pair(multiIngredientQuery, ingredients.size))
+
+                for (i in 2 until ingredients.size) {
+                    multiIngredientQuery = ingredients.subList(0, i)
+                            .joinToString(separator = ",") {
+                                CocktailMapper.cleanIngredientName(it.name.replace("\\s".toRegex(), "_"))
+                            }
+                    pairsQueryCount.add(Pair(multiIngredientQuery, i))
+                }
             }
+
+            for (ingredient in ingredients) {
+                pairsQueryCount.add(Pair(CocktailMapper.cleanIngredientName(ingredient.name), 1))
+            }
+
+            return pairsQueryCount
         }
     }
 }
