@@ -35,10 +35,20 @@ class PicassoHolderExtension(context: Context) {
 
     fun loadImage(url: String?,
                   imageView: ImageView,
+                  callback: Callback) {
+        picasso
+                .load(url)
+                .error(R.drawable.ic_error_outline_black_24dp)
+                .into(imageView, callback)
+    }
+
+    fun loadImage(url: String?,
+                  imageView: ImageView,
                   @DrawableRes placeHolderId: Int,
                   callback: Callback) {
         picasso
                 .load(url)
+                .noFade()
                 .placeholder(placeHolderId)
                 .error(R.drawable.ic_error_outline_black_24dp)
                 .into(imageView, callback)
@@ -51,6 +61,13 @@ class PicassoHolderExtension(context: Context) {
             picasso.setIndicatorsEnabled(false)
             picasso.isLoggingEnabled = false
             return picasso
+        }
+
+        fun loadImage(url: String?, imageView: ImageView) {
+            getPicasso(imageView.context)
+                    .load(url)
+                    .error(R.drawable.ic_error_outline_black_24dp)
+                    .into(imageView)
         }
 
         fun loadImage(url: String?,
@@ -70,6 +87,15 @@ class PicassoHolderExtension(context: Context) {
             getPicasso(imageView.context)
                     .load(url)
                     .placeholder(placeHolderId)
+                    .error(R.drawable.ic_error_outline_black_24dp)
+                    .into(imageView, callback)
+        }
+
+        fun loadImage(url: String?,
+                      imageView: ImageView,
+                      callback: Callback) {
+            getPicasso(imageView.context)
+                    .load(url)
                     .error(R.drawable.ic_error_outline_black_24dp)
                     .into(imageView, callback)
         }

@@ -23,15 +23,14 @@ class PaletteHolderExtension {
     }
 
     private fun notifySwatchExtracted(palette: Palette?, paletteListener: PaletteListener) {
-        val vibrantSwatch = palette?.vibrantSwatch
-        vibrantSwatch?.let {
-            paletteListener.onVibrantSwatchExtracted(it)
+        palette?.let {
+            paletteListener.onPaletteExtracted(it)
         }
     }
 }
 
 interface PaletteListener {
 
-    fun onVibrantSwatchExtracted(vibrantSwatch: Palette.Swatch)
+    fun onPaletteExtracted(palette: Palette)
 
 }

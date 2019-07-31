@@ -84,6 +84,10 @@ class DrinkDetailsPresenter(presenterView: PresenterView,
     fun onConnectionStatusChanged(connectedToInternet: Boolean) {
         view?.showOfflineLayout(!connectedToInternet)
     }
+
+    fun onGoBackClicked() {
+        view?.requestCloseScreen()
+    }
 }
 
 interface PresenterView : LifecycleOwner {
@@ -111,5 +115,7 @@ interface PresenterView : LifecycleOwner {
     fun clearNameInOverlay()
 
     fun showOfflineLayout(show: Boolean)
+
+    fun requestCloseScreen()
 
 }

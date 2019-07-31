@@ -8,7 +8,7 @@
     tools:ignore="ContentDescription">
 
     <View
-        android:id="@+id/backgroundLayout"
+        android:id="@+id/backgroundOverlayLayout"
         android:layout_width="@dimen/constraint_match"
         android:layout_height="@dimen/constraint_match"
         android:background="@color/main_background_popup"
@@ -25,7 +25,7 @@
         app:layout_constraintGuide_percent="0.05" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/contentLayout"
+        android:id="@+id/contentOverlayLayout"
         android:layout_width="@dimen/constraint_match"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"

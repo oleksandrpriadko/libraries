@@ -45,6 +45,17 @@
                 android:gravity="start"
                 tools:text="Good cocktail receipt" />
 
+            <com.android.oleksandrpriadko.demo.cocktails.DrinkLoadingView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/drinkItemImageLoadingLayout"
+                android:layout_alignBottom="@id/avatarImageView"
+                android:layout_alignEnd="@id/avatarImageView"
+                android:layout_alignStart="@id/avatarImageView"
+                android:layout_alignTop="@id/avatarImageView"
+                android:background="@color/cocktail_background_clickable"
+                app:drawableSize="@dimen/cocktail_size_overlay_loading_ingredient" />
+
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

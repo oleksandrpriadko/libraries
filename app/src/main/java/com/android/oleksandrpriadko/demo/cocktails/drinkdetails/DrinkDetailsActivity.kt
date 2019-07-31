@@ -27,11 +27,10 @@ import kotlinx.android.synthetic.main.cocktail_activity_drink_details.*
 import kotlinx.android.synthetic.main.cocktail_activity_drink_details.nameTextView
 import kotlinx.android.synthetic.main.cocktail_overlay_ingredient_details.*
 import kotlinx.android.synthetic.main.cocktail_overlay_ingredient_details.view.*
-import kotlinx.android.synthetic.main.cocktail_overlay_ingredient_details.view.ingredientLoadingLayout
 
 class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubscriber {
 
-    private lateinit var presenter: DrinkDetailsPresenter
+    private var presenter: DrinkDetailsPresenter? = null
 
     private var drink: Drink? = null
 
@@ -50,15 +49,15 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
         initOverlay()
 
         requestLoadCocktail(intent)
+
+        goBackImageView.setOnClickListener { presenter?.onGoBackClicked() }
     }
 
     private fun initOverlay() {
         overlayManager = OverlayManager(overlayContainer)
         overlayManager.hideParentAfter = false
         ingredientOverlay = overlayContainer.inflateOn(R.layout.cocktail_overlay_ingredient_details)
-        ingredientOverlay.addToSearchTextView.setOnClickListener {
-            presenter.onAddIngredientToSearch()
-        }
+        ingredientOverlay.addToSearchTextView.setOnClickListener { presenter?.onAddIngredientToSearch() }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -71,7 +70,7 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
             val drinkId = it.getStringExtra(BundleConst.DRINK_ID)
             val ingredientsFromSearch: ArrayList<String> = it.getStringArrayListExtra(
                     BundleConst.INGREDIENTS_FROM_SEARCH)
-            presenter.loadDrinkDetails(drinkId, ingredientsFromSearch)
+            presenter?.loadDrinkDetails(drinkId, ingredientsFromSearch)
         }
     }
 
@@ -118,24 +117,27 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
                     text = ingredient.createSpannableWithParentheses()
                     ingredientsChipGroup.addView(this)
                     setOnClickListener {
-                        presenter.onIngredientItemClicked(drink, ingredient)
+                        presenter?.onIngredientItemClicked(drink, ingredient)
                     }
                 }
     }
 
     override fun showIngredientOverlay(selectedIngredient: Ingredient) {
         val overlayBuilder: Overlay.Builder = Overlay.Builder(ingredientOverlay)
-                .contentView(R.id.contentLayout)
+                .contentView(R.id.contentOverlayLayout)
                 .animationShowContent(R.anim.overlay_module_slide_up)
                 .animationHideContent(R.anim.overlay_module_slide_down)
-                .backgroundView(R.id.backgroundLayout)
+                .backgroundView(R.id.backgroundOverlayLayout)
                 .animationShowBackground(R.anim.overlay_module_fade_in)
                 .animationHideBackground(R.anim.overlay_module_fade_out)
                 .overlayListener(object : Overlay.OverlayListener {
                     override fun stateChanged(state: OverlayState) {
                         when (state) {
+                            OverlayState.ANIMATING_IN -> {
+                                contentOverlayLayout.setOnClickListener { presenter?.onAddIngredientToSearch() }
+                            }
                             OverlayState.DISMISSED, OverlayState.DISMISSED_BACK_CLICK -> {
-                                presenter.onIngredientOverlayHidden(selectedIngredient)
+                                presenter?.onIngredientOverlayHidden(selectedIngredient)
                             }
                             else -> {
                             }
@@ -157,10 +159,9 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
     override fun loadIngredientImage(imageUrl: String) {
         PicassoHolderExtension.loadImage(imageUrl,
                 ingredientOverlay.ingredientImageView,
-                CocktailManagerFinder.randomPlaceholderManager.pickPlaceHolder(),
-                object: Callback {
+                object : Callback {
                     override fun onSuccess() {
-                        presenter.ingredientImageLoaded()
+                        presenter?.ingredientImageLoaded()
                     }
 
                     override fun onError() {
@@ -183,7 +184,7 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
     }
 
     override fun onConnectionStatusChanged(isConnectedToInternet: Boolean) {
-        presenter.onConnectionStatusChanged(isConnectedToInternet)
+        presenter?.onConnectionStatusChanged(isConnectedToInternet)
     }
 
     override fun showOfflineLayout(show: Boolean) {
@@ -202,6 +203,10 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
         if (!overlayManager.hideLast(HideMethod.DEFAULT)) {
             super.onBackPressed()
         }
+    }
+
+    override fun requestCloseScreen() {
+        onBackPressed()
     }
 
     companion object {
