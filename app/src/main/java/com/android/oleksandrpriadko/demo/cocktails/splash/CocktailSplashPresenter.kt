@@ -13,7 +13,7 @@ class CocktailSplashPresenter(presenterView: PresenterView,
     private val repo: SearchRepo = SearchRepo(presenterView, baseUrl)
     private val handlerPostRequest: Handler = Handler()
 
-    fun loadAllIngredients() {
+    private fun loadAllIngredients() {
         handlerPostRequest.removeCallbacksAndMessages(null)
         view?.onPauseLottie()
         view?.onRestoreLottieProgress()
@@ -21,12 +21,9 @@ class CocktailSplashPresenter(presenterView: PresenterView,
         handlerPostRequest.postDelayed(runnableRequest, delayBeforeRequest)
     }
 
-    fun onScreenStop() {
-
-    }
-
-    fun onScreenResume() {
-
+    override fun onResume(owner: LifecycleOwner) {
+        super.onResume(owner)
+        loadAllIngredients()
     }
 
     private val runnableRequest: Runnable = Runnable {
@@ -35,7 +32,6 @@ class CocktailSplashPresenter(presenterView: PresenterView,
 
             override fun onLoadingDone() {
                 view?.onSaveLottieProgress()
-                view?.onPauseLottie()
                 view?.onOpenSearchScreen()
                 view?.onFinishScreen()
             }
@@ -47,7 +43,7 @@ class CocktailSplashPresenter(presenterView: PresenterView,
     }
 
     companion object {
-        private const val delayBeforeRequest = 0L
+        private const val delayBeforeRequest = 2000L
     }
 
 }

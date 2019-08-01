@@ -2,6 +2,7 @@ package com.android.oleksandrpriadko.demo.cocktails.model.wrappers
 
 import com.android.oleksandrpriadko.demo.cocktails.drinkdetails.MeasureUnitsConverter
 import com.android.oleksandrpriadko.demo.cocktails.model.*
+import io.realm.RealmList
 
 class CocktailMapper {
 
@@ -13,7 +14,8 @@ class CocktailMapper {
                 drinkMapped = Drink(drinkDetails.idDrink ?: "")
                 drinkMapped.name = drinkDetails.strDrink ?: ""
                 drinkMapped.imageUrl = drinkDetails.strDrinkThumb ?: ""
-                drinkMapped.ingredientList = extractIngredientList(drinkDetails)
+                drinkMapped.ingredientList = RealmList()
+                drinkMapped.ingredientList.addAll(extractIngredientList(drinkDetails))
                 drinkMapped.instructions = drinkDetails.strInstructions ?: ""
                 drinkMapped.category = drinkDetails.strCategory ?: ""
                 drinkMapped.alcoholicType = drinkDetails.strAlcoholic ?: ""
@@ -39,7 +41,7 @@ class CocktailMapper {
                     ingredient.measure = measure
                 }
                 //measure unit
-                ingredient.measureUnit = MeasureUnitsConverter.findValidUnit(ingredient.measure)
+                ingredient.measureUnitAsString = MeasureUnitsConverter.findValidUnit(ingredient.measure).toString()
 
                 ingredientList.add(ingredient)
             }
@@ -48,7 +50,8 @@ class CocktailMapper {
         }
 
         fun mapToIngredient(ingredientDetails: IngredientDetails?): Ingredient {
-            val ingredientMapped = Ingredient(ingredientDetails?.strIngredient ?: "")
+            val draftIngredientName: String = ingredientDetails?.strIngredient ?: ""
+            val ingredientMapped = Ingredient(cleanIngredientName(draftIngredientName))
             ingredientMapped.id = ingredientDetails?.idIngredient ?: ""
             ingredientMapped.imageUrl = CocktailApi.createIngredientImageUrl(ingredientDetails?.strIngredient, ImageSize.NORMAL)
             ingredientMapped.description = ingredientDetails?.strDescription ?: ""
@@ -57,11 +60,23 @@ class CocktailMapper {
         }
 
         fun mapToIngredient(ingredientName: IngredientName?): Ingredient {
-            return Ingredient(ingredientName?.strIngredient1 ?: "")
+            return Ingredient(cleanIngredientName(ingredientName?.strIngredient1 ?: ""))
         }
 
         fun cleanIngredientName(draftName: String?): String {
-            return draftName?.replace("'", "") ?: ""
+            val words: MutableList<String>? = draftName?.split(" ")?.toMutableList()
+
+            var firstLetterCapitalised = ""
+
+            if (words != null) {
+                for (word in words) {
+                    firstLetterCapitalised += "${word.capitalize()} "
+                }
+            }
+
+            firstLetterCapitalised = firstLetterCapitalised.trim()
+
+            return firstLetterCapitalised.replace("'", "")
         }
     }
 

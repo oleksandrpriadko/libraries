@@ -61,7 +61,7 @@ abstract class ObservableRepo(lifecycleOwner: LifecycleOwner) {
         }
 
         if (!hasObservers()) {
-            logState("no observers, destroy " + lifecycleBoundObservers.size)
+            logState("no observers, destroy ${lifecycleBoundObservers.size}")
             cleanUp()
         }
     }
@@ -72,9 +72,9 @@ abstract class ObservableRepo(lifecycleOwner: LifecycleOwner) {
 
     abstract fun cleanUp()
 
-    protected fun enableLog(): Boolean = false
+    protected fun enableLog(): Boolean = true
 
-    private fun logState(message: String) {
+    protected fun logState(message: String) {
         if (enableLog()) {
             LogPublishService.logger().d(javaClass.simpleName, message)
         }
@@ -88,10 +88,10 @@ abstract class ObservableRepo(lifecycleOwner: LifecycleOwner) {
         }
 
         override fun onDestroy(owner: LifecycleOwner) {
-            logState("onStateChanged onDestroy() $lifecycleOwner")
+            logState("onStateChanged onDestroy() ${lifecycleOwner::class.java.simpleName}")
             if (lifecycleOwner.lifecycle.currentState == DESTROYED) {
                 lifecycleOwner.lifecycle.removeObserver(this)
-                logState("dead lifecycle owner $lifecycleOwner")
+                logState("dead lifecycle owner ${lifecycleOwner::class.java.simpleName}")
 
                 requestRemoveObserver(lifecycleOwner)
             }

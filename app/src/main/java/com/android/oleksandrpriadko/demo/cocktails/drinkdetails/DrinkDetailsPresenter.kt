@@ -11,7 +11,11 @@ class DrinkDetailsPresenter(presenterView: PresenterView,
     private var addIngredientToSearch: Boolean = false
     private val repo = DrinkDetailsRepo(presenterView, baseUrl)
 
-    fun loadDrinkDetails(drinkId: String, ingredientsFromSearch: List<String>) {
+    fun loadDrinkDetails(drinkId: String?, ingredientsFromSearch: List<String>?) {
+        if (drinkId == null) {
+            logState("drink id is null")
+            return
+        }
         repo.loadDrink(drinkId, object : DrinkDetailsRepoListener {
             override fun onNoInternet() {
                 view?.showOfflineLayout(show = true)
@@ -81,6 +85,15 @@ class DrinkDetailsPresenter(presenterView: PresenterView,
         view?.hideIngredientOverlay()
     }
 
+    override fun onResume(owner: LifecycleOwner) {
+        super.onResume(owner)
+        view?.requestCheckDrinkInIntent()
+        runnableOnNewIntent?.run()
+        runnableOnNewIntent = null
+        runnableOnActivityResult?.run()
+        runnableOnActivityResult = null
+    }
+
     fun onConnectionStatusChanged(connectedToInternet: Boolean) {
         view?.showOfflineLayout(!connectedToInternet)
     }
@@ -92,7 +105,7 @@ class DrinkDetailsPresenter(presenterView: PresenterView,
 
 interface PresenterView : LifecycleOwner {
 
-    fun populateDrinkDetails(drink: Drink, ingredientsFromSearch: List<String>)
+    fun populateDrinkDetails(drink: Drink, ingredientsFromSearch: List<String>?)
 
     fun showOverlayLoadingIngredient(show: Boolean)
 
@@ -117,5 +130,7 @@ interface PresenterView : LifecycleOwner {
     fun showOfflineLayout(show: Boolean)
 
     fun requestCloseScreen()
+
+    fun requestCheckDrinkInIntent()
 
 }

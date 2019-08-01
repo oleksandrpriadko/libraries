@@ -162,23 +162,25 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
         if (matches.isNotEmpty()) {
             if (popupListIngredientMatches == null) {
                 popupListIngredientMatches = ListPopupWindow(this)
+                popupListIngredientMatches?.anchorView = inputLayout
+                popupListIngredientMatches?.inputMethodMode = INPUT_METHOD_NEEDED
+                popupListIngredientMatches?.promptPosition = POSITION_PROMPT_BELOW
             }
 
+            popupListIngredientMatches?.dismiss()
+
             popupListIngredientMatches?.let { window ->
-                window.anchorView = inputLayout
-                window.inputMethodMode = INPUT_METHOD_NEEDED
                 val names = matches.map {
                     it.name
                 }
                 val adapter: ArrayAdapter<String> = ArrayAdapter(this, android.R.layout.simple_list_item_1, names)
-                        .apply { notifyDataSetChanged() }
+                adapter.notifyDataSetChanged()
                 window.setAdapter(adapter)
                 window.setOnItemClickListener { _, _, position, _ ->
                     presenter?.onIngredientMatchSelected(
                             matches[position],
                             false)
                 }
-                window.promptPosition = POSITION_PROMPT_BELOW
                 window.show()
             }
         }
@@ -190,6 +192,7 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
 
     override fun addSelectedIngredient(ingredient: Ingredient) {
         val chip = ingredientsChipGroup.inflateOn<Chip>(R.layout.cocktail_chip_search)
+        chip.id = View.generateViewId()
         chip.text = ingredient.name
         chip.tag = ingredient
         chip.setOnCloseIconClickListener {
@@ -247,16 +250,17 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         intent?.let {
-            if (it.getStringExtra(BundleConst.INGREDIENT_NAME) != null) {
-                presenter?.onIngredientMatchSelected(
-                        Ingredient(it.getStringExtra(BundleConst.INGREDIENT_NAME)), true)
-                presenter?.triggerSearchAfterSelection(true)
+            presenter?.runnableOnNewIntent = Runnable {
+                if (it.getStringExtra(BundleConst.INGREDIENT_NAME) != null) {
+                    presenter?.onIngredientMatchSelected(
+                            Ingredient(it.getStringExtra(BundleConst.INGREDIENT_NAME)), true)
+                    presenter?.triggerSearchAfterSelection(true)
 
-                when (searchTabs.getIndexOfSelectedItem()) {
-                    BY_INGREDIENTS -> presenter?.onSearchTypeChanged(SearchType.BY_INGREDIENTS)
-                    BY_NAME -> searchTabs.selectItem(BY_INGREDIENTS)
+                    when (searchTabs.getIndexOfSelectedItem()) {
+                        BY_INGREDIENTS -> presenter?.onSearchTypeChanged(SearchType.BY_INGREDIENTS)
+                        BY_NAME -> searchTabs.selectItem(BY_INGREDIENTS)
+                    }
                 }
-
             }
         }
     }

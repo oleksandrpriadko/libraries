@@ -28,32 +28,54 @@ class AttachedTabsPresenter(presenterView: PresenterView, isInEditMode: Boolean)
     }
 
     fun selectItem(index: Int, areTabsOnTop: Boolean) {
-        if (indexOfSelectedItem == index) {
-            return
+        runnableOnNewIntent = Runnable {
+            if (indexOfSelectedItem == index) {
+            } else {
+                val toBeSelectedView: View? = view?.getChildAt(index)
+                if (toBeSelectedView != null) {
+                    selectItem(toBeSelectedView, areTabsOnTop)
+                }
+            }
         }
-        val toBeSelectedView: View? = view?.getChildAt(index)
-        if (toBeSelectedView != null) {
-            selectItem(toBeSelectedView, areTabsOnTop)
+
+        if (view != null) {
+            runnableOnNewIntent?.run()
+            runnableOnNewIntent = null
         }
     }
 
     fun selectItem(toBeSelectedView: View, areTabsOnTop: Boolean) {
-        view?.endAnimator()
+        runnableOnNewIntent = Runnable {
+            view?.endAnimator()
 
-        coordinatesDestination = getCoordinatesFromView(toBeSelectedView, areTabsOnTop)
+            coordinatesDestination = getCoordinatesFromView(toBeSelectedView, areTabsOnTop)
 
-        var indexOfToBeSelectedView = 0
+            var indexOfToBeSelectedView = 0
 
-        view?.let {
-            indexOfToBeSelectedView = it.indexOfChild(toBeSelectedView)
+            view?.let {
+                indexOfToBeSelectedView = it.indexOfChild(toBeSelectedView)
+            }
+
+            direction = if (indexOfToBeSelectedView >= indexOfSelectedItem) Path.Direction.CW else Path.Direction.CCW
+            view?.changeChildSelectState(indexOfSelectedItem, false)
+            indexOfSelectedItem = indexOfToBeSelectedView
+
+            view?.createAnimator()
+            view?.startAnimator()
         }
 
-        direction = if (indexOfToBeSelectedView >= indexOfSelectedItem) Path.Direction.CW else Path.Direction.CCW
-        view?.changeChildSelectState(indexOfSelectedItem, false)
-        indexOfSelectedItem = indexOfToBeSelectedView
+        if (view != null) {
+            runnableOnNewIntent?.run()
+            runnableOnNewIntent = null
+        }
+    }
 
-        view?.createAnimator()
-        view?.startAnimator()
+    override fun onResume(owner: LifecycleOwner) {
+        super.onResume(owner)
+        runnableOnNewIntent?.run()
+        runnableOnNewIntent = null
+        runnableOnActivityResult?.run()
+        runnableOnActivityResult = null
     }
 
     fun onDrawUnderneathChildren(areTabsOnTop: Boolean,

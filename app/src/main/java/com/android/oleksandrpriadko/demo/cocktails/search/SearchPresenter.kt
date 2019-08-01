@@ -138,6 +138,17 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
         return false
     }
 
+    override fun onResume(owner: LifecycleOwner) {
+        super.onResume(owner)
+        if (currentState == State.LOADING) {
+            saveAndApplyState(State.RESULTS)
+        }
+        runnableOnNewIntent?.run()
+        runnableOnNewIntent = null
+        runnableOnActivityResult?.run()
+        runnableOnActivityResult = null
+    }
+
     fun onDrinkClicked(drink: Drink?) {
         drink?.let { drinkNotNull ->
             val ingredientNamesFromSearch = getSelectedIngredients().map { it.name }
@@ -168,8 +179,10 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
     }
 
     private fun saveAndApplyState(newState: State) {
-        currentState = newState
-        view?.applyState(newState)
+        view?.let {
+            currentState = newState
+            it.applyState(newState)
+        }
     }
 
     private val searchRepoListener: SearchRepoListener = object : SearchRepoListener {

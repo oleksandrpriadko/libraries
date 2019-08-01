@@ -6,50 +6,68 @@ import androidx.lifecycle.LifecycleOwner
 
 import com.android.oleksandrpriadko.loggalitic.LogPublishService
 
-abstract class BasePresenter<T : LifecycleOwner>(view: T?) : DefaultLifecycleObserver {
+abstract class BasePresenter<T : LifecycleOwner>(view: T) : DefaultLifecycleObserver {
+
+    var runnableOnNewIntent: Runnable? = null
+    var runnableOnActivityResult: Runnable? = null
+
+    private var isViewBound: Boolean = false
 
     protected var view: T? = view
         get() {
             field?.let {
-                if (it.lifecycle.currentState.isAtLeast(Lifecycle.State.INITIALIZED) || isViewInEditMode) {
-                    return it
+                return when {
+                    it.lifecycle.currentState.isAtLeast(Lifecycle.State.INITIALIZED) && this.isViewBound
+                            || this.isViewInEditMode -> it
+                    else -> null
                 }
             }
             return null
         }
 
     init {
-        this.view?.let {
-            bindView(it)
-        }
+        subscribeView(view)
     }
 
-    fun bindView(view: T) {
+    private fun subscribeView(view: T) {
         if (view.lifecycle.currentState == Lifecycle.State.DESTROYED) {
             logState("dead lifecycle owner")
-            return
+        } else {
+            view.lifecycle.addObserver(this)
+            this.view = view
+            logState("subscribed")
         }
-        logState("created")
-        view.lifecycle.addObserver(this)
-
-        this.view = view
     }
 
-    private fun unbind() {
-        view = null
-        logState("view unbound")
+    override fun onCreate(owner: LifecycleOwner) {
+        bindView(owner)
+    }
+
+    override fun onResume(owner: LifecycleOwner) {
+        bindView(owner)
+    }
+
+    private fun bindView(owner: LifecycleOwner) {
+        this.isViewBound = true
+        this.logState(owner.lifecycle.currentState.name)
+    }
+
+    override fun onStop(owner: LifecycleOwner) {
+        this.logState(owner.lifecycle.currentState.name)
+        this.isViewBound = false
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
-        logState(owner.lifecycle.currentState.name)
-        unbind()
+        this.logState(owner.lifecycle.currentState.name)
+        this.isViewBound = false
+        this.view = null
     }
 
     protected fun enableLog(): Boolean = false
 
-    private fun logState(message: String) {
+    protected fun logState(message: String) {
         if (enableLog()) {
-            LogPublishService.logger().d(javaClass.simpleName, message)
+            LogPublishService.logger().d(this::class.java.simpleName, message)
         }
     }
 

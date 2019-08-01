@@ -1,23 +1,18 @@
 package com.android.oleksandrpriadko.demo.cocktails.search
 
-import android.os.AsyncTask
 import androidx.lifecycle.LifecycleOwner
 import com.android.oleksandrpriadko.demo.cocktails.model.*
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.CocktailMapper
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Drink
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Ingredient
-import com.android.oleksandrpriadko.loggalitic.LogPublishService
 import com.android.oleksandrpriadko.mvp.repo.ObservableRepo
 import com.android.oleksandrpriadko.mvp.repo_extension.RetrofitRepoExtension
+import io.realm.RealmResults
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
-
 
 class SearchRepo(lifecycleOwner: LifecycleOwner,
                  baseUrl: String) : ObservableRepo(lifecycleOwner) {
@@ -26,12 +21,17 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
             baseUrl,
             converterFactory = GsonConverterFactory.create())
 
+    private val charRange : CharRange = ('a'..'z')
+
+    private val realmRepoExtension: CocktailsRealmRepoExtension = CocktailsRealmRepoExtension()
+
     private var multiIngredientRequestExecutor: RequestExecutorMultiIngredients? = null
 
     fun searchDrinkByName(name: String, listener: SearchRepoListener) {
         listener.onLoadingStarted()
 
         val api = getApi()
+
         if (api != null) {
             api.searchDrinkByName(name).enqueue(object : Callback<FoundDrinksResponse> {
                 override fun onResponse(call: Call<FoundDrinksResponse>,
@@ -45,12 +45,18 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
             })
         } else {
             onNoInternet(listener)
+
+            checkDrinkInDbContainsName(name, listener)
+
+            listener.onLoadingDone()
         }
     }
 
     fun loadPopularDrinks(listener: SearchRepoListener) {
         listener.onLoadingStarted()
+
         val api = getApi()
+
         if (api != null) {
             api.loadPopularDrinks().enqueue(object : Callback<FoundDrinksResponse> {
                 override fun onResponse(call: Call<FoundDrinksResponse>,
@@ -64,7 +70,25 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
             })
         } else {
             onNoInternet(listener)
+
+            checkDrinkInDbContainsName(charRange.random().toString(), listener)
+
+            listener.onLoadingDone()
         }
+    }
+
+    private fun checkDrinkInDbContainsName(drinkName: String, listener: SearchRepoListener): Boolean {
+        val drinksFromDb: List<Drink>? = realmRepoExtension.findDrinkContains(drinkName)
+
+        if (drinksFromDb.isNullOrEmpty()) {
+            listener.noDrinksFound()
+            return false
+        } else {
+            listener.onDrinksFound(drinksFromDb)
+            listener.onLoadingDone()
+            realmRepoExtension.logState("drinksList found in database")
+        }
+        return false
     }
 
     private fun onDrinksLoaded(response: Response<FoundDrinksResponse>,
@@ -109,7 +133,10 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
                             }
                         })
                     }
+                    realmRepoExtension.saveDrinks(drinksListMapped)
+
                     listener.onDrinksFound(drinksListMapped)
+                    retrofitRepoExtension.logState("drinksList downloaded and mapped")
                 } else {
                     onNoDrinksFound(listener)
                 }
@@ -128,7 +155,9 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
      */
     fun filterDrinksByIngredients(searchQueries: List<Pair<String, Int>>, listener: SearchRepoListener) {
         listener.onLoadingStarted()
+
         val api = getApi()
+
         if (api != null) {
             if (multiIngredientRequestExecutor != null) {
                 multiIngredientRequestExecutor?.cancel(true)
@@ -138,15 +167,12 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
                     api,
                     searchQueries,
                     object : RequestExecutorMultiIngredients.RequestExecutorListener {
-
                         override fun onLoaded(response: Response<FoundDrinksResponse>) {
                             onDrinksLoaded(response,
                                     listener,
                                     doMerge = true,
                                     doSort = true,
-                                    searchQueries = searchQueries.map {
-                                        it.first
-                                    })
+                                    searchQueries = searchQueries.map { it.first })
                         }
 
                         override fun onNoDrinksFound() {
@@ -156,6 +182,10 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
             multiIngredientRequestExecutor?.execute()
         } else {
             onNoInternet(listener)
+
+            //TODO: find matches in database
+
+            listener.onLoadingDone()
         }
     }
 
@@ -177,7 +207,25 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
             })
         } else {
             onNoInternet(listener)
+
+            checkAllIngredientsInDb(listener)
+
+            listener.onLoadingDone()
         }
+    }
+
+    private fun checkAllIngredientsInDb(listener: SearchRepoListener): Boolean {
+        val ingredientsListFromDb: RealmResults<Ingredient>? = realmRepoExtension.findAllIngredients()
+
+        if (ingredientsListFromDb.isNullOrEmpty()) {
+            listener.noIngredientsFound()
+        } else {
+            listener.onLoadingDone()
+            listener.onIngredientsLoaded(ingredientsListFromDb)
+            realmRepoExtension.logState("ingredientsList in database")
+            return true
+        }
+        return false
     }
 
     private fun onIngredientsLoaded(listener: SearchRepoListener,
@@ -193,7 +241,13 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
                     val ingredientsMappedList: List<Ingredient> = loadedIngredientNamesList.map {
                         CocktailMapper.mapToIngredient(it)
                     }
-                    listener.onIngredientsLoaded(ingredientsMappedList)
+                    if (ingredientsMappedList.isNotEmpty()) {
+                        realmRepoExtension.saveIngredients(ingredientsMappedList)
+                        listener.onIngredientsLoaded(ingredientsMappedList)
+                        retrofitRepoExtension.logState("ingredientList downloaded and mapped")
+                    } else {
+                        onNoIngredientsFound(listener)
+                    }
                 } else {
                     onNoIngredientsFound(listener)
                 }
@@ -208,9 +262,7 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
     private fun getApi() = retrofitRepoExtension.getApi(CocktailApi::class.java)
 
     fun findIngredientMatches(name: String): List<Ingredient>? {
-        return listOf("dummy", "items", "waiting", "for", "database", name).map {
-            Ingredient(it)
-        }
+        return realmRepoExtension.findIngredientContains(name)
     }
 
     fun findIngredientByName(name: String): Ingredient? {
@@ -230,162 +282,11 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
     }
 
     private fun onNoInternet(listener: SearchRepoListener) {
-        listener.onLoadingDone()
         listener.onNoInternet()
     }
 
-    override fun cleanUp() {}
-}
-
-/**
- * @param searchQueries List<Pair<String, Int>> int - number of ingredients in query, higher number -
- * earlier position in response list
- */
-class RequestExecutorMultiIngredients(private val api: CocktailApi,
-                                      private val searchQueries: List<Pair<String, Int>>,
-                                      private var listener: RequestExecutorListener)
-    : AsyncTask<Void, Void, Response<FoundDrinksResponse>?>() {
-
-    private lateinit var pool: ExecutorService
-
-    override fun doInBackground(vararg voids: Void): Response<FoundDrinksResponse>? {
-        var parentResponse: Response<FoundDrinksResponse>? = null
-        val pairsOfResponsesAndQueries: MutableList<Pair<Response<FoundDrinksResponse>, Int>> = mutableListOf()
-
-        pool = Executors.newFixedThreadPool(searchQueries.size)
-
-        val listener = object : SingleRequestListener {
-            override fun onLoaded(response: Response<FoundDrinksResponse>,
-                                  numberOfIngredients: Int) {
-                pairsOfResponsesAndQueries.add(Pair(response, numberOfIngredients))
-            }
-        }
-
-        for (searchQuery in searchQueries) {
-            pool.execute(SingleRequest(searchQuery, api, listener))
-        }
-
-        LogPublishService.logger().i(TAG, "started")
-
-        pool.shutdown()
-
-        while (!pool.isTerminated) {
-            try {
-                if (!pool.awaitTermination(TERMINATION_PERIOD_MS, TimeUnit.MILLISECONDS)) {
-                    LogPublishService.logger().i(TAG, "processing")
-                }
-            } catch (ignore: InterruptedException) {
-                Thread.currentThread().interrupt()
-            }
-        }
-
-        pairsOfResponsesAndQueries.sortWith(Comparator { o1, o2 ->
-            if (o1 != null && o2 != null) {
-                o1.second.compareTo(o2.second)
-            } else if (o1 != null) {
-                -1
-            } else if (o2 != null) {
-                1
-            } else {
-                0
-            }
-        })
-        pairsOfResponsesAndQueries.reverse()
-
-
-        for (i in 0 until pairsOfResponsesAndQueries.size) {
-            val pair = pairsOfResponsesAndQueries[i]
-            if (parentResponse == null) {
-                parentResponse = pair.first
-            } else {
-                val parentBody = parentResponse.body()
-                val localBody = pair.first.body()
-                if (parentBody != null) {
-                    val localFoundDrinks: MutableList<DrinkDetails>? = localBody?.drinkDetails
-                    val alreadyFoundDrinks: MutableList<DrinkDetails>? = parentBody.drinkDetails
-                    if (alreadyFoundDrinks != null) {
-                        if (localFoundDrinks != null) {
-                            alreadyFoundDrinks.addAll(localFoundDrinks)
-                        }
-                    } else {
-                        parentBody.drinkDetails = localFoundDrinks
-                    }
-                }
-            }
-        }
-
-        return parentResponse
-    }
-
-    override fun onPostExecute(response: Response<FoundDrinksResponse>?) {
-        super.onPostExecute(response)
-
-        if (response != null) {
-            listener.onLoaded(response)
-        } else {
-            listener.onNoDrinksFound()
-        }
-
-        LogPublishService.logger().i(TAG, "done")
-    }
-
-    override fun onCancelled(response: Response<FoundDrinksResponse>?) {
-        //if canceled - shutdown immediately
-        pool.shutdownNow()
-        listener = object : RequestExecutorListener {
-            override fun onLoaded(response: Response<FoundDrinksResponse>) {}
-
-            override fun onNoDrinksFound() {}
-        }
-        super.onCancelled(response)
-        LogPublishService.logger().i(TAG, "canceled")
-        LogPublishService.logger().i(TAG, "${pool.isShutdown} isShutDown")
-        LogPublishService.logger().i(TAG, "${pool.isTerminated} isTerminated")
-    }
-
-    private inner class SingleRequest internal constructor(private val searchPair: Pair<String, Int>,
-                                                           private val api: CocktailApi,
-                                                           private val listener: SingleRequestListener) : Runnable {
-
-        override fun run() {
-            LogPublishService.logger().e(TAG, "runnable run")
-            val call: Call<FoundDrinksResponse> = api.filterDrinksByIngredients(searchPair.first)
-            try {
-                val localResponse: Response<FoundDrinksResponse> = call.execute()
-                reportSuccessfulResponse(localResponse, listener)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                LogPublishService.logger().i(TAG, "$searchPair failed")
-            }
-
-        }
-
-        private fun reportSuccessfulResponse(localResponse: Response<FoundDrinksResponse>,
-                                             listener: SingleRequestListener) {
-            val localBody = localResponse.body()
-            if (localResponse.isSuccessful && localBody != null) {
-                listener.onLoaded(localResponse, searchPair.second)
-            }
-        }
-    }
-
-    interface SingleRequestListener {
-
-        fun onLoaded(response: Response<FoundDrinksResponse>, numberOfIngredients: Int)
-
-    }
-
-    interface RequestExecutorListener {
-
-        fun onLoaded(response: Response<FoundDrinksResponse>)
-
-        fun onNoDrinksFound()
-
-    }
-
-    companion object {
-
-        private val TAG = RequestExecutorMultiIngredients::class.java.simpleName
-        private const val TERMINATION_PERIOD_MS = 500L
+    override fun cleanUp() {
+        retrofitRepoExtension.cleanUp()
+        realmRepoExtension.cleanUp()
     }
 }

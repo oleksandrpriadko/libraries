@@ -19,4 +19,5 @@
     <dimen name="cocktail_padding_top_bottom_search_result_text">7dp</dimen>
     <dimen name="cocktail_size_loading_drink">140dp</dimen>
     <dimen name="cocktail_size_overlay_loading_ingredient">40dp</dimen>
+    <dimen name="cocktail_width_ingredient_match_stroke">3dp</dimen>
 </resources>

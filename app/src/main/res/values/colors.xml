@@ -23,7 +23,7 @@
     <color name="cocktail_background_secondary">#8E6374</color>
     <color name="cocktail_background_primary">#D696AC</color>
     <color name="cocktail_background_clickable">#EDDFE5</color>
-    <color name="cocktail_background_match_ingredient">#1A44FF00</color>
+    <color name="cocktail_background_match_ingredient">#9036BF00</color>
     <!--    accent  -->
     <color name="cocktail_accent_primary">#E6A999</color>
     <!--    text    -->

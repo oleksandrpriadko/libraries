@@ -21,11 +21,14 @@ import com.android.oleksandrpriadko.retrofit.ConnectionStatusReceiver
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
+import io.realm.Realm
 
 class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        Realm.init(this)
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(lifecycleObserver)
 

@@ -3,6 +3,7 @@ package com.android.oleksandrpriadko.demo.cocktails.drinkdetails
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +14,7 @@ import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Drink
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Ingredient
 import com.android.oleksandrpriadko.demo.cocktails.search.SearchActivity
 import com.android.oleksandrpriadko.demo.main.App
+import com.android.oleksandrpriadko.extension.dimenPixelSize
 import com.android.oleksandrpriadko.extension.inflateOn
 import com.android.oleksandrpriadko.extension.show
 import com.android.oleksandrpriadko.overlay.HideMethod
@@ -48,8 +50,6 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
 
         initOverlay()
 
-        requestLoadCocktail(intent)
-
         goBackImageView.setOnClickListener { presenter?.onGoBackClicked() }
     }
 
@@ -62,15 +62,22 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+        presenter?.runnableOnNewIntent = Runnable {
+            requestLoadCocktail(intent)
+        }
+    }
+
+    override fun requestCheckDrinkInIntent() {
         requestLoadCocktail(intent)
     }
 
     private fun requestLoadCocktail(intent: Intent?) {
         intent?.let {
-            val drinkId = it.getStringExtra(BundleConst.DRINK_ID)
-            val ingredientsFromSearch: ArrayList<String> = it.getStringArrayListExtra(
+            val drinkId: String? = it.getStringExtra(BundleConst.DRINK_ID)
+            val ingredientsFromSearch: ArrayList<String>? = it.getStringArrayListExtra(
                     BundleConst.INGREDIENTS_FROM_SEARCH)
             presenter?.loadDrinkDetails(drinkId, ingredientsFromSearch)
+            setIntent(Intent())
         }
     }
 
@@ -78,7 +85,7 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
         ingredientLoadingLayout.show(show)
     }
 
-    override fun populateDrinkDetails(drink: Drink, ingredientsFromSearch: List<String>) {
+    override fun populateDrinkDetails(drink: Drink, ingredientsFromSearch: List<String>?) {
         this.drink = drink
         val thisDrink: Drink = this.drink ?: drink
 
@@ -95,7 +102,7 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
         displayIngredientsChips(thisDrink, ingredientsFromSearch)
     }
 
-    private fun displayIngredientsChips(drink: Drink, ingredientNamesFromSearch: List<String>) {
+    private fun displayIngredientsChips(drink: Drink, ingredientNamesFromSearch: List<String>?) {
         for (ingredient in drink.ingredientList) {
             createAddChip(drink, ingredient, ingredientNamesFromSearch)
         }
@@ -103,23 +110,25 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
 
     private fun createAddChip(drink: Drink,
                               ingredient: Ingredient,
-                              ingredientsFromSearch: List<String>): Chip {
-        val isIngredientMatchSearch: String? = ingredientsFromSearch.find {
+                              ingredientsFromSearch: List<String>?) {
+        val isIngredientMatchSearch: String? = ingredientsFromSearch?.find {
             it.equals(ingredient.name, true)
         }
-        @LayoutRes val chipLayoutRes = if (isIngredientMatchSearch != null) {
-            R.layout.cocktail_item_ingredient_match
-        } else {
-            R.layout.cocktail_item_ingredient
+        @LayoutRes val chipLayoutRes = R.layout.cocktail_item_ingredient
+
+        val chip: Chip = ingredientsChipGroup.inflateOn(chipLayoutRes, false)
+        chip.id = View.generateViewId()
+        chip.text = ingredient.createSpannableWithParentheses()
+        if (!isIngredientMatchSearch.isNullOrEmpty()) {
+            chip.chipStrokeColor = getColorStateList(R.color.cocktail_background_match_ingredient)
+            chip.chipStrokeWidth = dimenPixelSize(R.dimen.cocktail_width_ingredient_match_stroke).toFloat()
         }
-        return ingredientsChipGroup.inflateOn<Chip>(chipLayoutRes, false)
-                .apply {
-                    text = ingredient.createSpannableWithParentheses()
-                    ingredientsChipGroup.addView(this)
-                    setOnClickListener {
-                        presenter?.onIngredientItemClicked(drink, ingredient)
-                    }
-                }
+        chip.setOnClickListener {
+            presenter?.onIngredientItemClicked(drink, ingredient)
+        }
+
+        ingredientsChipGroup.addView(chip)
+
     }
 
     override fun showIngredientOverlay(selectedIngredient: Ingredient) {

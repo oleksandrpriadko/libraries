@@ -58,7 +58,7 @@ class MeasureUnitsConverter {
 }
 
 enum class MeasureUnit(val unitName: String, val mlInUnit: Float) {
-    AS_IS("", 1f),
+    AS_IS("as_is", 1f),
     ML("ml", 1f),
     OZ("oz", 29.57f),
     CL("cl", 10f),

@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'realm-android'
 apply plugin: 'io.fabric'
 
 repositories {
@@ -29,6 +30,13 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+}
+
+realm {
+    kotlinExtensionsEnabled = true
 }
 
 dependencies {
@@ -41,6 +49,8 @@ dependencies {
     implementation project(':ui')
     implementation project(':mvp')
     implementation project(':retrofit')
+
+    testImplementation 'junit:junit:' + junit
 
     implementation 'com.google.firebase:firebase-core:17.0.1'
     implementation 'com.microsoft.appcenter:appcenter-analytics:1.5.1'
@@ -66,6 +76,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     implementation 'com.airbnb.android:lottie:3.0.7'
+
+    api 'io.realm:realm-gradle-plugin:' + realmVersion
 }
 
 apply plugin: 'com.google.gms.google-services'

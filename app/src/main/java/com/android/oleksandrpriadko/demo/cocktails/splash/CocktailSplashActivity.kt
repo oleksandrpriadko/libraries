@@ -14,12 +14,9 @@ class CocktailSplashActivity : AppCompatActivity(), PresenterView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.cocktail_activity_splash)
 
         presenter = CocktailSplashPresenter(this, getString(R.string.cocktail_base_url))
-
-        presenter?.loadAllIngredients()
     }
 
     override fun onRestoreLottieProgress() {
@@ -50,25 +47,5 @@ class CocktailSplashActivity : AppCompatActivity(), PresenterView {
 
     override fun onFinishScreen() {
         finish()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        presenter?.onScreenResume()
-    }
-
-    override fun onPause() {
-        presenter?.onScreenStop()
-        super.onPause()
-    }
-
-    override fun onStop() {
-        presenter?.onScreenStop()
-        super.onStop()
-    }
-
-    override fun onDestroy() {
-        presenter?.onScreenStop()
-        super.onDestroy()
     }
 }
