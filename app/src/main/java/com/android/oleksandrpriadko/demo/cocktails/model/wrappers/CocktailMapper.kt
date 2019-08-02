@@ -1,7 +1,9 @@
 package com.android.oleksandrpriadko.demo.cocktails.model.wrappers
 
-import com.android.oleksandrpriadko.demo.cocktails.drinkdetails.MeasureUnitsConverter
-import com.android.oleksandrpriadko.demo.cocktails.model.*
+import com.android.oleksandrpriadko.demo.cocktails.model.CocktailApi
+import com.android.oleksandrpriadko.demo.cocktails.model.DrinkDetails
+import com.android.oleksandrpriadko.demo.cocktails.model.IngredientDetails
+import com.android.oleksandrpriadko.demo.cocktails.model.IngredientName
 import io.realm.RealmList
 
 class CocktailMapper {
@@ -55,7 +57,7 @@ class CocktailMapper {
             val draftIngredientName: String = ingredientDetails?.strIngredient ?: ""
             val ingredientMapped = Ingredient(cleanIngredientName(draftIngredientName))
             ingredientMapped.id = ingredientDetails?.idIngredient ?: ""
-            ingredientMapped.imageUrl = CocktailApi.createIngredientImageUrl(ingredientDetails?.strIngredient, ImageSize.NORMAL)
+            ingredientMapped.imageUrl = CocktailApi.createIngredientImageUrl(ingredientDetails?.strIngredient)
             ingredientMapped.description = ingredientDetails?.strDescription ?: ""
             ingredientMapped.type = ingredientDetails?.strType ?: ""
             return ingredientMapped

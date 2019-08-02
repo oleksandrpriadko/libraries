@@ -46,7 +46,7 @@ interface CocktailApi {
 
         const val LIST_INGREDIENTS = "?i=list"
 
-        fun createIngredientImageUrl(ingredientName: String?, imageSize: ImageSize): String {
+        fun createIngredientImageUrl(ingredientName: String?, imageSize: ImageSize = ImageSize.NORMAL): String {
             if (ingredientName == null || ingredientName.isEmpty()) {
                 return ""
             }
