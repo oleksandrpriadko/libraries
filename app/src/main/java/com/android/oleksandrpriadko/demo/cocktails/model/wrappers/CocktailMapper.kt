@@ -28,22 +28,24 @@ class CocktailMapper {
             return drinkMapped
         }
 
-        private fun extractIngredientList(drinkDetails: DrinkDetails): MutableList<Ingredient> {
-            val ingredientList: MutableList<Ingredient> = mutableListOf()
+        private fun extractIngredientList(drinkDetails: DrinkDetails): MutableList<MeasuredIngredient> {
+            val ingredientList: MutableList<MeasuredIngredient> = mutableListOf()
             drinkDetails.listOfIngredientsNames.forEachIndexed { index, name ->
                 //name
                 val cleanName: String = cleanIngredientName(name)
 
-                val ingredient = Ingredient(cleanName)
+                val measuredIngredient = MeasuredIngredient("${drinkDetails.strDrink}$cleanName")
+                //patron name
+                measuredIngredient.patronName = cleanName
                 //measure if valid
                 val measure: String? = drinkDetails.listOfIngredientsMeasures[index]
                 if (measure != null && measure.isNotEmpty()) {
-                    ingredient.measure = measure
+                    measuredIngredient.measure = measure
                 }
                 //measure unit
-                ingredient.measureUnitAsString = MeasureUnitsConverter.findValidUnit(ingredient.measure).toString()
+//                measuredIngredient.measureUnitAsString = MeasureUnitsConverter.findValidUnit(measuredIngredient.measure).toString()
 
-                ingredientList.add(ingredient)
+                ingredientList.add(measuredIngredient)
             }
 
             return ingredientList

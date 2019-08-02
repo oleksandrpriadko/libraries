@@ -11,7 +11,7 @@ import com.android.oleksandrpriadko.demo.R
 import com.android.oleksandrpriadko.demo.cocktails.managers.CocktailManagerFinder
 import com.android.oleksandrpriadko.demo.cocktails.model.BundleConst
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Drink
-import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Ingredient
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.MeasuredIngredient
 import com.android.oleksandrpriadko.demo.cocktails.search.SearchActivity
 import com.android.oleksandrpriadko.demo.main.App
 import com.android.oleksandrpriadko.extension.dimenPixelSize
@@ -104,34 +104,33 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
 
     private fun displayIngredientsChips(drink: Drink, ingredientNamesFromSearch: List<String>?) {
         for (ingredient in drink.ingredientList) {
-            createAddChip(drink, ingredient, ingredientNamesFromSearch)
+            createAddChip(ingredient, ingredientNamesFromSearch)
         }
     }
 
-    private fun createAddChip(drink: Drink,
-                              ingredient: Ingredient,
+    private fun createAddChip(measuredIngredient: MeasuredIngredient,
                               ingredientsFromSearch: List<String>?) {
         val isIngredientMatchSearch: String? = ingredientsFromSearch?.find {
-            it.equals(ingredient.name, true)
+            it.equals(measuredIngredient.patronName, true)
         }
         @LayoutRes val chipLayoutRes = R.layout.cocktail_item_ingredient
 
         val chip: Chip = ingredientsChipGroup.inflateOn(chipLayoutRes, false)
         chip.id = View.generateViewId()
-        chip.text = ingredient.createSpannableWithParentheses()
+        chip.text = measuredIngredient.createSpannableWithParentheses()
         if (!isIngredientMatchSearch.isNullOrEmpty()) {
             chip.chipStrokeColor = getColorStateList(R.color.cocktail_background_match_ingredient)
             chip.chipStrokeWidth = dimenPixelSize(R.dimen.cocktail_width_ingredient_match_stroke).toFloat()
         }
         chip.setOnClickListener {
-            presenter?.onIngredientItemClicked(drink, ingredient)
+            presenter?.onIngredientItemClicked(measuredIngredient)
         }
 
         ingredientsChipGroup.addView(chip)
 
     }
 
-    override fun showIngredientOverlay(selectedIngredient: Ingredient) {
+    override fun showIngredientOverlay(selectedMeasuredIngredient: MeasuredIngredient) {
         val overlayBuilder: Overlay.Builder = Overlay.Builder(ingredientOverlay)
                 .contentView(R.id.contentOverlayLayout)
                 .animationShowContent(R.anim.overlay_module_slide_up)
@@ -146,7 +145,7 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
                                 contentOverlayLayout.setOnClickListener { presenter?.onAddIngredientToSearch() }
                             }
                             OverlayState.DISMISSED, OverlayState.DISMISSED_BACK_CLICK -> {
-                                presenter?.onIngredientOverlayHidden(selectedIngredient)
+                                presenter?.onIngredientOverlayHidden(selectedMeasuredIngredient)
                             }
                             else -> {
                             }
@@ -184,8 +183,8 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
         ingredientOverlay.nameTextView.text = name
     }
 
-    override fun openSearchWithIngredient(ingredient: Ingredient) {
-        SearchActivity.addIngredientToSelected(this, ingredient)
+    override fun openSearchWithIngredient(measuredIngredient: MeasuredIngredient) {
+        SearchActivity.addIngredientToSelected(this, measuredIngredient)
     }
 
     override fun showLoadingLayout(show: Boolean) {

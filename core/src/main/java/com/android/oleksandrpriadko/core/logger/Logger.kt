@@ -18,6 +18,8 @@ abstract class Logger(protected val policy: Policy) {
 
     abstract fun e(tag: String?, message: String?, force: Boolean)
 
+    abstract fun wtf(tag: String?, message: String?, force: Boolean)
+
     abstract fun v(tag: String?, message: String?)
 
     abstract fun d(tag: String?, message: String?)
@@ -31,7 +33,6 @@ abstract class Logger(protected val policy: Policy) {
     abstract fun wtf(tag: String?, message: String?)
 
     private class DummyLogger(policy: Policy) : Logger(policy) {
-
         override fun isLoggable(tag: String?, level: Int, force: Boolean): Boolean {
             return false
         }
@@ -57,6 +58,10 @@ abstract class Logger(protected val policy: Policy) {
         }
 
         override fun e(tag: String?, message: String?, force: Boolean) {
+
+        }
+
+        override fun wtf(tag: String?, message: String?, force: Boolean) {
 
         }
 

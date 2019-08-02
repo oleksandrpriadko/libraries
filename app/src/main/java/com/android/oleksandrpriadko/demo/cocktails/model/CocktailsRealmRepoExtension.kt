@@ -1,7 +1,13 @@
 package com.android.oleksandrpriadko.demo.cocktails.model
 
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Drink
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Drink.Companion.DRINK_FIELD_ID
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Drink.Companion.DRINK_FIELD_NAME
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Ingredient
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Ingredient.Companion.INGREDIENT_FIELD_ID
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Ingredient.Companion.INGREDIENT_FIELD_NAME
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.MeasuredIngredient
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.MeasuredIngredient.Companion.MEASURED_INGREDIENT_FIELD_ID
 import com.android.oleksandrpriadko.mvp.repo_extension.RealmRepoExtension
 import io.realm.Case
 import io.realm.Realm
@@ -81,7 +87,7 @@ class CocktailsRealmRepoExtension : RealmRepoExtension() {
                 ?.like(INGREDIENT_FIELD_NAME, mustHaveNameString)
                 ?.findFirst()
         return when {
-            found == null || found.hasEmptyFields(true) -> {
+            found == null || found.hasEmptyFields() -> {
                 logState("ingredient with name $mustHaveNameString not found or not filled")
                 logState(found?.toString() ?: "")
                 null
@@ -99,16 +105,37 @@ class CocktailsRealmRepoExtension : RealmRepoExtension() {
         return found
     }
 
-    fun saveDrinks(drinkList: List<Drink>) {
-        realm?.executeTransaction {
-            for (donor in drinkList) {
-                var receiver = findDrinkById(donor.id, it)
-
-                receiver = prepareDrinkToUpdate(donor, receiver)
-
-                it.copyToRealmOrUpdate(receiver)
+    private fun findMeasuredIngredientLike(mustHaveIdString: String, realmPassed: Realm? = realm): MeasuredIngredient? {
+        val found = realmPassed?.where(MeasuredIngredient::class.java)
+                ?.like(MEASURED_INGREDIENT_FIELD_ID, mustHaveIdString)
+                ?.findFirst()
+        return when (found) {
+            null -> {
+                logState("measured ingredient with id $mustHaveIdString not found")
+                null
             }
-            logState("drinkList copyToRealmOrUpdate")
+            else -> {
+                logState("measured ingredient with name $mustHaveIdString found")
+                found
+            }
+        }
+    }
+
+    private fun prepareMeasuredIngredientToUpdate(donor: MeasuredIngredient,
+                                                  receiver: MeasuredIngredient?): MeasuredIngredient {
+        return when {
+            receiver == null -> {
+                logState("donor to be saved")
+                donor
+            }
+            receiver.fillEmptyFields(donor) -> {
+                logState("receiver updated and to be saved")
+                receiver
+            }
+            else -> {
+                logState("receiver NOT updated and to be saved")
+                receiver
+            }
         }
     }
 
@@ -121,6 +148,19 @@ class CocktailsRealmRepoExtension : RealmRepoExtension() {
             it.copyToRealmOrUpdate(receiver)
 
             logState("$receiver copyToRealmOrUpdate")
+        }
+    }
+
+    fun saveDrinks(drinkList: List<Drink>) {
+        realm?.executeTransaction {
+            for (donor in drinkList) {
+                var receiver = findDrinkById(donor.id, it)
+
+                receiver = prepareDrinkToUpdate(donor, receiver)
+
+                it.copyToRealmOrUpdate(receiver)
+            }
+            logState("drinkList copyToRealmOrUpdate")
         }
     }
 
@@ -174,10 +214,7 @@ class CocktailsRealmRepoExtension : RealmRepoExtension() {
         }
     }
 
-    companion object {
-        const val INGREDIENT_FIELD_NAME = "name"
-        const val INGREDIENT_FIELD_ID = "id"
-        const val DRINK_FIELD_NAME = "name"
-        const val DRINK_FIELD_ID = "id"
+    override fun enableLog(): Boolean {
+        return false
     }
 }

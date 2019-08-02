@@ -5,6 +5,7 @@ import com.android.oleksandrpriadko.demo.cocktails.model.*
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.CocktailMapper
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Drink
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Ingredient
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.MeasuredIngredient
 import com.android.oleksandrpriadko.mvp.repo.ObservableRepo
 import com.android.oleksandrpriadko.mvp.repo_extension.RetrofitRepoExtension
 import retrofit2.Call
@@ -84,54 +85,56 @@ class DrinkDetailsRepo(lifecycleOwner: LifecycleOwner,
         }
     }
 
-    fun loadIngredient(drink: Drink, ingredient: Ingredient, listener: DrinkDetailsRepoListener) {
-        if (ingredient.hasEmptyFields(false)) {
-            if (!checkIngredientInDrink(drink, ingredient, listener)) {
+    fun loadIngredient(measuredIngredient: MeasuredIngredient, listener: DrinkDetailsRepoListener) {
+        val ingredient: Ingredient? = realmRepoExtension.findIngredientLikeNullIfEmpty(measuredIngredient.patronName)
+        when {
+            ingredient == null || ingredient.hasEmptyFields() -> {
                 listener.onLoadingStarted()
 
-                if (!checkIngredientInDb(ingredient, listener)) {
-                    loadIngredientFromServer(ingredient, listener)
+                if (!checkIngredientInDb(measuredIngredient.patronName, listener)) {
+                    loadIngredientFromServer(measuredIngredient.patronName, listener)
                 }
             }
-        } else {
-            listener.onIngredientLoaded(ingredient)
-            logState("${ingredient.name} already good")
+            else -> {
+                listener.onIngredientLoaded(ingredient)
+                logState("${ingredient.name} already good")
+            }
         }
     }
 
-    private fun checkIngredientInDrink(drink: Drink,
-                                       ingredient: Ingredient,
-                                       listener: DrinkDetailsRepoListener): Boolean {
-        val matched = drink.ingredientList.find {
-            it.name.equals(ingredient.name, true)
-        }
-        if (matched != null && !matched.hasEmptyFields(false)) {
-            listener.onIngredientLoaded(matched)
-            logState("${ingredient.name} in drink, fields filled")
-            return true
-        }
-        return false
-    }
+//    private fun checkIngredientInDrink(drink: Drink,
+//                                       ingredient: Ingredient,
+//                                       listener: DrinkDetailsRepoListener): Boolean {
+//        val matched = drink.ingredientList.find {
+//            it.name.equals(ingredient.name, true)
+//        }
+//        if (matched != null && !matched.hasEmptyFields(false)) {
+//            listener.onIngredientLoaded(matched)
+//            logState("${ingredient.name} in drink, fields filled")
+//            return true
+//        }
+//        return false
+//    }
 
-    private fun checkIngredientInDb(ingredient: Ingredient, listener: DrinkDetailsRepoListener): Boolean {
-        val fromDb: Ingredient? = realmRepoExtension.findIngredientLikeNullIfEmpty(ingredient.name)
+    private fun checkIngredientInDb(nameOfIngredient: String, listener: DrinkDetailsRepoListener): Boolean {
+        val fromDb: Ingredient? = realmRepoExtension.findIngredientLikeNullIfEmpty(nameOfIngredient)
 
         if (fromDb != null) {
             listener.onLoadingDone()
             listener.onIngredientLoaded(fromDb)
-            realmRepoExtension.logState("${ingredient.name} in database, fields filled")
+            realmRepoExtension.logState("$nameOfIngredient in database, fields filled")
             return true
         }
         return false
     }
 
-    private fun loadIngredientFromServer(ingredient: Ingredient,
+    private fun loadIngredientFromServer(nameOfIngredient: String,
                                          listener: DrinkDetailsRepoListener) {
         val api = getApi()
 
         if (api != null) {
 
-            api.searchIngredientByName(ingredient.name).enqueue(object : Callback<FoundIngredientsResponse> {
+            api.searchIngredientByName(nameOfIngredient).enqueue(object : Callback<FoundIngredientsResponse> {
                 override fun onResponse(call: Call<FoundIngredientsResponse>,
                                         response: Response<FoundIngredientsResponse>) {
                     onIngredientLoaded(response, listener)
@@ -190,4 +193,9 @@ class DrinkDetailsRepo(lifecycleOwner: LifecycleOwner,
         retrofitRepoExtension.cleanUp()
         realmRepoExtension.cleanUp()
     }
+
+    override fun enableLog(): Boolean {
+        return false
+    }
+
 }

@@ -1,19 +1,18 @@
 package com.android.oleksandrpriadko.demo.cocktails.model.wrappers
 
-import com.android.oleksandrpriadko.demo.cocktails.model.CocktailsRealmRepoExtension
 import com.android.oleksandrpriadko.loggalitic.LogPublishService
 import com.google.gson.annotations.SerializedName
 import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 
-open class Drink(@SerializedName(CocktailsRealmRepoExtension.DRINK_FIELD_ID)
+open class Drink(@SerializedName(DRINK_FIELD_ID)
                  @PrimaryKey
                  var id: String) : RealmObject() {
-    @SerializedName(CocktailsRealmRepoExtension.DRINK_FIELD_NAME)
+    @SerializedName(DRINK_FIELD_NAME)
     var name: String = ""
     var imageUrl: String = ""
-    var ingredientList: RealmList<Ingredient> = RealmList()
+    var ingredientList: RealmList<MeasuredIngredient> = RealmList()
     var instructions: String = ""
     var category: String = NO_CATEGORY
     var alcoholicType: String = NO_ALCOHOLIC_TYPE
@@ -25,8 +24,8 @@ open class Drink(@SerializedName(CocktailsRealmRepoExtension.DRINK_FIELD_ID)
     fun calculateIngredientMatches(ingredientNames: List<String>): Int {
         var matchesCount = 0
         for (ingredientName in ingredientNames) {
-            val foundMatch: Ingredient? = ingredientList.find { ingredient ->
-                ingredient.name.equals(ingredientName, true)
+            val foundMatch: MeasuredIngredient? = ingredientList.find { measuredIngredient ->
+                measuredIngredient.patronName.equals(ingredientName, true)
             }
             if (foundMatch != null) {
                 matchesCount++
@@ -36,10 +35,19 @@ open class Drink(@SerializedName(CocktailsRealmRepoExtension.DRINK_FIELD_ID)
     }
 
     fun hasEmptyFields(): Boolean {
+        var areMeasuredIngredientsEmpty = ingredientList.isEmpty()
+        if (!ingredientList.isEmpty()) {
+            for (measuredIngredient in ingredientList) {
+                if (measuredIngredient.hasEmptyFields()) {
+                    areMeasuredIngredientsEmpty = true
+                    break
+                }
+            }
+        }
         return id.isEmpty()
                 .or(name.isEmpty())
                 .or(imageUrl.isEmpty())
-                .or(ingredientList.isEmpty())
+                .or(areMeasuredIngredientsEmpty)
                 .or(instructions.isEmpty())
                 .or(category.isEmpty())
                 .or(category.equals(NO_CATEGORY, true))
@@ -77,8 +85,8 @@ open class Drink(@SerializedName(CocktailsRealmRepoExtension.DRINK_FIELD_ID)
                 if (ingredientList.size > donor.ingredientList.size)
                     ingredientList.size
                 else donor.ingredientList.size) {
-            var donorIngredient: Ingredient? = null
-            var receiverIngredient: Ingredient? = null
+            var donorIngredient: MeasuredIngredient? = null
+            var receiverIngredient: MeasuredIngredient? = null
             try {
                 donorIngredient = donor.ingredientList[i]
             } catch (e: IndexOutOfBoundsException) {
@@ -90,7 +98,7 @@ open class Drink(@SerializedName(CocktailsRealmRepoExtension.DRINK_FIELD_ID)
             if (receiverIngredient == null && donorIngredient != null) {
                 ingredientList.add(donorIngredient)
                 isChanged = true
-            } else if (receiverIngredient?.fillEmptyFields(donorIngredient) == true) {
+            } else if (receiverIngredient != null && receiverIngredient.fillEmptyFields(donorIngredient)) {
                 isChanged = true
             }
         }
@@ -148,9 +156,10 @@ open class Drink(@SerializedName(CocktailsRealmRepoExtension.DRINK_FIELD_ID)
                 "dateModified='$dateModified')"
     }
 
-
     private fun logState(message: String) {
-        LogPublishService.logger().e(this::class.java.simpleName, message)
+        if (false) {
+            LogPublishService.logger().d(this::class.java.simpleName, message)
+        }
     }
 
     override fun equals(other: Any?): Boolean {
@@ -189,6 +198,9 @@ open class Drink(@SerializedName(CocktailsRealmRepoExtension.DRINK_FIELD_ID)
     }
 
     companion object {
+        const val DRINK_FIELD_NAME = "name"
+        const val DRINK_FIELD_ID = "id"
+
         private const val NO_CATEGORY = "Undefined"
         private const val NO_ALCOHOLIC_TYPE = "Undefined"
         private const val NO_GLASS_TYPE = "Undefined"

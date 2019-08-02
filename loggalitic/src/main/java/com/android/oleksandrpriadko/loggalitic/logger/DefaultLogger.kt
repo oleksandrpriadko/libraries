@@ -43,12 +43,25 @@ class DefaultLogger(policy: Policy) : Logger(policy) {
         requestReportAndSend(tag, message, force, Policy.ERROR)
     }
 
+    override fun wtf(tag: String?, message: String?, force: Boolean) {
+        requestReportAndSend(tag, message, force, Policy.ASSERT)
+    }
+
     private fun requestReportAndSend(tag: String?,
                                      message: String?,
                                      force: Boolean,
                                      @Policy.LogLevel logLevel: Int) {
         if (isLoggable(tag, logLevel, force)) {
-            Log.e(tag, message)
+            when (logLevel) {
+                Policy.VERBOSE -> Log.v(tag, message)
+                Policy.DEBUG -> Log.d(tag, message)
+                Policy.INFO -> Log.i(tag, message)
+                Policy.WARN -> Log.w(tag, message)
+                Policy.ERROR -> Log.e(tag, message)
+                Policy.ASSERT -> Log.wtf(tag, message)
+                else -> {
+                }
+            }
         }
         if (isLogReportable(tag, logLevel, force)) {
             if (tag != null && message != null) {

@@ -1,19 +1,11 @@
 package com.android.oleksandrpriadko.demo.cocktails.model;
 
-import android.graphics.Typeface;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.style.StyleSpan;
-
-import com.android.oleksandrpriadko.demo.cocktails.drinkdetails.MeasureUnit;
-import com.android.oleksandrpriadko.demo.cocktails.drinkdetails.MeasureUnitsConverter;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class DrinkDetails {
@@ -560,125 +552,55 @@ public class DrinkDetails {
         this.strVideo = strVideo;
     }
 
-    public List<SpannableStringBuilder> getListOfIngredientsNamesAndMeasureUnits(@NonNull final MeasureUnit measureUnit) {
-        List<SpannableStringBuilder> ingredients = new ArrayList<>();
-
-
-        if (canIngredientBeAdded(strIngredient1)) {
-            ingredients.add(createSpannable(strIngredient1, MeasureUnitsConverter.Companion.convert(strMeasure1, measureUnit)));
-        }
-        if (canIngredientBeAdded(strIngredient2)) {
-            ingredients.add(createSpannable(strIngredient2, MeasureUnitsConverter.Companion.convert(strMeasure2, measureUnit)));
-        }
-        if (canIngredientBeAdded(strIngredient3)) {
-            ingredients.add(createSpannable(strIngredient3, MeasureUnitsConverter.Companion.convert(strMeasure3, measureUnit)));
-        }
-        if (canIngredientBeAdded(strIngredient4)) {
-            ingredients.add(createSpannable(strIngredient4, MeasureUnitsConverter.Companion.convert(strMeasure4, measureUnit)));
-        }
-        if (canIngredientBeAdded(strIngredient5)) {
-            ingredients.add(createSpannable(strIngredient5, MeasureUnitsConverter.Companion.convert(strMeasure5, measureUnit)));
-        }
-        if (canIngredientBeAdded(strIngredient6)) {
-            ingredients.add(createSpannable(strIngredient6, MeasureUnitsConverter.Companion.convert(strMeasure6, measureUnit)));
-        }
-        if (canIngredientBeAdded(strIngredient7)) {
-            ingredients.add(createSpannable(strIngredient7, MeasureUnitsConverter.Companion.convert(strMeasure7, measureUnit)));
-        }
-        if (canIngredientBeAdded(strIngredient8)) {
-            ingredients.add(createSpannable(strIngredient8, MeasureUnitsConverter.Companion.convert(strMeasure8, measureUnit)));
-        }
-        if (canIngredientBeAdded(strIngredient9)) {
-            ingredients.add(createSpannable(strIngredient9, MeasureUnitsConverter.Companion.convert(strMeasure9, measureUnit)));
-        }
-        if (canIngredientBeAdded(strIngredient10)) {
-            ingredients.add(createSpannable(strIngredient10, MeasureUnitsConverter.Companion.convert(strMeasure10, measureUnit)));
-        }
-        if (canIngredientBeAdded(strIngredient11)) {
-            ingredients.add(createSpannable(strIngredient11, MeasureUnitsConverter.Companion.convert(strMeasure11, measureUnit)));
-        }
-        if (canIngredientBeAdded(strIngredient12)) {
-            ingredients.add(createSpannable(strIngredient12, MeasureUnitsConverter.Companion.convert(strMeasure12, measureUnit)));
-        }
-        if (canIngredientBeAdded(strIngredient13)) {
-            ingredients.add(createSpannable(strIngredient13, MeasureUnitsConverter.Companion.convert(strMeasure13, measureUnit)));
-        }
-        if (canIngredientBeAdded(strIngredient14)) {
-            ingredients.add(createSpannable(strIngredient14, MeasureUnitsConverter.Companion.convert(strMeasure14, measureUnit)));
-        }
-        if (canIngredientBeAdded(strIngredient15)) {
-            ingredients.add(createSpannable(strIngredient15, MeasureUnitsConverter.Companion.convert(strMeasure15, measureUnit)));
-        }
-        return ingredients;
-    }
-
-    private SpannableStringBuilder createSpannable(@NonNull final String name,
-                                                   @NonNull final String measure) {
-        String nameTrimmed = name.trim();
-        String measureTrimmed = measure.trim();
-
-        String patternFormat = measureTrimmed.isEmpty() ? "%s" : "%s (%s)";
-        String whole = String.format(patternFormat, nameTrimmed, measureTrimmed);
-        int indexOfMeasure = measureTrimmed.isEmpty() ? nameTrimmed.length() : whole.indexOf("(");
-        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(whole);
-        spannableStringBuilder.setSpan(
-                new StyleSpan(Typeface.BOLD),
-                0,
-                indexOfMeasure,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        return spannableStringBuilder;
-    }
-
-
     public List<String> getListOfIngredientsNames() {
         if (ingredientsNameList != null && !ingredientsNameList.isEmpty()) {
             return ingredientsNameList;
         } else {
             ingredientsNameList = new ArrayList<>();
 
-            if (canIngredientBeAdded(strIngredient1)) {
+            if (canIngredientBeAdded(strIngredient1, ingredientsNameList)) {
                 ingredientsNameList.add(strIngredient1);
             }
-            if (canIngredientBeAdded(strIngredient2)) {
+            if (canIngredientBeAdded(strIngredient2, ingredientsNameList)) {
                 ingredientsNameList.add(strIngredient2);
             }
-            if (canIngredientBeAdded(strIngredient3)) {
+            if (canIngredientBeAdded(strIngredient3, ingredientsNameList)) {
                 ingredientsNameList.add(strIngredient3);
             }
-            if (canIngredientBeAdded(strIngredient4)) {
+            if (canIngredientBeAdded(strIngredient4, ingredientsNameList)) {
                 ingredientsNameList.add(strIngredient4);
             }
-            if (canIngredientBeAdded(strIngredient5)) {
+            if (canIngredientBeAdded(strIngredient5, ingredientsNameList)) {
                 ingredientsNameList.add(strIngredient5);
             }
-            if (canIngredientBeAdded(strIngredient6)) {
+            if (canIngredientBeAdded(strIngredient6, ingredientsNameList)) {
                 ingredientsNameList.add(strIngredient6);
             }
-            if (canIngredientBeAdded(strIngredient7)) {
+            if (canIngredientBeAdded(strIngredient7, ingredientsNameList)) {
                 ingredientsNameList.add(strIngredient7);
             }
-            if (canIngredientBeAdded(strIngredient8)) {
+            if (canIngredientBeAdded(strIngredient8, ingredientsNameList)) {
                 ingredientsNameList.add(strIngredient8);
             }
-            if (canIngredientBeAdded(strIngredient9)) {
+            if (canIngredientBeAdded(strIngredient9, ingredientsNameList)) {
                 ingredientsNameList.add(strIngredient9);
             }
-            if (canIngredientBeAdded(strIngredient10)) {
+            if (canIngredientBeAdded(strIngredient10, ingredientsNameList)) {
                 ingredientsNameList.add(strIngredient10);
             }
-            if (canIngredientBeAdded(strIngredient11)) {
+            if (canIngredientBeAdded(strIngredient11, ingredientsNameList)) {
                 ingredientsNameList.add(strIngredient11);
             }
-            if (canIngredientBeAdded(strIngredient12)) {
+            if (canIngredientBeAdded(strIngredient12, ingredientsNameList)) {
                 ingredientsNameList.add(strIngredient12);
             }
-            if (canIngredientBeAdded(strIngredient13)) {
+            if (canIngredientBeAdded(strIngredient13, ingredientsNameList)) {
                 ingredientsNameList.add(strIngredient13);
             }
-            if (canIngredientBeAdded(strIngredient14)) {
+            if (canIngredientBeAdded(strIngredient14, ingredientsNameList)) {
                 ingredientsNameList.add(strIngredient14);
             }
-            if (canIngredientBeAdded(strIngredient15)) {
+            if (canIngredientBeAdded(strIngredient15, ingredientsNameList)) {
                 ingredientsNameList.add(strIngredient15);
             }
             return ingredientsNameList;
@@ -691,57 +613,61 @@ public class DrinkDetails {
         } else {
             ingredientsMeasureList = new ArrayList<>();
 
-            if (canIngredientBeAdded(strIngredient1)) {
+            if (canMeasureBeAdded(strIngredient1)) {
                 ingredientsMeasureList.add(strMeasure1);
             }
-            if (canIngredientBeAdded(strIngredient2)) {
+            if (canMeasureBeAdded(strIngredient2)) {
                 ingredientsMeasureList.add(strMeasure2);
             }
-            if (canIngredientBeAdded(strIngredient3)) {
+            if (canMeasureBeAdded(strIngredient3)) {
                 ingredientsMeasureList.add(strMeasure3);
             }
-            if (canIngredientBeAdded(strIngredient4)) {
+            if (canMeasureBeAdded(strIngredient4)) {
                 ingredientsMeasureList.add(strMeasure4);
             }
-            if (canIngredientBeAdded(strIngredient5)) {
+            if (canMeasureBeAdded(strIngredient5)) {
                 ingredientsMeasureList.add(strMeasure5);
             }
-            if (canIngredientBeAdded(strIngredient6)) {
+            if (canMeasureBeAdded(strIngredient6)) {
                 ingredientsMeasureList.add(strMeasure6);
             }
-            if (canIngredientBeAdded(strIngredient7)) {
+            if (canMeasureBeAdded(strIngredient7)) {
                 ingredientsMeasureList.add(strMeasure7);
             }
-            if (canIngredientBeAdded(strIngredient8)) {
+            if (canMeasureBeAdded(strIngredient8)) {
                 ingredientsMeasureList.add(strMeasure8);
             }
-            if (canIngredientBeAdded(strIngredient9)) {
+            if (canMeasureBeAdded(strIngredient9)) {
                 ingredientsMeasureList.add(strMeasure9);
             }
-            if (canIngredientBeAdded(strIngredient10)) {
+            if (canMeasureBeAdded(strIngredient10)) {
                 ingredientsMeasureList.add(strMeasure10);
             }
-            if (canIngredientBeAdded(strIngredient11)) {
+            if (canMeasureBeAdded(strIngredient11)) {
                 ingredientsMeasureList.add(strMeasure11);
             }
-            if (canIngredientBeAdded(strIngredient12)) {
+            if (canMeasureBeAdded(strIngredient12)) {
                 ingredientsMeasureList.add(strMeasure12);
             }
-            if (canIngredientBeAdded(strIngredient13)) {
+            if (canMeasureBeAdded(strIngredient13)) {
                 ingredientsMeasureList.add(strMeasure13);
             }
-            if (canIngredientBeAdded(strIngredient14)) {
+            if (canMeasureBeAdded(strIngredient14)) {
                 ingredientsMeasureList.add(strMeasure14);
             }
-            if (canIngredientBeAdded(strIngredient15)) {
+            if (canMeasureBeAdded(strIngredient15)) {
                 ingredientsMeasureList.add(strMeasure15);
             }
             return ingredientsMeasureList;
         }
     }
 
-    private boolean canIngredientBeAdded(final String ingredient) {
-        return ingredient != null && !ingredient.isEmpty();
+    private boolean canIngredientBeAdded(final String ingredient, final List<String> destination) {
+        return ingredient != null && !ingredient.isEmpty() && !destination.contains(ingredient);
+    }
+
+    private boolean canMeasureBeAdded(final String measure) {
+        return measure != null && !measure.isEmpty();
     }
 
 

@@ -24,6 +24,7 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
 
     fun onSearchTypeChanged(newSearchType: SearchType) {
         currentSearchType = newSearchType
+
         when (currentSearchType) {
             SearchType.BY_INGREDIENTS -> {
                 if (triggerSearchAfterSelection) {
@@ -43,11 +44,11 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
     fun onSearchTriggered() {
         view?.hideKeyboard()
         view?.hideFoundIngredientMatches()
-        if (getSelectedIngredients().isNotEmpty()
+        if (getSelectedIngredients(true).isNotEmpty()
                 || view?.getCurrentInputText()?.isNotEmpty() == true) {
             when (currentSearchType) {
                 SearchType.BY_INGREDIENTS -> {
-                    filterByIngredients(getSelectedIngredients())
+                    filterByIngredients(getSelectedIngredients(true))
                 }
                 SearchType.BY_NAME -> {
                     searchDrink(view?.getCurrentInputText())
@@ -56,8 +57,8 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
         }
     }
 
-    private fun getSelectedIngredients(): List<Ingredient> {
-        return view?.getSelectedIngredients() ?: listOf()
+    private fun getSelectedIngredients(withInput: Boolean): List<Ingredient> {
+        return view?.getSelectedIngredients(withInput) ?: listOf()
     }
 
     fun onInputTextChanged(charSequence: CharSequence?) {
@@ -113,14 +114,14 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
         val ingredientFromDatabase: Ingredient? = repo.findIngredientByName(ingredient.name)
 
         if (ingredientFromDatabase != null) {
-            if (!isIngredientAlreadyAdded(ingredient)) {
+            if (!isIngredientAlreadyAdded(ingredient, false)) {
                 view?.addSelectedIngredient(ingredientFromDatabase)
                 view?.scrollSearchInputToEnd()
             }
             view?.clearSearchInputText()
             view?.hideFoundIngredientMatches()
         } else if (addIfAbsentInDatabase) {
-            if (!isIngredientAlreadyAdded(ingredient)) {
+            if (!isIngredientAlreadyAdded(ingredient, false)) {
                 view?.addSelectedIngredient(ingredient)
                 view?.scrollSearchInputToEnd()
             }
@@ -129,8 +130,8 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
         }
     }
 
-    private fun isIngredientAlreadyAdded(ingredient: Ingredient): Boolean {
-        view?.getSelectedIngredients()?.forEach { alreadySelected ->
+    private fun isIngredientAlreadyAdded(ingredient: Ingredient, withInput: Boolean): Boolean {
+        view?.getSelectedIngredients(withInput)?.forEach { alreadySelected ->
             if (alreadySelected.name.equals(ingredient.name, true)) {
                 return true
             }
@@ -151,7 +152,7 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
 
     fun onDrinkClicked(drink: Drink?) {
         drink?.let { drinkNotNull ->
-            val ingredientNamesFromSearch = getSelectedIngredients().map { it.name }
+            val ingredientNamesFromSearch = getSelectedIngredients(false).map { it.name }
             view?.showDrinkDetails(drinkNotNull, ingredientNamesFromSearch as ArrayList<String>)
         }
     }
@@ -235,7 +236,7 @@ interface PresenterView : LifecycleOwner {
 
     fun getCurrentInputText(): CharSequence?
 
-    fun getSelectedIngredients(): List<Ingredient>
+    fun getSelectedIngredients(withInput: Boolean): List<Ingredient>
 
     fun clearSearchInputText()
 

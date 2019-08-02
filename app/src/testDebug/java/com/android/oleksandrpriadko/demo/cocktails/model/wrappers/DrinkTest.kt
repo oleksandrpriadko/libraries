@@ -18,9 +18,15 @@ class DrinkTest {
     @Test
     fun calculateIngredientMatches() {
         drink.ingredientList = RealmList()
-        drink.ingredientList.add(Ingredient("name0"))
-        drink.ingredientList.add(Ingredient("name1"))
-        drink.ingredientList.add(Ingredient("name2"))
+        val measuredIngredient1 = MeasuredIngredient("${drink.name}name1")
+        measuredIngredient1.patronName = "name1"
+        val measuredIngredient2 = MeasuredIngredient("${drink.name}name2")
+        measuredIngredient2.patronName = "name2"
+        val measuredIngredient3 = MeasuredIngredient("${drink.name}name3")
+        measuredIngredient3.patronName = "name3"
+        drink.ingredientList.add(measuredIngredient1)
+        drink.ingredientList.add(measuredIngredient2)
+        drink.ingredientList.add(measuredIngredient3)
 
         assertEquals(2, drink.calculateIngredientMatches(listOf("name1", "name2")))
     }
@@ -36,7 +42,10 @@ class DrinkTest {
         assertTrue(drink.hasEmptyFields())
 
         drink.ingredientList = RealmList()
-        drink.ingredientList.add(Ingredient())
+        val measuredIngredient = MeasuredIngredient("${drink.name}1")
+        measuredIngredient.patronName = "name"
+        measuredIngredient.measure = "323"
+        drink.ingredientList.add(measuredIngredient)
         assertTrue(drink.hasEmptyFields())
 
         drink.instructions = "instr"
@@ -60,7 +69,9 @@ class DrinkTest {
         val drink2 = Drink()
         drink2.id = "2"
         drink2.name = "2"
-        drink2.ingredientList = RealmList(Ingredient("2"), Ingredient("2"), Ingredient("2"))
+        drink2.ingredientList = RealmList(MeasuredIngredient("${drink.name}1"),
+                MeasuredIngredient("${drink.name}2"),
+                MeasuredIngredient("${drink.name}3"))
         drink2.imageUrl = "2"
         drink2.category = "2"
         drink2.alcoholicType = "2"

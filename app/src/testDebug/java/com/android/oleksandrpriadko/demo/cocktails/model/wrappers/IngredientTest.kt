@@ -7,7 +7,7 @@ import org.junit.Test
 
 class IngredientTest {
 
-    var ingredient: Ingredient = Ingredient()
+    private var ingredient: Ingredient = Ingredient()
 
     @Before
     fun setUp() {
@@ -16,28 +16,28 @@ class IngredientTest {
 
     @Test
     fun hasEmptyFields() {
-        assertTrue(ingredient.hasEmptyFields(true))
+        assertTrue(ingredient.hasEmptyFields())
 
         ingredient.id = "id"
-        assertTrue(ingredient.hasEmptyFields(true))
+        assertTrue(ingredient.hasEmptyFields())
 
         ingredient.name = "name"
-        assertTrue(ingredient.hasEmptyFields(true))
+        assertTrue(ingredient.hasEmptyFields())
 
         ingredient.imageUrl = "url"
-        assertTrue(ingredient.hasEmptyFields(true))
+        assertTrue(ingredient.hasEmptyFields())
 
         ingredient.description = Ingredient.NO_DESCRIPTION
-        assertTrue(ingredient.hasEmptyFields(true))
+        assertTrue(ingredient.hasEmptyFields())
 
         ingredient.description = "desc"
-        assertTrue(ingredient.hasEmptyFields(true))
+        assertTrue(ingredient.hasEmptyFields())
 
         ingredient.type = Ingredient.NO_TYPE
-        assertTrue(ingredient.hasEmptyFields(true))
+        assertTrue(ingredient.hasEmptyFields())
 
         ingredient.type = "type"
-        assertFalse(ingredient.hasEmptyFields(true))
+        assertFalse(ingredient.hasEmptyFields())
     }
 
     @Test
@@ -48,8 +48,6 @@ class IngredientTest {
         ingredient2.imageUrl = "2"
         ingredient2.type = "2"
         ingredient2.description = "2"
-        ingredient2.measure = "2"
-        ingredient2.measureUnitAsString = "OZ"
 
         ingredient.fillEmptyFields(ingredient2)
         assertTrue(ingredient == ingredient2)

@@ -57,6 +57,10 @@ class RetrofitRepoExtension(
         retrofit = null
     }
 
+    override fun enableLog(): Boolean {
+        return false
+    }
+
     companion object {
         const val RESPONSE_NOT_SUCCESSFUL = "Response is not successful"
         const val RESPONSE_NULL = "Response content is null"

@@ -21,6 +21,7 @@ import com.android.oleksandrpriadko.demo.cocktails.drinkdetails.DrinkDetailsActi
 import com.android.oleksandrpriadko.demo.cocktails.model.BundleConst
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Drink
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Ingredient
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.MeasuredIngredient
 import com.android.oleksandrpriadko.demo.main.App
 import com.android.oleksandrpriadko.extension.hide
 import com.android.oleksandrpriadko.extension.inflateOn
@@ -121,7 +122,7 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
         searchInput.setText("")
     }
 
-    override fun getSelectedIngredients(): List<Ingredient> {
+    override fun getSelectedIngredients(withInput: Boolean): List<Ingredient> {
         val selectedIngredients: MutableList<Ingredient> = mutableListOf()
         // collect ingredients from all chips
         for (i in 0 until ingredientsChipGroup.childCount) {
@@ -131,10 +132,12 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
                 selectedIngredients.add(chipTag)
             }
         }
-        // request add current input text as
-        getCurrentInputText()?.let {
-            if (it.isNotEmpty()) {
-                selectedIngredients.add(Ingredient(it.toString()))
+        // request add current input text as ingredient
+        if (withInput) {
+            getCurrentInputText()?.let {
+                if (it.isNotEmpty()) {
+                    selectedIngredients.add(Ingredient(it.toString()))
+                }
             }
         }
         return selectedIngredients
@@ -290,9 +293,9 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
         private const val BY_INGREDIENTS = 0
         private const val BY_NAME = 1
 
-        fun addIngredientToSelected(context: Context, ingredient: Ingredient) {
+        fun addIngredientToSelected(context: Context, measuredIngredient: MeasuredIngredient) {
             context.startActivity(Intent(context, SearchActivity::class.java).apply {
-                putExtra(BundleConst.INGREDIENT_NAME, ingredient.name)
+                putExtra(BundleConst.INGREDIENT_NAME, measuredIngredient.patronName)
             })
         }
 

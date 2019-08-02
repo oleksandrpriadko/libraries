@@ -289,4 +289,8 @@ class SearchRepo(lifecycleOwner: LifecycleOwner,
         retrofitRepoExtension.cleanUp()
         realmRepoExtension.cleanUp()
     }
+
+    override fun enableLog(): Boolean {
+        return false
+    }
 }

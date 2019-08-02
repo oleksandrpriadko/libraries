@@ -3,6 +3,7 @@ package com.android.oleksandrpriadko.demo.cocktails.drinkdetails
 import androidx.lifecycle.LifecycleOwner
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Drink
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Ingredient
+import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.MeasuredIngredient
 import com.android.oleksandrpriadko.mvp.presenter.BasePresenter
 
 class DrinkDetailsPresenter(presenterView: PresenterView,
@@ -39,15 +40,15 @@ class DrinkDetailsPresenter(presenterView: PresenterView,
         })
     }
 
-    fun onIngredientItemClicked(drink: Drink, ingredient: Ingredient) {
-        view?.showIngredientOverlay(ingredient)
+    fun onIngredientItemClicked(measuredIngredient: MeasuredIngredient) {
+        view?.showIngredientOverlay(measuredIngredient)
         view?.clearImageInOverlay()
         view?.clearNameInOverlay()
-        requestLoadIngredientDetails(drink, ingredient)
+        requestLoadIngredientDetails(measuredIngredient)
     }
 
-    private fun requestLoadIngredientDetails(drink: Drink, ingredient: Ingredient) {
-        repo.loadIngredient(drink, ingredient, object : DrinkDetailsRepoListener {
+    private fun requestLoadIngredientDetails(measuredIngredient: MeasuredIngredient) {
+        repo.loadIngredient(measuredIngredient, object : DrinkDetailsRepoListener {
             override fun onNoInternet() {
                 view?.showOfflineLayout(show = true)
             }
@@ -74,9 +75,9 @@ class DrinkDetailsPresenter(presenterView: PresenterView,
         view?.showOverlayLoadingIngredient(false)
     }
 
-    fun onIngredientOverlayHidden(ingredientAttachedToOverlay: Ingredient) {
+    fun onIngredientOverlayHidden(measureIngredientAttachedToOverlay: MeasuredIngredient) {
         if (addIngredientToSearch) {
-            view?.openSearchWithIngredient(ingredientAttachedToOverlay)
+            view?.openSearchWithIngredient(measureIngredientAttachedToOverlay)
         }
     }
 
@@ -115,11 +116,11 @@ interface PresenterView : LifecycleOwner {
 
     fun populateIngredientDescription(description: String)
 
-    fun showIngredientOverlay(selectedIngredient: Ingredient)
+    fun showIngredientOverlay(selectedMeasuredIngredient: MeasuredIngredient)
 
     fun hideIngredientOverlay()
 
-    fun openSearchWithIngredient(ingredient: Ingredient)
+    fun openSearchWithIngredient(measuredIngredient: MeasuredIngredient)
 
     fun showLoadingLayout(show: Boolean)
 

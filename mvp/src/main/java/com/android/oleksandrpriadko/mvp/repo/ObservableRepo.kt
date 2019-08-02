@@ -72,7 +72,7 @@ abstract class ObservableRepo(lifecycleOwner: LifecycleOwner) {
 
     abstract fun cleanUp()
 
-    protected fun enableLog(): Boolean = true
+    protected open fun enableLog(): Boolean = true
 
     protected fun logState(message: String) {
         if (enableLog()) {
