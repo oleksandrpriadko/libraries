@@ -23,8 +23,14 @@ open class MeasuredIngredient(@PrimaryKey
     fun getMeasureUnit(): MeasureUnit = MeasureUnit.valueOf(measureUnitAsString)
 
     fun hasEmptyFields(checkMeasureUnit: Boolean = false): Boolean {
+        val isMeasureUnitEmpty = if (checkMeasureUnit) {
+            measureUnitAsString.equals(MeasureUnit.AS_IS.toString(), true)
+        } else {
+            false
+        }
         return patronName.isEmpty()
                 .or(id.isEmpty().or(id.equals(ID_NOT_SET, true)))
+                .or(isMeasureUnitEmpty)
     }
 
     fun fillEmptyFields(donor: MeasuredIngredient?): Boolean {
