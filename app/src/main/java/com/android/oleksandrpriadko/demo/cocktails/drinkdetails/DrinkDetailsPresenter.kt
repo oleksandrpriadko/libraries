@@ -5,6 +5,7 @@ import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Drink
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Ingredient
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.MeasuredIngredient
 import com.android.oleksandrpriadko.mvp.presenter.BasePresenter
+import com.android.oleksandrpriadko.retrofit.ConnectionStatusReceiver
 
 class DrinkDetailsPresenter(presenterView: PresenterView,
                             baseUrl: String) : BasePresenter<PresenterView>(presenterView) {
@@ -86,13 +87,25 @@ class DrinkDetailsPresenter(presenterView: PresenterView,
         view?.hideIngredientOverlay()
     }
 
+    fun onIngredientImageClicked(measuredIngredient: MeasuredIngredient) {
+        view?.requestOpenBrowserWithSearch(measuredIngredient.patronName)
+    }
+
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
-        view?.requestCheckDrinkInIntent()
-        runnableOnNewIntent?.run()
-        runnableOnNewIntent = null
-        runnableOnActivityResult?.run()
-        runnableOnActivityResult = null
+
+        onConnectionStatusChanged(ConnectionStatusReceiver.isOnline)
+        consumeOnPendingActionRunnable()
+        consumeOnNewIntentRunnable()
+        consumeOnActivityResultRunnable()
+    }
+
+    override fun onStop(owner: LifecycleOwner) {
+        super.onStop(owner)
+
+        saveOnPendingActionRunnable(Runnable {
+            view?.requestCheckDrinkInIntent()
+        })
     }
 
     fun onConnectionStatusChanged(connectedToInternet: Boolean) {
@@ -133,5 +146,7 @@ interface PresenterView : LifecycleOwner {
     fun requestCloseScreen()
 
     fun requestCheckDrinkInIntent()
+
+    fun requestOpenBrowserWithSearch(ingredientName: String)
 
 }

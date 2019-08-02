@@ -36,7 +36,7 @@ class AdapterDemos(itemListener: BaseItemListener<Demo>?)
 
     inner class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private val picassoHolderExtension = PicassoHolderExtension(itemView.context)
+        private val picassoHolderExtension = PicassoHolderExtension()
 
         fun loadAvatar(url: String?, @DrawableRes iconResId: Int) {
             if (iconResId == 0) {

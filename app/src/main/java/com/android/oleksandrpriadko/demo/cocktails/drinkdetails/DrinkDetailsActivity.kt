@@ -1,10 +1,14 @@
 package com.android.oleksandrpriadko.demo.cocktails.drinkdetails
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import com.android.oleksandrpriadko.demo.R
@@ -29,6 +33,8 @@ import kotlinx.android.synthetic.main.cocktail_activity_drink_details.*
 import kotlinx.android.synthetic.main.cocktail_activity_drink_details.nameTextView
 import kotlinx.android.synthetic.main.cocktail_overlay_ingredient_details.*
 import kotlinx.android.synthetic.main.cocktail_overlay_ingredient_details.view.*
+import java.net.URLEncoder
+
 
 class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubscriber {
 
@@ -46,11 +52,16 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
 
         setContentView(R.layout.cocktail_activity_drink_details)
 
-        App.connectionStatusReceiver.subscribe(this)
-
         initOverlay()
 
         goBackImageView.setOnClickListener { presenter?.onGoBackClicked() }
+
+        instructionsTextView.movementMethod = ScrollingMovementMethod()
+
+        presenter?.saveOnPendingActionRunnable(Runnable {
+            App.connectionStatusReceiver.subscribe(this)
+            requestCheckDrinkInIntent()
+        })
     }
 
     private fun initOverlay() {
@@ -62,9 +73,9 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        presenter?.runnableOnNewIntent = Runnable {
+        presenter?.saveOnNewIntentRunnable(Runnable {
             requestLoadCocktail(intent)
-        }
+        })
     }
 
     override fun requestCheckDrinkInIntent() {
@@ -94,9 +105,10 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
         avatarImageView.setImageResource(CocktailManagerFinder.randomPlaceholderManager.pickPlaceHolder())
 
         PicassoHolderExtension.loadImage(
-                thisDrink.imageUrl,
-                avatarImageView,
-                CocktailManagerFinder.randomPlaceholderManager.pickPlaceHolder())
+                url = thisDrink.imageUrl,
+                imageView = avatarImageView,
+                errorDrawableId = CocktailManagerFinder.randomPlaceholderManager.pickPlaceHolder(),
+                placeHolderDrawableId = CocktailManagerFinder.randomPlaceholderManager.pickPlaceHolder())
         instructionsTextView.text = thisDrink.instructions
 
         displayIngredientsChips(thisDrink, ingredientsFromSearch)
@@ -121,6 +133,8 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
         if (!isIngredientMatchSearch.isNullOrEmpty()) {
             chip.chipStrokeColor = getColorStateList(R.color.cocktail_background_match_ingredient)
             chip.chipStrokeWidth = dimenPixelSize(R.dimen.cocktail_width_ingredient_match_stroke).toFloat()
+            chip.isChipIconVisible = true
+            chip.chipIcon = getDrawable(R.drawable.ic_check_green_24dp)
         }
         chip.setOnClickListener {
             presenter?.onIngredientItemClicked(measuredIngredient)
@@ -142,7 +156,9 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
                     override fun stateChanged(state: OverlayState) {
                         when (state) {
                             OverlayState.ANIMATING_IN -> {
-                                contentOverlayLayout.setOnClickListener { presenter?.onAddIngredientToSearch() }
+                                contentOverlayLayout.setOnClickListener {
+                                    presenter?.onIngredientImageClicked(selectedMeasuredIngredient)
+                                }
                             }
                             OverlayState.DISMISSED, OverlayState.DISMISSED_BACK_CLICK -> {
                                 presenter?.onIngredientOverlayHidden(selectedMeasuredIngredient)
@@ -166,8 +182,9 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
 
     override fun loadIngredientImage(imageUrl: String) {
         PicassoHolderExtension.loadImage(imageUrl,
-                ingredientOverlay.ingredientImageView,
-                object : Callback {
+                imageView = ingredientOverlay.ingredientImageView,
+                errorDrawableId = CocktailManagerFinder.randomPlaceholderManager.pickPlaceHolder(),
+                callback = object : Callback {
                     override fun onSuccess() {
                         presenter?.ingredientImageLoaded()
                     }
@@ -185,6 +202,22 @@ class DrinkDetailsActivity : AppCompatActivity(), PresenterView, ConnectionStatu
 
     override fun openSearchWithIngredient(measuredIngredient: MeasuredIngredient) {
         SearchActivity.addIngredientToSelected(this, measuredIngredient)
+    }
+
+    override fun requestOpenBrowserWithSearch(ingredientName: String) {
+        try {
+            val escapedQuery = URLEncoder.encode(ingredientName, "UTF-8")
+            val uri = Uri.parse("http://www.google.com/#q=$escapedQuery")
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(this,
+                    getString(R.string.cocktail_no_browser),
+                    Toast.LENGTH_LONG)
+                    .show()
+            e.printStackTrace()
+        }
+
     }
 
     override fun showLoadingLayout(show: Boolean) {

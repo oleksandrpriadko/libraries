@@ -51,7 +51,7 @@ class DefaultLogger(policy: Policy) : Logger(policy) {
                                      message: String?,
                                      force: Boolean,
                                      @Policy.LogLevel logLevel: Int) {
-        if (isLoggable(tag, logLevel, force)) {
+        if (isLoggable(tag, logLevel, force) && message != null) {
             when (logLevel) {
                 Policy.VERBOSE -> Log.v(tag, message)
                 Policy.DEBUG -> Log.d(tag, message)

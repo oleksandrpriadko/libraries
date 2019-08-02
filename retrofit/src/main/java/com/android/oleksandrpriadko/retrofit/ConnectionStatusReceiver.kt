@@ -24,6 +24,7 @@ class ConnectionStatusReceiver : BroadcastReceiver() {
             })
             subscribers.add(subscriber)
             logState("$subscriber added, size after ${subscribers.size}")
+            subscriber.onConnectionStatusChanged(isConnectedToInternet())
         }
     }
 
@@ -66,7 +67,7 @@ class ConnectionStatusReceiver : BroadcastReceiver() {
     }
 
     private fun logState(message: String) {
-        CoreServiceManager.logService.d(ConnectionStatusReceiver::class.java.simpleName, message)
+        CoreServiceManager.logService.d(this::class.java.simpleName, message)
     }
 }
 

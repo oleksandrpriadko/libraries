@@ -28,7 +28,7 @@
         app:layout_constraintBottom_toTopOf="@id/nameTextView"
         app:layout_constraintEnd_toEndOf="@id/instructionsTextView"
         app:layout_constraintStart_toStartOf="@id/nameTextView"
-        app:layout_constraintTop_toTopOf="@id/loadingLayout"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1"
         app:layout_constraintVertical_chainStyle="packed" />
 
@@ -54,10 +54,13 @@
         android:layout_width="@dimen/constraint_match"
         android:layout_height="wrap_content"
         android:background="@color/cocktail_background_secondary"
+        android:fadeScrollbars="false"
+        android:maxLines="10"
         android:paddingBottom="20dp"
         android:paddingEnd="20dp"
         android:paddingStart="20dp"
         android:paddingTop="20dp"
+        android:scrollbars="vertical"
         android:textColor="@color/cocktail_background_clickable"
         app:layout_constraintBottom_toTopOf="@id/offlineLayout"
         app:layout_constraintEnd_toEndOf="parent"
@@ -75,7 +78,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:alpha="0.6"
+        tools:alpha="0.3"
         tools:visibility="visible" />
 
     <include
@@ -84,7 +87,7 @@
         android:layout_width="@dimen/constraint_match"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/loadingLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/instructionsTextView"

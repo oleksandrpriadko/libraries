@@ -3,101 +3,65 @@ package com.android.oleksandrpriadko.recycler_adapter
 import android.content.Context
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
+import com.android.oleksandrpriadko.core.CoreServiceManager
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import com.squareup.picasso.RequestCreator
+import java.lang.Exception
 
-class PicassoHolderExtension(context: Context) {
-
-    private val picasso: Picasso = getPicasso(context).apply {
-        setIndicatorsEnabled(BuildConfig.DEBUG)
-    }
-
-    fun loadImage(url: String,
-                  imageView: ImageView,
-                  @DrawableRes placeHolderId: Int,
-                  @DrawableRes errorID: Int) {
-        picasso
-                .load(url)
-                .placeholder(placeHolderId)
-                .error(errorID)
-                .into(imageView)
-    }
-
+class PicassoHolderExtension {
     fun loadImage(url: String?,
                   imageView: ImageView,
-                  @DrawableRes placeHolderId: Int) {
-        picasso
-                .load(url)
-                .placeholder(placeHolderId)
-                .error(R.drawable.ic_error_outline_black_24dp)
-                .into(imageView)
-    }
-
-    fun loadImage(url: String?,
-                  imageView: ImageView,
-                  callback: Callback) {
-        picasso
-                .load(url)
-                .error(R.drawable.ic_error_outline_black_24dp)
-                .into(imageView, callback)
-    }
-
-    fun loadImage(url: String?,
-                  imageView: ImageView,
-                  @DrawableRes placeHolderId: Int,
-                  callback: Callback) {
-        picasso
-                .load(url)
-                .noFade()
-                .placeholder(placeHolderId)
-                .error(R.drawable.ic_error_outline_black_24dp)
-                .into(imageView, callback)
+                  @DrawableRes placeHolderDrawableId: Int = -1,
+                  @DrawableRes errorDrawableId: Int = R.drawable.ic_error_outline_black_24dp,
+                  imageWidth: Int = -1,
+                  imageHeight: Int = -1,
+                  callback: Callback? = null) {
+        Companion.loadImage(url,
+                imageView,
+                placeHolderDrawableId,
+                errorDrawableId,
+                imageWidth,
+                imageHeight,
+                callback)
     }
 
     companion object {
 
         private fun getPicasso(context: Context): Picasso {
             val picasso = Picasso.with(context)
-            picasso.setIndicatorsEnabled(false)
+            picasso.setIndicatorsEnabled(BuildConfig.DEBUG)
             picasso.isLoggingEnabled = false
             return picasso
         }
 
-        fun loadImage(url: String?, imageView: ImageView) {
-            getPicasso(imageView.context)
-                    .load(url)
-                    .error(R.drawable.ic_error_outline_black_24dp)
-                    .into(imageView)
-        }
-
         fun loadImage(url: String?,
                       imageView: ImageView,
-                      @DrawableRes placeHolderId: Int) {
-            getPicasso(imageView.context)
-                    .load(url)
-                    .placeholder(placeHolderId)
-                    .error(R.drawable.ic_error_outline_black_24dp)
-                    .into(imageView)
-        }
+                      @DrawableRes placeHolderDrawableId: Int = -1,
+                      @DrawableRes errorDrawableId: Int = R.drawable.ic_error_outline_black_24dp,
+                      imageWidth: Int = -1,
+                      imageHeight: Int = -1,
+                      callback: Callback? = null) {
+            try {
+                val picasso: Picasso = getPicasso(imageView.context)
 
-        fun loadImage(url: String?,
-                      imageView: ImageView,
-                      @DrawableRes placeHolderId: Int,
-                      callback: Callback) {
-            getPicasso(imageView.context)
-                    .load(url)
-                    .placeholder(placeHolderId)
-                    .error(R.drawable.ic_error_outline_black_24dp)
-                    .into(imageView, callback)
-        }
-
-        fun loadImage(url: String?,
-                      imageView: ImageView,
-                      callback: Callback) {
-            getPicasso(imageView.context)
-                    .load(url)
-                    .error(R.drawable.ic_error_outline_black_24dp)
-                    .into(imageView, callback)
+                val requestCreator: RequestCreator = picasso.load(url)
+                if (placeHolderDrawableId != -1) {
+                    requestCreator.placeholder(placeHolderDrawableId)
+                }
+                if (imageHeight > 0 && imageWidth > 0) {
+                    requestCreator.resize(imageWidth, imageHeight)
+                }
+                requestCreator.error(errorDrawableId)
+                if (callback != null) {
+                    requestCreator.into(imageView, callback)
+                } else {
+                    requestCreator.into(imageView)
+                }
+            } catch (e: Exception) {
+                CoreServiceManager.logService.e(e.message, e.cause?.message)
+                imageView.setImageResource(errorDrawableId)
+            }
         }
     }
 }

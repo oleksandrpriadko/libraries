@@ -7,6 +7,7 @@ import com.android.oleksandrpriadko.demo.cocktails.model.CocktailApi
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Drink
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Ingredient
 import com.android.oleksandrpriadko.mvp.presenter.BasePresenter
+import com.android.oleksandrpriadko.retrofit.ConnectionStatusReceiver
 
 class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePresenter<PresenterView>(presenterView) {
 
@@ -141,13 +142,10 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
 
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
-        if (currentState == State.LOADING) {
-            saveAndApplyState(State.RESULTS)
-        }
-        runnableOnNewIntent?.run()
-        runnableOnNewIntent = null
-        runnableOnActivityResult?.run()
-        runnableOnActivityResult = null
+        connectionStatusChanged(ConnectionStatusReceiver.isOnline)
+        consumeOnPendingActionRunnable()
+        consumeOnNewIntentRunnable()
+        consumeOnActivityResultRunnable()
     }
 
     fun onDrinkClicked(drink: Drink?) {
@@ -166,12 +164,13 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
 
     fun connectionStatusChanged(isConnectedToInternet: Boolean) {
         if (isConnectedToInternet) {
-            saveAndApplyState(State.ONLINE)
+            view?.showOfflineLayout(false)
             if (view?.areSearchResultsEmpty() == true) {
                 searchPopularDrinks()
             }
         } else {
-            saveAndApplyState(State.OFFLINE)
+            view?.showOfflineLayout(true)
+            saveState(State.OFFLINE)
         }
     }
 
@@ -179,39 +178,50 @@ class SearchPresenter(baseUrl: String, presenterView: PresenterView) : BasePrese
         view?.superOnBackPressed()
     }
 
-    private fun saveAndApplyState(newState: State) {
+    private fun saveState(newState: State) {
         view?.let {
             currentState = newState
-            it.applyState(newState)
         }
     }
 
     private val searchRepoListener: SearchRepoListener = object : SearchRepoListener {
 
         override fun onDrinksFound(drinkList: MutableList<Drink>) {
-            view?.clearSearchResults(redrawItems = false)
-            view?.populateSearchResults(drinkList)
-            view?.scrollToFirstSearchResult()
+            saveOnPendingActionRunnable(Runnable {
+                view?.showLoadingLayout(false)
+                view?.showEmptyLayout(false)
+                view?.clearSearchResults(redrawItems = false)
+                view?.populateSearchResults(drinkList)
+                view?.showResultsListLayout(true)
+                view?.scrollToFirstSearchResult()
+            })
+            view?.let {
+                consumeOnPendingActionRunnable()
+            }
         }
 
         override fun noDrinksFound() {
-            saveAndApplyState(State.EMPTY)
+            view?.showEmptyLayout(true)
+            saveState(State.EMPTY)
         }
 
         override fun onLoadingStarted() {
-            saveAndApplyState(State.LOADING)
+            view?.showLoadingLayout(true)
+            saveState(State.LOADING)
         }
 
         override fun onLoadingDone() {
-            saveAndApplyState(State.RESULTS)
+            view?.showLoadingLayout(false)
         }
 
         override fun onLoadingError() {
-            saveAndApplyState(State.EMPTY)
+            view?.showEmptyLayout(true)
+            saveState(State.EMPTY)
         }
 
         override fun onNoInternet() {
-            saveAndApplyState(State.OFFLINE)
+            view?.showOfflineLayout(true)
+            saveState(State.OFFLINE)
         }
     }
 }
@@ -244,11 +254,17 @@ interface PresenterView : LifecycleOwner {
 
     fun hideFoundIngredientMatches()
 
+    fun showLoadingLayout(show: Boolean)
+
+    fun showEmptyLayout(show: Boolean)
+
+    fun showResultsListLayout(show: Boolean)
+
+    fun showOfflineLayout(show: Boolean)
+
     fun updateSearchInputHint()
 
     fun hideKeyboard()
-
-    fun applyState(state: State)
 
     fun superOnBackPressed()
 
@@ -262,8 +278,6 @@ enum class SearchType {
 
 enum class State {
     LOADING,
-    RESULTS,
     EMPTY,
-    OFFLINE,
-    ONLINE
+    OFFLINE
 }

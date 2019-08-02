@@ -28,7 +28,7 @@ class AttachedTabsPresenter(presenterView: PresenterView, isInEditMode: Boolean)
     }
 
     fun selectItem(index: Int, areTabsOnTop: Boolean) {
-        runnableOnNewIntent = Runnable {
+        saveOnNewIntentRunnable(Runnable {
             if (indexOfSelectedItem == index) {
             } else {
                 val toBeSelectedView: View? = view?.getChildAt(index)
@@ -36,16 +36,15 @@ class AttachedTabsPresenter(presenterView: PresenterView, isInEditMode: Boolean)
                     selectItem(toBeSelectedView, areTabsOnTop)
                 }
             }
-        }
+        })
 
         if (view != null) {
-            runnableOnNewIntent?.run()
-            runnableOnNewIntent = null
+            consumeOnNewIntentRunnable()
         }
     }
 
     fun selectItem(toBeSelectedView: View, areTabsOnTop: Boolean) {
-        runnableOnNewIntent = Runnable {
+        saveOnNewIntentRunnable(Runnable {
             view?.endAnimator()
 
             coordinatesDestination = getCoordinatesFromView(toBeSelectedView, areTabsOnTop)
@@ -62,20 +61,19 @@ class AttachedTabsPresenter(presenterView: PresenterView, isInEditMode: Boolean)
 
             view?.createAnimator()
             view?.startAnimator()
-        }
+        })
 
         if (view != null) {
-            runnableOnNewIntent?.run()
-            runnableOnNewIntent = null
+            consumeOnNewIntentRunnable()
         }
     }
 
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
-        runnableOnNewIntent?.run()
-        runnableOnNewIntent = null
-        runnableOnActivityResult?.run()
-        runnableOnActivityResult = null
+
+        consumeOnPendingActionRunnable()
+        consumeOnNewIntentRunnable()
+        consumeOnActivityResultRunnable()
     }
 
     fun onDrawUnderneathChildren(areTabsOnTop: Boolean,

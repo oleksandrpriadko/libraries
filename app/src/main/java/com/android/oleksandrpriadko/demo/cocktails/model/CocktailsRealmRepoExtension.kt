@@ -4,7 +4,6 @@ import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Drink
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Drink.Companion.DRINK_FIELD_ID
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Drink.Companion.DRINK_FIELD_NAME
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Ingredient
-import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Ingredient.Companion.INGREDIENT_FIELD_ID
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Ingredient.Companion.INGREDIENT_FIELD_NAME
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.MeasuredIngredient
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.MeasuredIngredient.Companion.MEASURED_INGREDIENT_FIELD_ID
@@ -94,6 +93,23 @@ class CocktailsRealmRepoExtension : RealmRepoExtension() {
             }
             else -> {
                 logState("ingredient with name $mustHaveNameString found and filled")
+                found
+            }
+        }
+    }
+
+    fun findIngredientLike(mustHaveNameString: String): Ingredient? {
+        val found = realm?.where(Ingredient::class.java)
+                ?.like(INGREDIENT_FIELD_NAME, mustHaveNameString)
+                ?.findFirst()
+        return when (found) {
+            null -> {
+                logState("ingredient with name $mustHaveNameString not found")
+                logState(found?.toString() ?: "")
+                null
+            }
+            else -> {
+                logState("ingredient with name $mustHaveNameString found")
                 found
             }
         }
@@ -192,7 +208,7 @@ class CocktailsRealmRepoExtension : RealmRepoExtension() {
 
     fun findDrinkById(id: String, passedRealm: Realm? = realm): Drink? {
         val found: Drink? = passedRealm?.where(Drink::class.java)
-                ?.like(INGREDIENT_FIELD_ID, id)
+                ?.like(DRINK_FIELD_ID, id)
                 ?.findFirst()
         logState("drink with id $id ${if (found == null) "not found" else "found"}")
         return found

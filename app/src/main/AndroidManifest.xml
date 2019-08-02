@@ -42,7 +42,8 @@
             android:name=".cocktails.search.SearchActivity"
             android:label="Cocktails"
             android:launchMode="singleTask"
-            android:theme="@style/CocktailTheme">
+            android:theme="@style/CocktailTheme"
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 

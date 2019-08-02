@@ -14,17 +14,17 @@ import com.android.oleksandrpriadko.recycler_adapter.PicassoHolderExtension
 import com.squareup.picasso.Callback
 import kotlinx.android.synthetic.main.cocktail_item_drink.view.*
 
-class StartDrinksAdapter(itemListener: StartItemListener? = null)
-    : BaseAdapterRecyclerView<Drink, StartDrinkHolder, StartItemListener>(itemListener) {
+class FoundDrinksAdapter(itemListener: FoundDrinksItemListener? = null)
+    : BaseAdapterRecyclerView<Drink, FoundDrinkHolder, FoundDrinksItemListener>(itemListener) {
 
     override fun isItemViewClickable(): Boolean = false
 
-    override fun onGetHolder(inflater: LayoutInflater, parent: ViewGroup, viewType: Int): StartDrinkHolder {
-        return StartDrinkHolder(
+    override fun onGetHolder(inflater: LayoutInflater, parent: ViewGroup, viewType: Int): FoundDrinkHolder {
+        return FoundDrinkHolder(
                 inflater.inflate(R.layout.cocktail_item_drink, parent, false))
     }
 
-    override fun onBindHolder(holder: StartDrinkHolder, position: Int) {
+    override fun onBindHolder(holder: FoundDrinkHolder, position: Int) {
         holder.onBind(items[position])
         holder.itemView.avatarCardView.setOnClickListener {
             itemListener?.itemClicked(position, items[position])
@@ -32,19 +32,22 @@ class StartDrinksAdapter(itemListener: StartItemListener? = null)
     }
 }
 
-class StartDrinkHolder(iteView: View)
+class FoundDrinkHolder(iteView: View)
     : RecyclerView.ViewHolder(iteView) {
 
-    private val picassoHolderExtension = PicassoHolderExtension(itemView.context)
+    private val picassoHolderExtension = PicassoHolderExtension()
 
     fun onBind(drink: Drink) {
         itemView.drinkItemImageLoadingLayout.show(true)
 
         picassoHolderExtension.loadImage(
-                drink.imageUrl,
-                itemView.avatarImageView,
-                CocktailManagerFinder.randomPlaceholderManager.pickPlaceHolder(),
-                object : Callback {
+                url = drink.imageUrl,
+                imageView = itemView.avatarImageView,
+                placeHolderDrawableId = CocktailManagerFinder.randomPlaceholderManager.pickPlaceHolder(),
+                errorDrawableId = CocktailManagerFinder.randomPlaceholderManager.pickPlaceHolder(),
+                imageWidth = itemView.measuredWidth,
+                imageHeight = itemView.measuredHeight,
+                callback = object : Callback {
                     override fun onSuccess() {
                         itemView.drinkItemImageLoadingLayout.show(false)
                     }
@@ -59,4 +62,4 @@ class StartDrinkHolder(iteView: View)
     }
 }
 
-interface StartItemListener : BaseItemListener<Drink>
+interface FoundDrinksItemListener : BaseItemListener<Drink>

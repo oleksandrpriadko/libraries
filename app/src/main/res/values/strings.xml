@@ -21,4 +21,5 @@ Est velit egestas dui id ornare arcu.
     <string name="sorry_we_couldn_t_find_any_matches">Sorry we couldn\'t find any matches</string>
     <string name="add_to_search">Add to search</string>
     <string name="you_re_offline">You\'re offline</string>
+    <string name="cocktail_no_browser">No application can handle this request. Please install a web browser</string>
 </resources>

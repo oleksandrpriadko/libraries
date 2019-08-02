@@ -12,6 +12,7 @@ open class Drink(@SerializedName(DRINK_FIELD_ID)
     @SerializedName(DRINK_FIELD_NAME)
     var name: String = ""
     var imageUrl: String = ""
+    @SerializedName(DRINK_FIELD_INGREDIENTS_LIST)
     var ingredientList: RealmList<MeasuredIngredient> = RealmList()
     var instructions: String = ""
     var category: String = NO_CATEGORY
@@ -32,6 +33,18 @@ open class Drink(@SerializedName(DRINK_FIELD_ID)
             }
         }
         return matchesCount
+    }
+
+    fun containsIngredientsWithNames(ingredientNames: List<String>): Int {
+        var count = 0
+        for (measuredIngredient in ingredientList) {
+            for (ingredientName in ingredientNames) {
+                if (measuredIngredient.patronName.equals(ingredientName, true)) {
+                    count++
+                }
+            }
+        }
+        return count
     }
 
     fun hasEmptyFields(): Boolean {
@@ -200,6 +213,7 @@ open class Drink(@SerializedName(DRINK_FIELD_ID)
     companion object {
         const val DRINK_FIELD_NAME = "name"
         const val DRINK_FIELD_ID = "id"
+        const val DRINK_FIELD_INGREDIENTS_LIST = "ingredientList"
 
         private const val NO_CATEGORY = "Undefined"
         private const val NO_ALCOHOLIC_TYPE = "Undefined"

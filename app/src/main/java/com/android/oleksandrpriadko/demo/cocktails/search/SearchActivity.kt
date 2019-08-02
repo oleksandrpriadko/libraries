@@ -13,9 +13,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.ListPopupWindow
 import androidx.appcompat.widget.ListPopupWindow.INPUT_METHOD_NEEDED
 import androidx.appcompat.widget.ListPopupWindow.POSITION_PROMPT_BELOW
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.transition.AutoTransition
-import androidx.transition.TransitionManager
 import com.android.oleksandrpriadko.demo.R
 import com.android.oleksandrpriadko.demo.cocktails.drinkdetails.DrinkDetailsActivity
 import com.android.oleksandrpriadko.demo.cocktails.model.BundleConst
@@ -37,11 +34,7 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
 
     private var popupListIngredientMatches: ListPopupWindow? = null
 
-    private val constraintSetLoading: ConstraintSet = ConstraintSet()
-    private val constraintSetResults: ConstraintSet = ConstraintSet()
-    private val constraintSetEmpty: ConstraintSet = ConstraintSet()
-
-    private val adapterItems = StartDrinksAdapter()
+    private val adapterItems = FoundDrinksAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,26 +42,17 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
 
         setContentView(R.layout.cocktail_activity_search)
 
-        initConstraintSets()
         prepareSearch()
         initItemsRecView()
 
-        App.connectionStatusReceiver.subscribe(this)
-
-        presenter?.searchPopularDrinks()
-    }
-
-    private fun initConstraintSets() {
-        constraintSetLoading.clone(
-                this, R.layout.cocktail_activity_loading_state)
-        constraintSetResults.clone(
-                this, R.layout.cocktail_activity_results_state)
-        constraintSetEmpty.clone(
-                this, R.layout.cocktail_activity_empty_state)
+        presenter?.saveOnPendingActionRunnable(Runnable {
+            App.connectionStatusReceiver.subscribe(this)
+            presenter?.searchPopularDrinks()
+        })
     }
 
     private fun initItemsRecView() {
-        adapterItems.itemListener = object : StartItemListener {
+        adapterItems.itemListener = object : FoundDrinksItemListener {
             override fun isEmpty(isEmpty: Boolean) {}
 
             override fun itemClicked(position: Int, item: Drink) {
@@ -150,7 +134,10 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
     override fun areSearchResultsEmpty(): Boolean = adapterItems.getData().isEmpty()
 
     override fun clearSearchResults(redrawItems: Boolean) {
-        adapterItems.clearData(redrawItems)
+        try {
+            adapterItems.clearData(redrawItems)
+        } catch (ignore: UnsupportedOperationException) {
+        }
     }
 
     override fun scrollToFirstSearchResult() {
@@ -170,8 +157,6 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
                 popupListIngredientMatches?.promptPosition = POSITION_PROMPT_BELOW
             }
 
-            popupListIngredientMatches?.dismiss()
-
             popupListIngredientMatches?.let { window ->
                 val names = matches.map {
                     it.name
@@ -179,9 +164,9 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
                 val adapter: ArrayAdapter<String> = ArrayAdapter(this, android.R.layout.simple_list_item_1, names)
                 adapter.notifyDataSetChanged()
                 window.setAdapter(adapter)
-                window.setOnItemClickListener { _, _, position, _ ->
+                window.setOnItemClickListener { adapterView, _, position, _ ->
                     presenter?.onIngredientMatchSelected(
-                            matches[position],
+                            Ingredient(adapterView.adapter.getItem(position) as? String ?: ""),
                             false)
                 }
                 window.show()
@@ -222,6 +207,24 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
         ingredientsChipGroup.hide()
     }
 
+    override fun showLoadingLayout(show: Boolean) {
+        loadingLayout.show(show)
+    }
+
+    override fun showEmptyLayout(show: Boolean) {
+        backgroundOfflineView.show(show)
+        emptyResultsImageView.show(show)
+        emptyResultsTextView.show(show)
+    }
+
+    override fun showResultsListLayout(show: Boolean) {
+        itemsRecyclerView.show(show)
+    }
+
+    override fun showOfflineLayout(show: Boolean) {
+        offlineLayout.show(show)
+    }
+
     override fun scrollSearchInputToEnd() {}
 
     override fun updateSearchInputHint() {
@@ -253,7 +256,7 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         intent?.let {
-            presenter?.runnableOnNewIntent = Runnable {
+            presenter?.saveOnNewIntentRunnable(Runnable {
                 if (it.getStringExtra(BundleConst.INGREDIENT_NAME) != null) {
                     presenter?.onIngredientMatchSelected(
                             Ingredient(it.getStringExtra(BundleConst.INGREDIENT_NAME)), true)
@@ -264,27 +267,7 @@ class SearchActivity : AppCompatActivity(), PresenterView, ConnectionStatusSubsc
                         BY_NAME -> searchTabs.selectItem(BY_INGREDIENTS)
                     }
                 }
-            }
-        }
-    }
-
-    override fun applyState(state: State) {
-        val transition = AutoTransition().apply {
-            duration = 0
-        }
-        TransitionManager.beginDelayedTransition(motionParent, transition)
-        when (state) {
-            State.LOADING -> {
-                constraintSetLoading.applyTo(motionParent)
-            }
-            State.RESULTS -> {
-                constraintSetResults.applyTo(motionParent)
-            }
-            State.EMPTY -> {
-                constraintSetEmpty.applyTo(motionParent)
-            }
-            State.OFFLINE -> offlineLayout.show()
-            State.ONLINE -> offlineLayout.hide()
+            })
         }
     }
 

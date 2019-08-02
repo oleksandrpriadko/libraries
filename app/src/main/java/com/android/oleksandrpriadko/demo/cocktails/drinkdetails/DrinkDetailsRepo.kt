@@ -8,6 +8,7 @@ import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.Ingredient
 import com.android.oleksandrpriadko.demo.cocktails.model.wrappers.MeasuredIngredient
 import com.android.oleksandrpriadko.mvp.repo.ObservableRepo
 import com.android.oleksandrpriadko.mvp.repo_extension.RetrofitRepoExtension
+import com.android.oleksandrpriadko.retrofit.ConnectionStatusReceiver
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -28,8 +29,13 @@ class DrinkDetailsRepo(lifecycleOwner: LifecycleOwner,
         }
     }
 
-    private fun checkDrinkInDb(drinkId: String, listener: DrinkDetailsRepoListener): Boolean {
-        val fromDb: Drink? = realmRepoExtension.findDrinkByIdNullIfEmpty(drinkId)
+    private fun checkDrinkInDb(drinkId: String,
+                               listener: DrinkDetailsRepoListener,
+                               onlyFilledDrink: Boolean = ConnectionStatusReceiver.isOnline): Boolean {
+        val fromDb: Drink? = when {
+            onlyFilledDrink -> realmRepoExtension.findDrinkByIdNullIfEmpty(drinkId)
+            else -> realmRepoExtension.findDrinkById(drinkId)
+        }
         if (fromDb != null) {
             listener.onDrinkLoaded(fromDb)
             listener.onLoadingDone()
@@ -102,22 +108,15 @@ class DrinkDetailsRepo(lifecycleOwner: LifecycleOwner,
         }
     }
 
-//    private fun checkIngredientInDrink(drink: Drink,
-//                                       ingredient: Ingredient,
-//                                       listener: DrinkDetailsRepoListener): Boolean {
-//        val matched = drink.ingredientList.find {
-//            it.name.equals(ingredient.name, true)
-//        }
-//        if (matched != null && !matched.hasEmptyFields(false)) {
-//            listener.onIngredientLoaded(matched)
-//            logState("${ingredient.name} in drink, fields filled")
-//            return true
-//        }
-//        return false
-//    }
-
-    private fun checkIngredientInDb(nameOfIngredient: String, listener: DrinkDetailsRepoListener): Boolean {
-        val fromDb: Ingredient? = realmRepoExtension.findIngredientLikeNullIfEmpty(nameOfIngredient)
+    private fun checkIngredientInDb(nameOfIngredient: String,
+                                    listener: DrinkDetailsRepoListener,
+                                    onlyFilledDrink: Boolean = ConnectionStatusReceiver.isOnline): Boolean {
+        val fromDb: Ingredient? =
+                if (onlyFilledDrink) {
+                    realmRepoExtension.findIngredientLikeNullIfEmpty(nameOfIngredient)
+                } else {
+                    realmRepoExtension.findIngredientLike(nameOfIngredient)
+                }
 
         if (fromDb != null) {
             listener.onLoadingDone()
