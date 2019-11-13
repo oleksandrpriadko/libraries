@@ -27,10 +27,21 @@ class AttachedTabsPresenter(presenterView: PresenterView, isInEditMode: Boolean)
         super.isViewInEditMode = isInEditMode
     }
 
+    fun requestSelectNextToRight(childCount: Int, areTabsOnTop: Boolean) {
+        if ((childCount - 1) > getIngexOfSelectedItem()) {
+            selectItem(getIngexOfSelectedItem() + 1, areTabsOnTop)
+        }
+    }
+
+    fun requestSelectNextToLeft(areTabsOnTop: Boolean) {
+        if (getIngexOfSelectedItem() > 0) {
+            selectItem(getIngexOfSelectedItem() - 1, areTabsOnTop)
+        }
+    }
+
     fun selectItem(index: Int, areTabsOnTop: Boolean) {
         saveOnNewIntentRunnable(Runnable {
-            if (indexOfSelectedItem == index) {
-            } else {
+            if (indexOfSelectedItem != index) {
                 val toBeSelectedView: View? = view?.getChildAt(index)
                 if (toBeSelectedView != null) {
                     selectItem(toBeSelectedView, areTabsOnTop)

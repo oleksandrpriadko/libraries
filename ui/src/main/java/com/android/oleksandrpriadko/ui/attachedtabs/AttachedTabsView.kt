@@ -128,6 +128,14 @@ class AttachedTabsView : ConstraintLayout, PresenterView {
         presenter.selectItem(index, areTabsOnTop)
     }
 
+    fun requestSelectNextToRight() {
+        presenter.requestSelectNextToRight(childCount, areTabsOnTop)
+    }
+
+    fun requestSelectNextToLeft() {
+        presenter.requestSelectNextToLeft(areTabsOnTop)
+    }
+
     override fun createAnimator() {
         animator = ValueAnimator.ofFloat(0f, 1f)
                 .setDuration(animationDuration)

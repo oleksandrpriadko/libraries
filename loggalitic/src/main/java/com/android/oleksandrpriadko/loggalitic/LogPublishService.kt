@@ -30,7 +30,7 @@ object LogPublishService {
     fun logger(): Logger {
         if (logger === Logger.NOT_SET) {
             Log.i(LogPublishService::class.java.simpleName,
-                    "Default ${Logger::class.java} in use")
+                    "Default ${Logger::class.java.simpleName} in use")
         }
         return logger
     }
@@ -38,7 +38,7 @@ object LogPublishService {
     fun publisher(): Publisher {
         if (publisher === Publisher.NOT_SET) {
             Log.i(LogPublishService::class.java.simpleName,
-                    "Default ${Publisher::class.java} in use")
+                    "Default ${Publisher::class.java.simpleName} in use")
         }
         return publisher
     }

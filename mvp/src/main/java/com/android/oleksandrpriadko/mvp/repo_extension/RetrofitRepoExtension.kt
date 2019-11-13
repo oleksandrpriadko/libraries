@@ -10,7 +10,7 @@ import retrofit2.Retrofit
 class RetrofitRepoExtension(
         private val baseUrl: String,
         private val interceptors: List<Interceptor> = listOf(),
-        private val loggingLevel: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.BASIC,
+        private val loggingLevel: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.NONE,
         private val converterFactory: Converter.Factory) : RepoExtension {
 
     private var retrofit: Retrofit? = null
