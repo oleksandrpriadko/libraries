@@ -1,5 +1,6 @@
 package com.android.oleksandrpriadko.mvp.repo_extension
 
+import android.content.Context
 import com.android.oleksandrpriadko.core.CoreServiceManager
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -8,6 +9,7 @@ import retrofit2.Converter
 import retrofit2.Retrofit
 
 class RetrofitRepoExtension(
+        private val context: Context,
         private val baseUrl: String,
         private val interceptors: List<Interceptor> = listOf(),
         private val loggingLevel: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.NONE,
@@ -46,7 +48,7 @@ class RetrofitRepoExtension(
      * return null if there is no internet connection
      */
     fun <T> getApi(apiClass: Class<T>): T? {
-        return if (CoreServiceManager.isOnline()) {
+        return if (CoreServiceManager.isOnline(context)) {
             retrofit!!.create(apiClass)
         } else {
             null

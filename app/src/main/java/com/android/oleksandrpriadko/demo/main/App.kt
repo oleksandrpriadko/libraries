@@ -8,8 +8,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.android.oleksandrpriadko.demo.BuildConfig
 import com.android.oleksandrpriadko.demo.R
-import com.android.oleksandrpriadko.demo.cocktails.managers.CocktailManagerFinder
-import com.android.oleksandrpriadko.demo.cocktails.managers.SharedPreferencesManagerImpl
 import com.android.oleksandrpriadko.demo.logpublish.AppCenterConverter
 import com.android.oleksandrpriadko.demo.logpublish.DemoPublisher
 import com.android.oleksandrpriadko.demo.logpublish.FabricConverter
@@ -38,7 +36,6 @@ class App : Application() {
         val policy = initPolicy()
 
         LogPublishService.init(initLogger(policy), initPublisher(policy))
-        CocktailManagerFinder.sharedPreferencesManager = SharedPreferencesManagerImpl(applicationContext)
     }
 
     private fun initPolicy(): DefaultPolicy {

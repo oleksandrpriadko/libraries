@@ -38,45 +38,6 @@
             android:name=".logpublish.LogPublishActivity"
             android:label="LogPublish" />
 
-        <activity
-            android:name=".cocktails.search.SearchActivity"
-            android:label="Cocktails"
-            android:launchMode="singleTask"
-            android:theme="@style/CocktailTheme"
-            android:windowSoftInputMode="adjustNothing">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="@string/cocktail_host"
-                    android:pathPrefix="@string/cocktail_pathPrefixSearch"
-                    android:scheme="http" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".cocktails.drinkdetails.DrinkDetailsActivity"
-            android:theme="@style/CocktailThemeDetails">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="@string/cocktail_host"
-                    android:pathPrefix="@string/cocktail_pathPrefixCocktail"
-                    android:scheme="http" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".cocktails.splash.CocktailSplashActivity"
-            android:theme="@style/CocktailThemeSplash" />
-
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="35ba9af7c2f219ba35a8a57ea690f62d5a52318e" />

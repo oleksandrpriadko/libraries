@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.oleksandrpriadko.demo.R
 import com.android.oleksandrpriadko.demo.main.adapter.AdapterDemos
 import com.android.oleksandrpriadko.demo.main.adapter.Demo
-import com.android.oleksandrpriadko.demo.cocktails.splash.CocktailSplashActivity
 import com.android.oleksandrpriadko.demo.item_decoration.ItemDecorationActivity
 import com.android.oleksandrpriadko.demo.logpublish.LogPublishActivity
 import com.android.oleksandrpriadko.extension.dimenPixelSize
@@ -74,13 +73,6 @@ class MainActivity : AppCompatActivity() {
                 "Analytics",
                 null,
                 R.drawable.main_ic_analytics_512)
-        demoList.add(demo)
-
-        demo = Demo(
-                CocktailSplashActivity::class.java,
-                "Cocktails",
-                null,
-                R.drawable.main_ic_cocktail_512)
         demoList.add(demo)
 
         adapterDemos.setData(demoList)
