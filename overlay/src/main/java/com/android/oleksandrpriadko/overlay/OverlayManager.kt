@@ -9,21 +9,22 @@ import com.android.oleksandrpriadko.overlay.HideMethod.BACK_PRESSED
 import com.android.oleksandrpriadko.overlay.HideMethod.CLICK_ON_BACKGROUND
 import com.android.oleksandrpriadko.overlay.HideMethod.DEFAULT
 import com.android.oleksandrpriadko.overlay.HideMethod.HIDE_ALL
-import com.android.oleksandrpriadko.overlay.OverlayState.ANIMATING_IN
-import com.android.oleksandrpriadko.overlay.OverlayState.ANIMATING_OUT
-import com.android.oleksandrpriadko.overlay.OverlayState.ANIMATING_OUT_BACK_CLICK
-import com.android.oleksandrpriadko.overlay.OverlayState.DISMISSED
-import com.android.oleksandrpriadko.overlay.OverlayState.DISMISSED_BACK_CLICK
-import com.android.oleksandrpriadko.overlay.OverlayState.DISPLAYING
-import com.android.oleksandrpriadko.overlay.OverlayState.IDLE
+import com.android.oleksandrpriadko.overlay.OverlayState.*
 
 open class OverlayManager(containerViewGroup: ViewGroup) {
 
     private val overlayList = mutableListOf<Overlay>()
 
+    /**
+     * if we try to add a new overlay while isHidingAll = true, we need to process this
+     * overlayHolder when all overlays have been hidden, so add this overlay to this list
+     * when this happens
+     */
+    private val pendingOverlayList = mutableListOf<Overlay>()
+
     private val overlayRenderer: OverlayRenderer
 
-    private val handlerHideInLoop = Handler()
+    private val handlerDismissInLoop = Handler()
 
     @get:VisibleForTesting
     internal var isHidingAll = false
@@ -31,14 +32,14 @@ open class OverlayManager(containerViewGroup: ViewGroup) {
 
     private var isHostResumed = false
 
-    var showParentBefore: Boolean = true
+    private var showParentBefore: Boolean = true
         get
         /**
          * If true - parent's layout visibility will be changed to [View.VISIBLE] once
          * [Overlay] attached, false - no changes to parent's layout visibility
          */
         set
-    var hideParentAfter = true
+    private var hideParentAfter = true
         get
         /**
          * If true - parent's layout visibility will be changed to [View.GONE] once
@@ -53,19 +54,19 @@ open class OverlayManager(containerViewGroup: ViewGroup) {
     init {
         val rendererListener = object : OverlayRenderer.RendererListener {
 
-            override fun onAnimateShow(overlay: Overlay) {
-                log(message = "onAnimateShow: ${getTagOf(overlay)}")
-                overlay.updateState(ANIMATING_IN)
+            override fun onDisplayInProgress(overlay: Overlay) {
+                log(message = "onDisplayInProgress: ${getTagOf(overlay)}")
+                overlay.updateState(DISPLAY_IN_PROGRESS)
             }
 
             override fun onDisplay(overlay: Overlay) = toDisplay(overlay, true)
 
-            override fun onAnimateDismiss(overlay: Overlay, hideMethod: HideMethod) {
-                log(message = "onAnimateDismiss: ${getTagOf(overlay)}")
+            override fun onDismissInProgress(overlay: Overlay, hideMethod: HideMethod) {
+                log(message = "onDismissInProgress: ${getTagOf(overlay)}")
                 if (hideMethod == CLICK_ON_BACKGROUND) {
-                    overlay.updateState(ANIMATING_OUT_BACK_CLICK)
+                    overlay.updateState(DISMISS_IN_PROGRESS_BACKGROUND_CLICK)
                 } else {
-                    overlay.updateState(ANIMATING_OUT)
+                    overlay.updateState(DISMISS_IN_PROGRESS)
                 }
             }
 
@@ -81,26 +82,26 @@ open class OverlayManager(containerViewGroup: ViewGroup) {
     }
 
     /**
-     * @param displayNext if true - next [Overlay] in [.overlayList]
+     * @param displayNext if true - next [Overlay] in [.overlayHolderList]
      * will be notified
      */
     @VisibleForTesting
-    internal fun toDisplay(overlay: Overlay, displayNext: Boolean) {
-        log(message = "onDisplay: ${getTagOf(overlay)}")
-        overlay.updateState(DISPLAYING)
+    internal fun toDisplay(overlayHolder: Overlay, displayNext: Boolean) {
+        log(message = "onDisplay: ${getTagOf(overlayHolder)}")
+        overlayHolder.updateState(DISPLAYING)
         if (displayNext) {
-            requestDisplayNext(overlay)
+            requestDisplayNext(overlayHolder)
         }
     }
 
-    private fun toDismiss(overlay: Overlay, hideMethod: HideMethod) {
-        log(message = "toDismissAfterAnimOut: ${getTagOf(overlay)}")
+    private fun toDismiss(overlayHolder: Overlay, hideMethod: HideMethod) {
+        log(message = "toDismissAfterAnimOut: ${getTagOf(overlayHolder)}")
         // covers cases
-        // 1) current Overlay is in state ANIMATING_OUT
+        // 1) current Overlay is in state DISMISS_IN_PROGRESS
         // 2) attach() triggered
-        requestDisplayNext(overlay)
+        requestDisplayNext(overlayHolder)
 
-        stateDismissAndRemoveFromListAndViewGroup(overlay, hideMethod)
+        stateDismissAndRemoveFromListAndViewGroup(overlayHolder, hideMethod)
 
         if (areAllHidden()) {
             overlayRenderer.showHoldersContainerViewGroup(!hideParentAfter)
@@ -114,10 +115,17 @@ open class OverlayManager(containerViewGroup: ViewGroup) {
     @VisibleForTesting
     internal fun unlock() {
         if (areAllHidden()) {
-            log(message = "isHidingAll = false")
+            log(message = "unlock: isHidingAll = false")
             isHidingAll = false
+            //check docs for pendingOverlayList
+            for (overlayHolder in pendingOverlayList) {
+                log(message = "unlock: add overlay from pending list")
+                add(overlayHolder)
+            }
+            pendingOverlayList.clear()
         }
     }
+
 
     @VisibleForTesting
     internal fun setIsDismissingAll(isDismissingAll: Boolean) {
@@ -126,13 +134,13 @@ open class OverlayManager(containerViewGroup: ViewGroup) {
 
     fun areAllHidden(): Boolean = overlayList.isEmpty()
 
-    fun isOverlayOnTop(overlay: Overlay): Boolean =
+    fun isOverlayOnTop(overlayHolder: Overlay): Boolean =
             if (areAllHidden()) false
-            else overlayList[overlayList.size - 1] === overlay
+            else overlayList[overlayList.size - 1] === overlayHolder
 
-    fun isOverlayOnTop(rootViewGroupInOverlayHolder: ViewGroup?): Boolean =
+    fun isOverlayOnTop(rootViewGroupInOverlay: ViewGroup?): Boolean =
             if (areAllHidden()) false
-            else overlayList[overlayList.size - 1].rootViewGroup === rootViewGroupInOverlayHolder
+            else overlayList[overlayList.size - 1].rootViewGroup === rootViewGroupInOverlay
 
     fun getTopView() : View? {
         return if (areAllHidden()) {
@@ -144,50 +152,53 @@ open class OverlayManager(containerViewGroup: ViewGroup) {
     /**
      * Check validity of [Overlay] and [.attach] if valid
      */
-    fun add(overlay: Overlay) {
+    fun add(overlayHolder: Overlay) {
         if (isHidingAll) {
             log(message = "addOverlay: dismissAll in progress")
+            //check docs for pendingOverlayList
+            pendingOverlayList.add(overlayHolder)
+            log(message = "addOverlay: adding to pending list")
             return
         }
 
-        val stateValidToCommit = isStateValidToCommit(overlay)
-        val isAlreadyAdded = hasSameOverlay(overlay)
+        val stateValidToCommit = isStateValidToCommit(overlayHolder)
+        val isAlreadyAdded = hasSameOverlay(overlayHolder)
 
         if (stateValidToCommit && !isAlreadyAdded) {
-            attach(overlay)
+            attach(overlayHolder)
         } else {
-            log(message = "addOverlay: cannot proceed with used overlay")
+            log(message = "addOverlay: cannot proceed with used overlayHolder")
         }
     }
 
-    private fun isStateValidToCommit(overlay: Overlay): Boolean
-            = overlay.isReadyToDisplay()
+    private fun isStateValidToCommit(overlayHolder: Overlay): Boolean
+            = overlayHolder.isReadyToDisplay()
 
-    private fun hasSameOverlay(overlay: Overlay): Boolean
-            = overlayList.contains(overlay)
+    private fun hasSameOverlay(overlayHolder: Overlay): Boolean
+            = overlayList.contains(overlayHolder)
 
     /**
      * 1) Shows container of all [Overlay]s if necessary;
-     * 2) Add provided [Overlay] to [.overlayList]
+     * 2) Add provided [Overlay] to [.overlayHolderList]
      * 3) If previous [Overlay] is in #DISPLAYING state -
      * [OverlayRenderer.display];
      * 4) If current [Overlay] is alone - [OverlayRenderer.display]
      */
-    private fun attach(overlay: Overlay) {
-        overlayList.add(overlay)
-        log(message = "attach: ${getTagOf(overlay)}")
+    private fun attach(overlayHolder: Overlay) {
+        overlayList.add(overlayHolder)
+        log(message = "attach: ${getTagOf(overlayHolder)}")
 
         val indexOfAddedTransaction = overlayList.size - 1
 
         overlayRenderer.showHoldersContainerViewGroup(showParentBefore)
 
         if (overlayList.size > 1) {
-            val previousOverlayHolder = overlayList[indexOfAddedTransaction - 1]
-            if (previousOverlayHolder.state == DISPLAYING) {
-                overlayRenderer.display(overlay)
+            val previousOverlay = overlayList[indexOfAddedTransaction - 1]
+            if (previousOverlay.state == DISPLAYING) {
+                overlayRenderer.display(overlayHolder)
             }
         } else {
-            overlayRenderer.display(overlay)
+            overlayRenderer.display(overlayHolder)
         }
     }
 
@@ -199,10 +210,10 @@ open class OverlayManager(containerViewGroup: ViewGroup) {
         val indexOfLastDisplayed = overlayList.indexOf(focusedOverlay)
 
         if (overlayList.size > indexOfLastDisplayed + 1) {
-            val nextOverlayHolder = overlayList[indexOfLastDisplayed + 1]
-            if (nextOverlayHolder.isReadyToDisplay()) {
+            val nextOverlay = overlayList[indexOfLastDisplayed + 1]
+            if (nextOverlay.isReadyToDisplay()) {
                 log(message = "requestDisplayNext:")
-                overlayRenderer.display(nextOverlayHolder)
+                overlayRenderer.display(nextOverlay)
             } else {
                 log("overlay not ready to display")
             }
@@ -224,32 +235,32 @@ open class OverlayManager(containerViewGroup: ViewGroup) {
             return false
         }
 
-        return dismissLatestOverlayHolder(hideMethod)
+        return dismissLatestOverlay(hideMethod)
     }
 
-    private fun dismissLatestOverlayHolder(hideMethod: HideMethod): Boolean {
+    private fun dismissLatestOverlay(hideMethod: HideMethod): Boolean {
         val size = overlayList.size
-        val latestOverlayHolder = overlayList[size - 1]
+        val latestOverlay = overlayList[size - 1]
 
         if (hideMethod == BACK_PRESSED) {
-            if (!latestOverlayHolder.doHideByBackPressed) {
-                log(message = "$latestOverlayHolder not allowed to be hidden by back press")
+            if (!latestOverlay.doHideByBackPressed) {
+                log(message = "$latestOverlay not allowed to be hidden by back press")
                 return true
             }
         }
 
         log(message = "hideLastOverlay:")
 
-        when (latestOverlayHolder.state) {
-            ANIMATING_IN, DISPLAYING -> {
-                log(message = "dismissLatestOverlayHolder:allowed ${getTagOf(latestOverlayHolder)}")
-                overlayRenderer.hide(latestOverlayHolder, false, hideMethod)
+        when (latestOverlay.state) {
+            DISPLAY_IN_PROGRESS, DISPLAYING -> {
+                log(message = "dismissLatestOverlay:allowed ${getTagOf(latestOverlay)}")
+                overlayRenderer.hide(latestOverlay, false, hideMethod)
             }
-            ANIMATING_OUT, ANIMATING_OUT_BACK_CLICK ->
-                log(message = "dismissLatestOverlayHolder: animOutInProgress ${getTagOf(latestOverlayHolder)}")
-            IDLE, DISMISSED, DISMISSED_BACK_CLICK -> {
-                log(message = "dismissLatestOverlayHolder:justRemovedFromList ${getTagOf(latestOverlayHolder)}")
-                overlayList.remove(latestOverlayHolder)
+            DISMISS_IN_PROGRESS, DISMISS_IN_PROGRESS_BACKGROUND_CLICK ->
+                log(message = "dismissLatestOverlay: animOutInProgress ${getTagOf(latestOverlay)}")
+            IDLE, DISMISSED, DISMISSED_BACKGROUND_CLICK -> {
+                log(message = "dismissLatestOverlay:justRemovedFromList ${getTagOf(latestOverlay)}")
+                overlayList.remove(latestOverlay)
                 return overlayList.size > 0
             }
         }
@@ -258,18 +269,18 @@ open class OverlayManager(containerViewGroup: ViewGroup) {
     }
 
     @VisibleForTesting
-    internal fun stateDismissAndRemoveFromListAndViewGroup(overlay: Overlay,
+    internal fun stateDismissAndRemoveFromListAndViewGroup(overlayHolder: Overlay,
                                                            hideMethod: HideMethod) {
-        log(message = "dismissAndRemove${getTagOf(overlay)}")
+        log(message = "dismissAndRemove${getTagOf(overlayHolder)}")
 
-        overlayRenderer.removeFromHoldersContainerViewGroup(overlay)
+        overlayRenderer.removeFromHoldersContainerViewGroup(overlayHolder)
 
-        overlayList.remove(overlay)
+        overlayList.remove(overlayHolder)
 
         if (hideMethod == CLICK_ON_BACKGROUND) {
-            overlay.updateState(DISMISSED_BACK_CLICK)
+            overlayHolder.updateState(DISMISSED_BACKGROUND_CLICK)
         } else {
-            overlay.updateState(DISMISSED)
+            overlayHolder.updateState(DISMISSED)
         }
     }
 
@@ -294,7 +305,7 @@ open class OverlayManager(containerViewGroup: ViewGroup) {
         log(message = "hideAllOverlays")
         isHidingAll = true
 
-        dismissFromEndInLoop(overlayList.size, handlerHideInLoop, HIDE_ALL)
+        dismissFromEndInLoop(overlayList.size, handlerDismissInLoop, HIDE_ALL)
     }
 
     @VisibleForTesting
@@ -308,18 +319,18 @@ open class OverlayManager(containerViewGroup: ViewGroup) {
                     log(message = "dismissFromEndInLoop:toDismiss ${getTagOf(overlayHolder)}")
                     toDismiss(overlayHolder, hideMethod)
                 }
-                ANIMATING_IN, DISPLAYING -> {
+                DISPLAY_IN_PROGRESS, DISPLAYING -> {
                     if (indexOfLastActive == -1) {
                         indexOfLastActive = i
                     }
-                    val delay = ((indexOfLastActive - i) * DELAY_BETWEEN_ITEMS_WHILE_HIDE_ALL_MS).toLong()
+                    val delay = ((indexOfLastActive - i) * DELAY_BETWEEN_ITEMS_WHILE_POP_ALL_MS).toLong()
                     log(message = "dismissFromEndInLoop:delayed by $delay${getTagOf(overlayHolder)}")
                     handlerPopInLoop.postDelayed({ overlayRenderer.hide(overlayHolder, !isHostResumed, hideMethod) }, delay)
                 }
-                ANIMATING_OUT, ANIMATING_OUT_BACK_CLICK ->
+                DISMISS_IN_PROGRESS, DISMISS_IN_PROGRESS_BACKGROUND_CLICK ->
                     if (!isHostResumed) {
                         val hideMethodForAnimOut: HideMethod =
-                                if (overlayHolder.state == ANIMATING_OUT_BACK_CLICK) CLICK_ON_BACKGROUND
+                                if (overlayHolder.state == DISMISS_IN_PROGRESS_BACKGROUND_CLICK) CLICK_ON_BACKGROUND
                                 else hideMethod
 
                         overlayRenderer.hide(overlayHolder, !isHostResumed, hideMethodForAnimOut)
@@ -327,7 +338,7 @@ open class OverlayManager(containerViewGroup: ViewGroup) {
                     } else {
                         log(message = "dismissFromEndInLoop: animating out")
                     }
-                DISMISSED, DISMISSED_BACK_CLICK -> {
+                DISMISSED, DISMISSED_BACKGROUND_CLICK -> {
                 }
             }
         }
@@ -339,11 +350,11 @@ open class OverlayManager(containerViewGroup: ViewGroup) {
     fun stop() {
         hostStopped()
         if (isHidingAll) {
-            suspendWhileDismissingAll(handlerHideInLoop)
+            suspendWhileDismissingAll(handlerDismissInLoop)
             return
         }
 
-        val overlayHolder = findFirstWithState(ANIMATING_IN)
+        val overlayHolder = findFirstWithState(DISPLAY_IN_PROGRESS)
         if (overlayHolder == null) {
             log(message = "suspendOverlayManager:disallowed, no animIn Overlay")
             return
@@ -370,18 +381,18 @@ open class OverlayManager(containerViewGroup: ViewGroup) {
     }
 
     @VisibleForTesting
-    internal fun requestForcedDismissWithRenderer(overlay: Overlay) {
-        when (overlay.state) {
-            ANIMATING_OUT, DISPLAYING -> {
-                log(message = "suspendWhileDismissingAll: forced hide and cancel out anim${getTagOf(overlay)}")
-                overlayRenderer.hide(overlay, forceAnimation = true, hideMethod = DEFAULT)
+    internal fun requestForcedDismissWithRenderer(overlayHolder: Overlay) {
+        when (overlayHolder.state) {
+            DISMISS_IN_PROGRESS, DISPLAYING -> {
+                log(message = "suspendWhileDismissingAll: forced hide and cancel out anim${getTagOf(overlayHolder)}")
+                overlayRenderer.hide(overlayHolder, forceAnimation = true, hideMethod = DEFAULT)
             }
-            ANIMATING_OUT_BACK_CLICK -> {
-                log(message = "suspendWhileDismissingAll: forced hide and cancel out anim${getTagOf(overlay)}")
-                overlayRenderer.hide(overlay, forceAnimation = true, hideMethod = CLICK_ON_BACKGROUND)
+            DISMISS_IN_PROGRESS_BACKGROUND_CLICK -> {
+                log(message = "suspendWhileDismissingAll: forced hide and cancel out anim${getTagOf(overlayHolder)}")
+                overlayRenderer.hide(overlayHolder, forceAnimation = true, hideMethod = CLICK_ON_BACKGROUND)
             }
             else ->
-                log(message = "suspendWhileDismissingAll: no cancel, state=${overlay.state}${getTagOf(overlay)}")
+                log(message = "suspendWhileDismissingAll: no cancel, state=${overlayHolder.state}${getTagOf(overlayHolder)}")
         }
     }
 
@@ -395,7 +406,7 @@ open class OverlayManager(containerViewGroup: ViewGroup) {
             return
         }
 
-        val animatingOverlay = findFirstWithState(ANIMATING_IN, ANIMATING_OUT)
+        val animatingOverlay = findFirstWithState(DISPLAY_IN_PROGRESS, DISMISS_IN_PROGRESS)
         if (animatingOverlay == null) {
             val readyToDisplayOverlay = findReadyToDisplay()
 
@@ -455,10 +466,10 @@ open class OverlayManager(containerViewGroup: ViewGroup) {
         isHostResumed = false
     }
 
-    private fun getTagOf(overlay: Overlay): String = overlay.toString()
+    private fun getTagOf(overlayHolder: Overlay): String = overlayHolder.toString()
 
     companion object {
-        private const val DELAY_BETWEEN_ITEMS_WHILE_HIDE_ALL_MS = 300
+        private const val DELAY_BETWEEN_ITEMS_WHILE_POP_ALL_MS = 300
 
         private const val isLoggingEnabled = true
 

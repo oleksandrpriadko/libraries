@@ -8,9 +8,9 @@ enum class OverlayState(val description: String) {
     IDLE("IDLE"),
 
     /**
-     * View is playing inner animations
+     * View is preparing to play or playing inner animations
      */
-    ANIMATING_IN("ANIMATING_IN"),
+    DISPLAY_IN_PROGRESS("DISPLAY_IN_PROGRESS"),
 
     /**
      * View finished inner animations and have been displayed
@@ -18,14 +18,14 @@ enum class OverlayState(val description: String) {
     DISPLAYING("DISPLAYING"),
 
     /**
-     * View is playing outer animations
+     * View is preparing to play or playing outer animations
      */
-    ANIMATING_OUT("ANIMATING_OUT"),
+    DISMISS_IN_PROGRESS("DISMISS_IN_PROGRESS"),
 
     /**
-     * View is playing outer animations after click on background
+     * View is preparing to play or playing outer animations after click on background
      */
-    ANIMATING_OUT_BACK_CLICK("ANIMATING_OUT_BACK_CLICK"),
+    DISMISS_IN_PROGRESS_BACKGROUND_CLICK("DISMISS_IN_PROGRESS_BACKGROUND_CLICK"),
 
     /**
      * View finished outer animations and have been removed from [.mRootViewGroup]
@@ -36,5 +36,5 @@ enum class OverlayState(val description: String) {
      * View finished outer animations and have been removed from [.mRootViewGroup] after click on
      * background
      */
-    DISMISSED_BACK_CLICK("DISMISSED_BACK_CLICK")
+    DISMISSED_BACKGROUND_CLICK("DISMISSED_BACKGROUND_CLICK")
 }

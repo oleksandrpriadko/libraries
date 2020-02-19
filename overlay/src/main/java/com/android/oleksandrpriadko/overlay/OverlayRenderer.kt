@@ -11,18 +11,20 @@ import com.android.oleksandrpriadko.overlay.HideMethod.DEFAULT
 internal class OverlayRenderer(private val holdersContainerViewGroup: ViewGroup,
                                private val rendererListener: RendererListener?) {
 
-    fun display(overlay: Overlay) {
-        val rootViewGroup = overlay.rootViewGroup
+    fun display(overlayHolder: Overlay) {
+        val rootViewGroup = overlayHolder.rootViewGroup
 
-        val animShowRoot = overlay.animShowRoot
-        val animShowBackground = overlay.animShowBackground
-        val animShowContent = overlay.animShowContent
+        val animShowRoot = overlayHolder.animShowRoot
+        val animShowBackground = overlayHolder.animShowBackground
+        val animShowContent = overlayHolder.animShowContent
+
+        notifyOnDisplayInProgress(overlayHolder)
 
         holdersContainerViewGroup.addView(rootViewGroup)
 
-        requestSetUpHideByClickOnBackground(overlay)
+        requestSetUpHideByClickOnBackground(overlayHolder)
 
-        animate(overlay,
+        animate(overlayHolder,
                 animShowRoot,
                 animShowBackground,
                 animShowContent,
@@ -34,17 +36,19 @@ internal class OverlayRenderer(private val holdersContainerViewGroup: ViewGroup,
     /**
      * @param forceAnimation If true - animation will not be played, false - otherwise
      */
-    fun hide(overlay: Overlay, forceAnimation: Boolean, hideMethod: HideMethod) {
+    fun hide(overlayHolder: Overlay, forceAnimation: Boolean, hideMethod: HideMethod) {
         if (forceAnimation) {
-            requestCancelAnimations(overlay, isShowAnimation = false)
+            requestCancelAnimations(overlayHolder, isShowAnimation = false)
         }
-        requestCancelAnimations(overlay, isShowAnimation = true)
+        requestCancelAnimations(overlayHolder, isShowAnimation = true)
 
-        val animHideRoot = overlay.animHideRoot
-        val animHideBackground = overlay.animHideBackground
-        val animHideContent = overlay.animHideContent
+        val animHideRoot = overlayHolder.animHideRoot
+        val animHideBackground = overlayHolder.animHideBackground
+        val animHideContent = overlayHolder.animHideContent
 
-        animate(overlay,
+        notifyOnDismissInProgress(overlayHolder, hideMethod)
+
+        animate(overlayHolder,
                 animHideRoot,
                 animHideBackground,
                 animHideContent,
@@ -56,7 +60,7 @@ internal class OverlayRenderer(private val holdersContainerViewGroup: ViewGroup,
     /**
      * @param forceAnimation check [.hide]
      */
-    private fun animate(overlay: Overlay,
+    private fun animate(overlayHolder: Overlay,
                         animRoot: Animation?,
                         animBackground: Animation?,
                         animContent: Animation?,
@@ -65,16 +69,16 @@ internal class OverlayRenderer(private val holdersContainerViewGroup: ViewGroup,
                         isShowAnimation: Boolean) {
         if (animRoot == null && animContent == null && animBackground == null) {
             if (isShowAnimation) {
-                notifyOnDisplay(overlay)
+                notifyOnDisplay(overlayHolder)
             } else {
-                notifyOnDismiss(overlay, hideMethod ?: DEFAULT)
+                notifyOnDismiss(overlayHolder, hideMethod ?: DEFAULT)
             }
         } else {
             startLongestAnimation(
-                    overlay,
-                    overlay.rootViewGroup,
-                    overlay.backgroundView,
-                    overlay.contentView,
+                    overlayHolder,
+                    overlayHolder.rootViewGroup,
+                    overlayHolder.backgroundView,
+                    overlayHolder.contentView,
                     animRoot,
                     animBackground,
                     animContent,
@@ -91,7 +95,7 @@ internal class OverlayRenderer(private val holdersContainerViewGroup: ViewGroup,
      * @param forceAnimation check [.hide]
      */
     @VisibleForTesting
-    fun startLongestAnimation(overlay: Overlay,
+    fun startLongestAnimation(overlayHolder: Overlay,
                               rootViewGroup: ViewGroup,
                               backgroundView: View?,
                               contentView: View?,
@@ -116,25 +120,25 @@ internal class OverlayRenderer(private val holdersContainerViewGroup: ViewGroup,
             }
             if (isRootLongerThanBack && isRootLongerThanContent) {
                 log("back, " + "no notice")
-                requestAnimation(overlay, backgroundView, false, animBackground, forceAnimation, isShowAnimation, hideMethod)
+                requestAnimation(overlayHolder, backgroundView, false, animBackground, forceAnimation, isShowAnimation, hideMethod)
                 log("content, " + "no notice")
-                requestAnimation(overlay, contentView, false, animContent, forceAnimation, isShowAnimation, hideMethod)
+                requestAnimation(overlayHolder, contentView, false, animContent, forceAnimation, isShowAnimation, hideMethod)
                 log("root, " + "notice")
-                requestAnimation(overlay, rootViewGroup, true, animRoot, forceAnimation, isShowAnimation, hideMethod, isAnimatingRoot = true)
+                requestAnimation(overlayHolder, rootViewGroup, true, animRoot, forceAnimation, isShowAnimation, hideMethod, isAnimatingRoot = true)
             } else if (isRootLongerThanBack) {
                 log("root, " + "no notice")
-                requestAnimation(overlay, rootViewGroup, false, animRoot, forceAnimation, isShowAnimation, hideMethod, isAnimatingRoot = true)
+                requestAnimation(overlayHolder, rootViewGroup, false, animRoot, forceAnimation, isShowAnimation, hideMethod, isAnimatingRoot = true)
                 log("back, " + "no notice")
-                requestAnimation(overlay, backgroundView, false, animBackground, forceAnimation, isShowAnimation, hideMethod)
+                requestAnimation(overlayHolder, backgroundView, false, animBackground, forceAnimation, isShowAnimation, hideMethod)
                 log("content, " + "notice")
-                requestAnimation(overlay, contentView, true, animContent, forceAnimation, isShowAnimation, hideMethod)
+                requestAnimation(overlayHolder, contentView, true, animContent, forceAnimation, isShowAnimation, hideMethod)
             } else {
                 log("root, " + "no notice")
-                requestAnimation(overlay, rootViewGroup, false, animRoot, forceAnimation, isShowAnimation, hideMethod, isAnimatingRoot = true)
+                requestAnimation(overlayHolder, rootViewGroup, false, animRoot, forceAnimation, isShowAnimation, hideMethod, isAnimatingRoot = true)
                 log("content, " + "no notice")
-                requestAnimation(overlay, contentView, false, animContent, forceAnimation, isShowAnimation, hideMethod)
+                requestAnimation(overlayHolder, contentView, false, animContent, forceAnimation, isShowAnimation, hideMethod)
                 log("back, " + "notice")
-                requestAnimation(overlay, backgroundView, true, animBackground, forceAnimation, isShowAnimation, hideMethod)
+                requestAnimation(overlayHolder, backgroundView, true, animBackground, forceAnimation, isShowAnimation, hideMethod)
             }
         } else if (animBackground != null && backgroundView != null) {
             // compare back and content animations
@@ -146,19 +150,19 @@ internal class OverlayRenderer(private val holdersContainerViewGroup: ViewGroup,
             }
             if (isBackLongerThanContent) {
                 log("content, " + "no notice")
-                requestAnimation(overlay, contentView, false, animContent, forceAnimation, isShowAnimation, hideMethod)
+                requestAnimation(overlayHolder, contentView, false, animContent, forceAnimation, isShowAnimation, hideMethod)
                 log("back, " + "notice")
-                requestAnimation(overlay, backgroundView, true, animBackground, forceAnimation, isShowAnimation, hideMethod)
+                requestAnimation(overlayHolder, backgroundView, true, animBackground, forceAnimation, isShowAnimation, hideMethod)
             } else {
                 log("back, " + "no notice")
-                requestAnimation(overlay, backgroundView, false, animBackground, forceAnimation, isShowAnimation, hideMethod)
+                requestAnimation(overlayHolder, backgroundView, false, animBackground, forceAnimation, isShowAnimation, hideMethod)
                 log("content, " + "notice")
-                requestAnimation(overlay, contentView, true, animContent, forceAnimation, isShowAnimation, hideMethod)
+                requestAnimation(overlayHolder, contentView, true, animContent, forceAnimation, isShowAnimation, hideMethod)
             }
         } else if (animContent != null && contentView != null) {
             // only contentAnimation not null
             log("content, " + "notice")
-            requestAnimation(overlay, contentView, true, animContent, forceAnimation, isShowAnimation, hideMethod)
+            requestAnimation(overlayHolder, contentView, true, animContent, forceAnimation, isShowAnimation, hideMethod)
         } else {
             log("cannot play animation on any of views")
         }
@@ -173,7 +177,7 @@ internal class OverlayRenderer(private val holdersContainerViewGroup: ViewGroup,
      * @param forceAnimation If true - force OUTER animation, false - let it play
      */
     @VisibleForTesting
-    fun requestAnimation(overlay: Overlay,
+    fun requestAnimation(overlayHolder: Overlay,
                          targetView: View?,
                          needNotice: Boolean,
                          animation: Animation?,
@@ -185,45 +189,39 @@ internal class OverlayRenderer(private val holdersContainerViewGroup: ViewGroup,
             var animationListener: AnimationListener? = null
             if (needNotice) {
                 animationListener = createAnimationListener(
-                        overlay, isShowAnimation, hideMethod, targetView, isAnimatingRoot)
+                        overlayHolder, isShowAnimation, hideMethod, targetView, isAnimatingRoot)
                 animation.setAnimationListener(animationListener)
             }
             if (isShowAnimation) {
                 if (targetView != null) {
-                    log("anim proceed $overlay")
+                    log("anim proceed $overlayHolder")
                     targetView.startAnimation(animation)
                 } else {
                     log("cannot proceed anim as targetView is null")
                 }
             } else {
                 forceOrPlayOutAnimation(
-                        overlay, targetView, animation, animationListener, forceAnimation, needNotice)
+                        overlayHolder, targetView, animation, animationListener, forceAnimation, needNotice)
             }
         }
     }
 
-    private fun createAnimationListener(overlay: Overlay,
+    private fun createAnimationListener(overlayHolder: Overlay,
                                         isShowAnimation: Boolean,
                                         hideMethod: HideMethod?,
                                         animatingView: View?,
                                         isAnimatingRoot: Boolean): AnimationListener {
         return object : AnimationListener {
-            override fun onAnimationStart(animation: Animation) {
-                if (isShowAnimation) {
-                    notifyOnAnimateShow(overlay)
-                } else {
-                    notifyOnAnimateDismiss(overlay, hideMethod ?: DEFAULT)
-                }
-            }
+            override fun onAnimationStart(animation: Animation) {}
 
             override fun onAnimationEnd(animation: Animation) {
                 if (isShowAnimation) {
-                    notifyOnDisplay(overlay)
+                    notifyOnDisplay(overlayHolder)
                 } else {
                     if (!isAnimatingRoot) {
                         preventFlicker()
                     }
-                    notifyOnDismiss(overlay, hideMethod ?: DEFAULT)
+                    notifyOnDismiss(overlayHolder, hideMethod ?: DEFAULT)
                 }
             }
 
@@ -258,7 +256,7 @@ internal class OverlayRenderer(private val holdersContainerViewGroup: ViewGroup,
      * @param needNotice     check [.requestAnimation]
      */
     @VisibleForTesting
-    fun forceOrPlayOutAnimation(overlay: Overlay,
+    fun forceOrPlayOutAnimation(overlayHolder: Overlay,
                                 targetView: View?,
                                 animation: Animation,
                                 animationListener: AnimationListener?,
@@ -267,18 +265,18 @@ internal class OverlayRenderer(private val holdersContainerViewGroup: ViewGroup,
         if (forceAnimation) {
             if (needNotice) {
                 if (animationListener != null) {
-                    log("anim forced with notice $overlay")
+                    log("anim forced with notice $overlayHolder")
                     animationListener.onAnimationStart(animation)
                     animationListener.onAnimationEnd(animation)
                 } else {
                     log("cannot notice as animation listener is null")
                 }
             } else {
-                log("anim forced $overlay")
+                log("anim forced $overlayHolder")
             }
         } else {
             if (targetView != null) {
-                log("anim proceed $overlay")
+                log("anim proceed $overlayHolder")
                 targetView.startAnimation(animation)
             } else {
                 log("cannot proceed anim as targetView is null")
@@ -286,14 +284,14 @@ internal class OverlayRenderer(private val holdersContainerViewGroup: ViewGroup,
         }
     }
 
-    fun removeFromHoldersContainerViewGroup(overlay: Overlay) {
-        holdersContainerViewGroup.removeView(overlay.rootViewGroup)
+    fun removeFromHoldersContainerViewGroup(overlayHolder: Overlay) {
+        holdersContainerViewGroup.removeView(overlayHolder.rootViewGroup)
     }
 
-    private fun requestSetUpHideByClickOnBackground(overlay: Overlay) {
-        if (overlay.doHideByClickOnBackground && overlay.backgroundView != null) {
-            overlay.backgroundView.setOnClickListener { notifyOnTouchedBackground(overlay) }
-        } else if (overlay.backgroundView == null) {
+    private fun requestSetUpHideByClickOnBackground(overlayHolder: Overlay) {
+        if (overlayHolder.doHideByClickOnBackground && overlayHolder.backgroundView != null) {
+            overlayHolder.backgroundView.setOnClickListener { notifyOnTouchedBackground(overlayHolder) }
+        } else if (overlayHolder.backgroundView == null) {
             log("cannot be dismissed by click on background as background view is not provided or null")
         }
     }
@@ -306,16 +304,16 @@ internal class OverlayRenderer(private val holdersContainerViewGroup: ViewGroup,
         }
     }
 
-    fun requestCancelAnimations(overlay: Overlay,
+    fun requestCancelAnimations(overlayHolder: Overlay,
                                 isShowAnimation: Boolean) {
         if (isShowAnimation) {
-            requestCancelAnim(overlay.animShowRoot)
-            requestCancelAnim(overlay.animShowBackground)
-            requestCancelAnim(overlay.animShowContent)
+            requestCancelAnim(overlayHolder.animShowRoot)
+            requestCancelAnim(overlayHolder.animShowBackground)
+            requestCancelAnim(overlayHolder.animShowContent)
         } else {
-            requestCancelAnim(overlay.animHideRoot)
-            requestCancelAnim(overlay.animHideBackground)
-            requestCancelAnim(overlay.animHideContent)
+            requestCancelAnim(overlayHolder.animHideRoot)
+            requestCancelAnim(overlayHolder.animHideBackground)
+            requestCancelAnim(overlayHolder.animHideContent)
         }
     }
 
@@ -326,20 +324,20 @@ internal class OverlayRenderer(private val holdersContainerViewGroup: ViewGroup,
         }
     }
 
-    private fun notifyOnAnimateShow(overlay: Overlay)
-            = rendererListener?.onAnimateShow(overlay)
+    private fun notifyOnDisplayInProgress(overlayHolder: Overlay)
+            = rendererListener?.onDisplayInProgress(overlayHolder)
 
-    private fun notifyOnDisplay(overlay: Overlay)
-            = rendererListener?.onDisplay(overlay)
+    private fun notifyOnDisplay(overlayHolder: Overlay)
+            = rendererListener?.onDisplay(overlayHolder)
 
-    private fun notifyOnAnimateDismiss(overlay: Overlay, hideMethod: HideMethod)
-            = rendererListener?.onAnimateDismiss(overlay, hideMethod)
+    private fun notifyOnDismissInProgress(overlayHolder: Overlay, hideMethod: HideMethod)
+            = rendererListener?.onDismissInProgress(overlayHolder, hideMethod)
 
-    private fun notifyOnDismiss(overlay: Overlay, hideMethod: HideMethod)
-            = rendererListener?.onDismiss(overlay, hideMethod)
+    private fun notifyOnDismiss(overlayHolder: Overlay, hideMethod: HideMethod)
+            = rendererListener?.onDismiss(overlayHolder, hideMethod)
 
-    private fun notifyOnTouchedBackground(overlay: Overlay)
-            = rendererListener?.onBackgroundClicked(overlay)
+    private fun notifyOnTouchedBackground(overlayHolder: Overlay)
+            = rendererListener?.onBackgroundClicked(overlayHolder)
 
     private fun getAnimationDuration(animation: Animation?): Long
             = if (animation == null) 0 else animation.duration + animation.startOffset
@@ -349,11 +347,11 @@ internal class OverlayRenderer(private val holdersContainerViewGroup: ViewGroup,
 
     internal interface RendererListener {
 
-        fun onAnimateShow(overlay: Overlay)
+        fun onDisplayInProgress(overlay: Overlay)
 
         fun onDisplay(overlay: Overlay)
 
-        fun onAnimateDismiss(overlay: Overlay, hideMethod: HideMethod)
+        fun onDismissInProgress(overlay: Overlay, hideMethod: HideMethod)
 
         fun onDismiss(overlay: Overlay, hideMethod: HideMethod)
 
