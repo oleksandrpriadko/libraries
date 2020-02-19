@@ -11,8 +11,8 @@ buildscript {
         buildToolsVersion = '28.0.3'
 
         // version
-        versionsName = "1.4.5"
-        versionsCode = 37
+        versionsName = "1.4.6"
+        versionsCode = 38
 
         androidX = '1.1.0-rc01'
         androidX100 = '1.0.0'
