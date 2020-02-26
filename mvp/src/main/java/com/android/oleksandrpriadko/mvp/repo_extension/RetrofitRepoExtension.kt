@@ -7,6 +7,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
+import java.util.concurrent.TimeUnit
 
 class RetrofitRepoExtension(
         private val context: Context,
@@ -30,7 +31,12 @@ class RetrofitRepoExtension(
     private fun initRetrofit() {
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = loggingLevel
-        val builder = OkHttpClient.Builder().addInterceptor(interceptor)
+        val builder = OkHttpClient.Builder()
+                .connectTimeout(20, TimeUnit.SECONDS)
+                .readTimeout(20, TimeUnit.SECONDS)
+                .writeTimeout(20, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(false)
+                .addInterceptor(interceptor)
         val interceptors = interceptors
         for (i in interceptors.indices) {
             builder.addInterceptor(interceptors[i])
