@@ -9,7 +9,13 @@ import com.android.oleksandrpriadko.overlay.HideMethod.BACK_PRESSED
 import com.android.oleksandrpriadko.overlay.HideMethod.CLICK_ON_BACKGROUND
 import com.android.oleksandrpriadko.overlay.HideMethod.DEFAULT
 import com.android.oleksandrpriadko.overlay.HideMethod.HIDE_ALL
-import com.android.oleksandrpriadko.overlay.OverlayState.*
+import com.android.oleksandrpriadko.overlay.OverlayState.DISMISSED
+import com.android.oleksandrpriadko.overlay.OverlayState.DISMISSED_BACKGROUND_CLICK
+import com.android.oleksandrpriadko.overlay.OverlayState.DISMISS_IN_PROGRESS
+import com.android.oleksandrpriadko.overlay.OverlayState.DISMISS_IN_PROGRESS_BACKGROUND_CLICK
+import com.android.oleksandrpriadko.overlay.OverlayState.DISPLAYING
+import com.android.oleksandrpriadko.overlay.OverlayState.DISPLAY_IN_PROGRESS
+import com.android.oleksandrpriadko.overlay.OverlayState.IDLE
 
 open class OverlayManager(containerViewGroup: ViewGroup) {
 
@@ -70,8 +76,8 @@ open class OverlayManager(containerViewGroup: ViewGroup) {
                 }
             }
 
-            override fun onDismiss(overlay: Overlay, hideMethod: HideMethod)
-                    = toDismiss(overlay, hideMethod)
+            override fun onDismiss(overlay: Overlay,
+                                   hideMethod: HideMethod) = toDismiss(overlay, hideMethod)
 
             override fun onBackgroundClicked(overlay: Overlay) {
                 log(message = "onBackgroundClicked:${getTagOf(overlay)}")
@@ -142,13 +148,14 @@ open class OverlayManager(containerViewGroup: ViewGroup) {
             if (areAllHidden()) false
             else overlayList[overlayList.size - 1].rootViewGroup === rootViewGroupInOverlay
 
-    fun getTopView() : View? {
+    fun getTopView(): View? {
         return if (areAllHidden()) {
             null
         } else {
             overlayList[overlayList.size - 1].rootViewGroup
         }
     }
+
     /**
      * Check validity of [Overlay] and [.attach] if valid
      */
@@ -171,11 +178,9 @@ open class OverlayManager(containerViewGroup: ViewGroup) {
         }
     }
 
-    private fun isStateValidToCommit(overlayHolder: Overlay): Boolean
-            = overlayHolder.isReadyToDisplay()
+    private fun isStateValidToCommit(overlayHolder: Overlay): Boolean = overlayHolder.isReadyToDisplay()
 
-    private fun hasSameOverlay(overlayHolder: Overlay): Boolean
-            = overlayList.contains(overlayHolder)
+    private fun hasSameOverlay(overlayHolder: Overlay): Boolean = overlayList.contains(overlayHolder)
 
     /**
      * 1) Shows container of all [Overlay]s if necessary;
@@ -217,6 +222,27 @@ open class OverlayManager(containerViewGroup: ViewGroup) {
             } else {
                 log("overlay not ready to display")
             }
+        }
+    }
+
+    fun requestHideFirstBeforeDismissing() {
+        if (isHidingAll) {
+            log(message = "hideLastOverlay:dismissAll in progress")
+            return
+        }
+
+        if (overlayList.isEmpty()) {
+            log(message = "hideLastOverlay: disallowed")
+            return
+        }
+
+        val firstBeforeDismissing: Overlay? = overlayList.findLast {
+            it.state == DISPLAYING || it.state == DISPLAY_IN_PROGRESS || it.state == IDLE
+        }
+
+        if (firstBeforeDismissing != null) {
+            log(message = "hideFirstBeforeDismissing:allowed ${getTagOf(firstBeforeDismissing)}")
+            overlayRenderer.hide(firstBeforeDismissing, false, DEFAULT)
         }
     }
 
@@ -309,7 +335,9 @@ open class OverlayManager(containerViewGroup: ViewGroup) {
     }
 
     @VisibleForTesting
-    internal fun dismissFromEndInLoop(size: Int, handlerPopInLoop: Handler, hideMethod: HideMethod) {
+    internal fun dismissFromEndInLoop(size: Int,
+                                      handlerPopInLoop: Handler,
+                                      hideMethod: HideMethod) {
         var indexOfLastActive = -1
 
         for (i in size - 1 downTo 0) {
