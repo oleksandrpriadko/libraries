@@ -1,13 +1,11 @@
 package com.android.oleksandrpriadko.recycler_adapter
 
-import android.content.Context
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import com.android.oleksandrpriadko.core.CoreServiceManager
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.RequestCreator
-import java.lang.Exception
 
 class PicassoHolderExtension {
     fun loadImage(url: String?,
@@ -28,8 +26,8 @@ class PicassoHolderExtension {
 
     companion object {
 
-        private fun getPicasso(context: Context): Picasso {
-            val picasso = Picasso.with(context)
+        private fun getPicasso(): Picasso {
+            val picasso = Picasso.get()
             picasso.setIndicatorsEnabled(BuildConfig.DEBUG)
             picasso.isLoggingEnabled = false
             return picasso
@@ -43,7 +41,7 @@ class PicassoHolderExtension {
                       imageHeight: Int = -1,
                       callback: Callback? = null) {
             try {
-                val picasso: Picasso = getPicasso(imageView.context)
+                val picasso: Picasso = getPicasso()
 
                 val requestCreator: RequestCreator = picasso.load(url)
                 if (placeHolderDrawableId != -1) {

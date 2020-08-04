@@ -11,7 +11,7 @@ buildscript {
         buildToolsVersion = '28.0.3'
 
         // version
-        versionsName = "1.4.7"
+        versionsName = "1.4.9"
         versionsCode = 38
 
         androidX = '1.1.0-rc01'
@@ -28,7 +28,7 @@ buildscript {
         retrofit = '2.3.0'
         okhttp = '3.4.1'
 
-        picasso = '2.5.2'
+        picasso = '2.71828'
 
         guava = '22.0'
 
